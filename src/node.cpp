@@ -93,9 +93,27 @@ bool hashNode::operator() (const Node* node1, const Node* node2) const
 	return (node1->state == node2->state);
 }
 
-
 bool sortH::operator() (const Node* node1, const Node* node2) const
+{
+	if (node1->h == node2->h)
+	{
+		for (int i = 0; i < node1->state.size(); ++i)
+		{
+			if (node1->state[i] != node2->state[i])
+				return (node1->state[i] > node2->state[i]);
+		}
+
+		return false;
+	}
+	else
+	{
+		return (node1->h > node2->h);
+	}
+}
+
+bool sortF::operator() (const Node* node1, const Node* node2) const
 {
 	return (node1->f < node2->f);
 }
+
 

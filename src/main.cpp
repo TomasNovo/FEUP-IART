@@ -192,7 +192,6 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 
 	if (DEBUG)
 	{
-		cout << "h = " << currNode->h << "\n";
 		cout << *currNode << "\n\n";
 	}
 
@@ -208,7 +207,11 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 		nextNode->operationName = operationNames[i];
 
 		if (nextNode->state == objective)
-		{ 
+		{
+			if (DEBUG)
+			{
+				cout << "Level: " << level << "\n";
+			}
 			return nextNode;
 		}
 
@@ -216,6 +219,11 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 		{
 			nextNode->setH(objective);
 			nextRow.push(nextNode);
+
+			if (DEBUG)
+			{
+				cout << *nextNode << "\n\n";
+			}
 		}
 	}
 
@@ -223,11 +231,10 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 	{
 		nextNode = nextRow.top();
 
-		// if (DEBUG)
-		// {
-		// 	cout << "h = " << nextNode->h << "\n";
-		// 	cout << *nextNode << "\n\n";
-		// }
+		if (DEBUG)
+		{
+			cout << *nextNode << "\n\n";
+		}
 
 		Node* nextCall = greedy(tree, nextNode, objective, map, operations, operationNames, level+1);
 
@@ -242,9 +249,9 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 }
 
 
-multiset<Node*, sortH>::iterator linearSearchSet(multiset<Node*, sortH> input, Node* node)
+multiset<Node*, sortF>::iterator linearSearchSet(multiset<Node*, sortF> input, Node* node)
 {
-	multiset<Node*, sortH>::iterator it;
+	multiset<Node*, sortF>::iterator it;
 	for (it = input.begin(); it != input.end(); ++it)
 	{
 		if ((*it)->state == node->state)
@@ -257,8 +264,8 @@ multiset<Node*, sortH>::iterator linearSearchSet(multiset<Node*, sortH> input, N
 
 Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
 {
-	multiset<Node*, sortH> openList;
-	multiset<Node*, sortH> closedList;
+	multiset<Node*, sortF> openList;
+	multiset<Node*, sortF> closedList;
 	
 	openList.insert(currNode);
 
@@ -266,7 +273,7 @@ Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vect
 
 	while (openList.size() > 0)
 	{
-		multiset<Node*, sortH>::iterator it = openList.begin();
+		multiset<Node*, sortF>::iterator it = openList.begin();
 		currNode = *(it);
 
 		if (currNode->state == objective)
@@ -317,10 +324,10 @@ Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vect
 
 Node* aStar2(Node* currNode, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
 {
-	multiset<Node*, sortH> openList;
+	multiset<Node*, sortF> openList;
 	unordered_set<Node*, hashNode, hashNode> openSet;
 
-	multiset<Node*, sortH> closedList;
+	multiset<Node*, sortF> closedList;
 	unordered_set<Node*, hashNode, hashNode> closedSet;
 
 	openList.insert(currNode);
@@ -330,7 +337,7 @@ Node* aStar2(Node* currNode, vector<int> objective, vector<vector<int>> map, vec
 
 	while (openList.size() > 0)
 	{
-		multiset<Node*, sortH>::iterator it = openList.begin();
+		multiset<Node*, sortF>::iterator it = openList.begin();
 		currNode = *(it);
 
 		if (currNode->state == objective)
@@ -575,6 +582,8 @@ void printPath3(Node* node, vector<vector<int>> map)
 		cout << "\n\n";
 		ui_utilities::milliSleep(flashTime); //sleeps for 500 milliseconds
 	}
+
+	cout << "Path size: " << path.size()-1 << "\n\n";
 }
 
 
@@ -591,7 +600,7 @@ int main()
 	vector<int> start;
 	vector<int> objective;
 
-	vector<vector<int>> map = loadMap("map2.txt", start, objective);
+	vector<vector<int>> map = loadMap("map3.txt", start, objective);
 	
 	Node* rootNode = new Node();
 	rootNode->state = start;
@@ -599,9 +608,6 @@ int main()
 
 	vector<Node*> rootRow;
 	rootRow.push_back(rootNode);
-
-	priority_queue<Node*, vector<Node*>, sortH> rootRow2;
-	rootRow2.push(rootNode);
 
 	unordered_set<Node*, hashNode, hashNode> tree;
 	tree.insert(rootNode);
@@ -617,8 +623,8 @@ int main()
 		// result = breadth(rootRow, objective, map, operations, operationNames, 0);
 		// result = breadth2(tree, rootRow, objective, map, operations, operationNames, 0);
 		// result = depth(rootNode, objective, operations, operationNames, 0, 12);
-		// result = greedy(rootNode, tree, rootNode, objective, operations, operationNames, 0);
-		result = aStar(rootNode, objective, map, operations, operationNames, 0);
+		result = greedy(tree, rootNode, objective, map, operations, operationNames, 0);
+		// result = aStar(rootNode, objective, map, operations, operationNames, 0);
 		// result = aStar2(rootNode, objective, map, operations, operationNames, 0);
 	}
 

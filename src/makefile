@@ -1,5 +1,5 @@
 CXX		 = g++
-CXXFLAGS = -std=c++11 -O3
+CXXFLAGS = -std=c++11 -g
 LDFLAGS  =
 DEPS	 = main.cpp node.cpp node.h mapLoader.cpp mapLoader.h ui_utilities.cpp ui_utilities.h makefile
 OBJFILES = main.o node.o mapLoader.o ui_utilities.o

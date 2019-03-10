@@ -55,6 +55,9 @@ struct sortH
 	bool operator() (const Node* node1, const Node* node2) const;
 };
 
-
+struct sortF
+{
+	bool operator() (const Node* node1, const Node* node2) const;
+};
 
 #endif
