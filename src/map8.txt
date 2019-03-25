@@ -20,4 +20,4 @@ c,0,0,1,0,1,1,1,1,0,0,0,1,0,0,0
 // 1- wall
 // a, b, c, d, e - robot's position
 // A, B, C, D, E - goal
-// Map with 5 robots
+// Map with 4 robots
