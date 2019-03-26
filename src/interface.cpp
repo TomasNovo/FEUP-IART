@@ -2,11 +2,157 @@
 
 #include "mapLoader.h"
 
+void info()
+{
+	ui_utilities::ClearScreen();
+
+	cout << "Game devoloped based on play store game Labyrinth Robots." << endl << endl;
+	cout << "Developed by :" << endl << endl;
+	cout << "-Joana Silva  - up201208979" << endl;
+	cout << "-João Franco  - up201604828" << endl;
+	cout << "-Tomás Novo   - up201604503" << endl << endl;
+	
+	ui_utilities::milliSleep(6000);
+
+	menu();
+
+}
+
+void agent(string map)
+{
+	Node* rootNode = initiateMap(map);
+
+	vector<Node*> rootRow;
+	rootRow.push_back(rootNode);
+
+	unordered_set<Node*, hashNode, hashNode> tree;
+	tree.insert(rootNode);
+
+	Node* result = NULL;
+	
+	clock_t time = clock();
+
+	for (int i = 0; i < 1; i++)
+	{
+		// result = breadth(rootRow, 0);
+		// result = breadth2(tree, rootRow, 0);
+		// result = depth(rootNode, 0, 12);
+		result = greedy(tree, rootNode, 0);
+		// result = aStar(rootNode, 0);
+		// result = aStar2(rootNode, 0);
+	}
+
+	double deltaTime = (double)(clock()-time)/CLOCKS_PER_SEC;
+
+	cout << "\n";
+
+	printPath3(result);
+
+	printf("\nFinished in %f seconds.\n", deltaTime);
+
+	ui_utilities::milliSleep(6000);
+
+	agent_menu2();
+}
+
+void agent_menu2()
+{
+	ui_utilities::ClearScreen();
+
+	cout << "---------------------------" << endl;
+	cout << "|    Choose an option:    |" << endl;
+	cout << "---------------------------" << endl;
+	cout << "| 1 - Return to map menu  |" << endl;
+	cout << "--------------------------" << endl;
+	cout << "| 2 - Return to main menu |" << endl;
+	cout << "--------------------------" << endl;
+	cout << "| 0 - Exit                |" << endl;
+	cout << "--------------------------" << endl;
+	
+
+	int input;
+
+	cout << "Option: " ;
+	cin >> input;
+	while (cin.fail() || input > 2 || input < 0)
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nChoose a valid number please ! \n\n";
+			cout << "Input: ";
+			cin >> input;
+		}
+
+	if(input == 0) return;
+	else if(input == 1) agent_menu();
+	else if(input == 2) menu();
+}
+
+void agent_menu()
+{
+	ui_utilities::ClearScreen();
+
+	int input;
+
+	cout << endl << "------------------------------------" << endl;
+	cout << "|                                  |" << endl;
+	cout << "|  L A B Y R I N T H   R O B O T S |" << endl;
+	cout << "|                                  |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "|      Choose the map to play  !   |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 1 - MAP 1                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 2 - MAP 2                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 3 - MAP 3                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 4 - MAP 4                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 5 - MAP 5                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 6 - MAP 6                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 7 - MAP 7                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 8 - MAP 8                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 9 - MAP 9                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 10 - MAP 10                      |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << endl << endl << "Option: ";
+
+	string m = "map";
+
+	cin >> input;
+	while (cin.fail() || input > 10 || input < 0)
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nChoose a valid number please ! \n\n";
+			cout << "Input: ";
+			cin >> input;
+		}
+
+
+
+	m += std::to_string(input);
+	m += ".txt";
+	agent(m);
+
+	m = "map";
+	
+}
+
 
 Node* play_loop(Node* currNode)
 {
 	
 	Node* nextNode = new Node();
+	double i = 1;
+ 	double percentage;
+
 
 	while (!currNode->finished())
 	{
@@ -75,10 +221,10 @@ int play()
 
 	cout << " How to play :" << endl << endl;
 	cout << "- Input the letter of the robot that you want to move (A-Z)" << endl;
-	cout << "- Use W,S,A,D to go up, down, left and right, respectively " << endl;
+	cout << "- Input u,d,l,r to go up, down, left and right, respectively " << endl;
  	cout << "- By pressing one of these keys, your robot will move in that direction " << "and it will only stop if an obstacle is in its way" << endl;
 
-	// ui_utilities::milliSleep(6000); //sleeps for 1 second
+	ui_utilities::milliSleep(6000); 
 	ui_utilities::ClearScreen();
 
 	Node* rootNode = initiateMap("map3.txt");
@@ -108,18 +254,29 @@ int menu()
 	cout << "------------------------------------" << endl;
 	cout << "| 3 - Info                         |" << endl;
 	cout << "------------------------------------" << endl;
+	cout << "| 0 - Exit                         |" << endl;
+	cout << "------------------------------------" << endl;
 	cout << endl << endl << "Input: ";
 
 	cin >> input;
-	while (cin.fail() || input > 3 || input < 1)
+	while (cin.fail() || input > 4 || input < 0)
 		{
 			cin.clear();
 			cin.ignore(1000, '\n');
 			cout << "\nChoose a valid number please ! \n\n";
-			cout << "Input: ";
+			cout << "Option number: ";
 			cin >> input;
 		}
-
+	if (input == 1) play();
+	else if (input == 2) agent_menu();
+	else if (input == 3) info();
+	else if(input == 0)
+	{
+		cout << endl << "Bye, have a good time !" << endl;
+		ui_utilities::milliSleep(4000);
+		ui_utilities::ClearScreen();
+		return 0;
+	}
 
 	return input;
 }
