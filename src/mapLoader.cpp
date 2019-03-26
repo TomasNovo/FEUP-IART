@@ -3,12 +3,45 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <algorithm>
 
-vector<vector<char>> loadMap(string filename, vector<Robot>& robots)
+vector<vector<char>> map;
+
+vector<Operator> operations;
+vector<string> operationNames;
+
+
+bool validMove(Node* node, int robotIndex, int x, int y)
+{
+	if (x < 0 || x >= map[0].size() || y < 0 || y >= map.size() || map[y][x] == '1')
+		return false;
+
+	for (int i = 0; i < node->state.size(); ++i)
+	{
+		if (i != robotIndex && node->state[i].coords[0] == x && node->state[i].coords[1] == y)
+			return false;
+	}
+
+	return true;
+}
+
+Node* initiateMap(string filename)
+{
+	initiateOperators();
+	
+	vector<Robot> startState;
+
+	loadMap(filename, startState);
+	
+	Node* rootNode = new Node();
+	rootNode->state = startState;
+	rootNode->setH();
+
+	return rootNode;
+}
+
+void loadMap(string filename, vector<Robot>& robots)
 {
 	ifstream ifs(filename);
-	vector<vector<char>> map;
 	string line, cell;
 	char cellValue;
 
@@ -74,6 +107,16 @@ vector<vector<char>> loadMap(string filename, vector<Robot>& robots)
 
 		map.push_back(row);
 	}
+}
 
-	return map;
+
+void initiateOperators()
+{
+	Operator up = [](Node* node, int robotIndex) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[1]; i >= 0; i--) { if (!validMove(newNode, robotIndex, newNode->state[robotIndex].coords[0], i)) {break;}} newNode->state[robotIndex].coords[1] = i+1; return newNode;};
+	Operator right = [](Node* node, int robotIndex) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[0]; i < map[newNode->state[robotIndex].coords[1]].size(); i++) { if (!validMove(newNode, robotIndex, i, newNode->state[robotIndex].coords[1])) {break;}} newNode->state[robotIndex].coords[0] = i-1; return newNode;};
+	Operator down = [](Node* node, int robotIndex) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[1]; i < map.size(); i++) { if (!validMove(newNode, robotIndex, newNode->state[robotIndex].coords[0], i)) {break;}} newNode->state[robotIndex].coords[1] = i-1; return newNode;};
+	Operator left = [](Node* node, int robotIndex) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[0]; i >= 0; i--) { if (!validMove(newNode, robotIndex, i, newNode->state[robotIndex].coords[1])) {break;}} newNode->state[robotIndex].coords[0] = i+1; return newNode;};
+
+	operations = {up, right, down, left};
+	operationNames = {"up", "right", "down", "left"};
 }
