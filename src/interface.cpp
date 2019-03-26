@@ -4,6 +4,7 @@
 
 #include <sstream> 
 #include <algorithm>
+#include <random>
 
 void info()
 {
@@ -248,7 +249,14 @@ int play()
 	// ui_utilities::milliSleep(6000); 
 	ui_utilities::ClearScreen();
 
-	Node* rootNode = initiateMap("map9.txt");
+	srand(time(NULL));
+	int randNum = rand()%(10-1 + 1) + 1;
+
+	string map = "map";
+
+	map += std::to_string(randNum);
+	map += ".txt";
+	Node* rootNode = initiateMap(map);
 
 	play_loop(rootNode);
 
