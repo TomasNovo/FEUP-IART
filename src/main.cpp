@@ -16,6 +16,8 @@
 
 using namespace std;
 
+typedef Node* (*Operator)(Node*, int, std::vector<std::vector<char> >);
+
 
 void printSet(unordered_set<Node*, hashNode, hashNode> tree)
 {
@@ -28,7 +30,7 @@ void printSet(unordered_set<Node*, hashNode, hashNode> tree)
 }
 
 
-Node* breadth(vector<Node*> currRow, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
+Node* breadth(vector<Node*> currRow, vector<vector<char>> map, vector<Operator> operations, string operationNames[], int level)
 {
 	if (currRow.size() == 0)
 	{
@@ -47,28 +49,32 @@ Node* breadth(vector<Node*> currRow, vector<int> objective, vector<vector<int>> 
 			currNode = currRow[i];
 			// cout << *currNode << "\n";
 
-			for (int j = 0; j < operations.size(); j++)
+			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 			{
-				nextNode = operations[j](currNode, map);
-				nextNode->cost++;
-				nextNode->parent = currNode;
-				nextNode->operationName = operationNames[j];
-
-				// cout << *nextNode << "\n";
-
-				if (nextNode->state == objective)
+				for (int j = 0; j < operations.size(); j++)
 				{
-					return nextNode;
-				}
+					nextNode = operations[j](currNode, robotIndex, map);
+					nextNode->cost++;
+					nextNode->parent = currNode;
+					nextNode->operationName = operationNames[j];
 
-				if (nextNode->parent == NULL || nextNode->state != nextNode->parent->state) // Checks if the state is the same after the operation
-				{
-					if (nextNode->parent->parent == NULL || nextNode->state != nextNode->parent->parent->state) // Checks if the state doesn't change from 2 levels above
+					// cout << *nextNode << "\n";
+
+					if (nextNode->finished())
 					{
-						nextRow.push_back(nextNode);
+						return nextNode;
+					}
+
+					if (nextNode->parent == NULL || nextNode->state != nextNode->parent->state) // Checks if the state is the same after the operation
+					{
+						if (nextNode->parent->parent == NULL || nextNode->state != nextNode->parent->parent->state) // Checks if the state doesn't change from 2 levels above
+						{
+							nextRow.push_back(nextNode);
+						}
 					}
 				}
 			}
+			
 		}
 
 		currRow = nextRow;
@@ -80,7 +86,7 @@ Node* breadth(vector<Node*> currRow, vector<int> objective, vector<vector<int>> 
 }
 
 
-Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> currRow, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
+Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> currRow, vector<vector<char>> map, vector<Operator> operations, string operationNames[], int level)
 {
 	if (currRow.size() == 0)
 	{
@@ -103,38 +109,45 @@ Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> curr
 		if (DEBUG)
 			cout << *currNode << "\n";
 
-		for (int j = 0; j < operations.size(); j++)
+		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{
-			nextNode = operations[j](currNode, map);
-			nextNode->cost++;
-			nextNode->parent = currNode;
-			nextNode->operationName = operationNames[j];
-
-			if (nextNode->state == objective)
+			for (int j = 0; j < operations.size(); j++)
 			{
-				if (DEBUG)
-					cout << "Tree size = " << tree.size() << "\n";
+				nextNode = operations[j](currNode, robotIndex, map);
+				nextNode->cost++;
+				nextNode->parent = currNode;
+				nextNode->operationName = operationNames[j];
 
-				return nextNode;
-			}
+				if (nextNode->finished())
+				{
+					if (DEBUG)
+						cout << "Tree size = " << tree.size() << "\n";
 
-			if (tree.insert(nextNode).second)
-			{
-				nextRow.push_back(nextNode);
-			}
-			else
-			{
-				delete nextNode;
+					return nextNode;
+				}
+
+				if (tree.insert(nextNode).second)
+				{
+					if (DEBUG)
+						cout << *nextNode << "\n";
+
+					nextRow.push_back(nextNode);
+				}
+				else
+				{
+					delete nextNode;
+				}
 			}
 		}
+
 	}
 
 
-	return breadth2(tree, nextRow, objective, map, operations, operationNames, level+1);
+	return breadth2(tree, nextRow, map, operations, operationNames, level+1);
 }
 
 /*
-Node* depth(Node* currNode, vector<int> objective, vector<function<vector<int>(vector<int>)>> operations, string operationNames[], int level, int limit)
+Node* depth(Node* currNode, vector<Operator> operations, string operationNames[], int level, int limit)
 {
 	if (currNode == NULL)
 	{
@@ -154,7 +167,7 @@ Node* depth(Node* currNode, vector<int> objective, vector<function<vector<int>(v
 		nextNode->parent = currNode;
 		nextNode->operationName = operationNames[i];
 
-		if (nextNode->state == objective)
+		if (nextNode->finished())
 		{
 			return nextNode;
 		}
@@ -165,7 +178,7 @@ Node* depth(Node* currNode, vector<int> objective, vector<function<vector<int>(v
 			{
 				if (level+1 <= limit)
 				{
-					Node* nextCall = depth(nextNode, objective, operations, operationNames, level+1, limit);
+					Node* nextCall = depth(nextNode, operations, operationNames, level+1, limit);
 
 					if (nextCall != NULL)
 						return nextCall;
@@ -183,7 +196,7 @@ Node* depth(Node* currNode, vector<int> objective, vector<function<vector<int>(v
 
 
 
-Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
+Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vector<vector<char>> map, vector<Operator> operations, string operationNames[], int level)
 {
 	if (currNode == NULL/* || level == 10*/)
 	{
@@ -199,30 +212,34 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 
 	priority_queue<Node*, vector<Node*>, sortH> nextRow;
 
-	for (int i = 0; i < operations.size(); i++)
+	for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 	{
-		nextNode = operations[i](currNode, map);
-		nextNode->cost++;
-		nextNode->parent = currNode;
-		nextNode->operationName = operationNames[i];
-
-		if (nextNode->state == objective)
+		for (int i = 0; i < operations.size(); i++)
 		{
-			if (DEBUG)
+			nextNode = operations[i](currNode, robotIndex, map);
+			nextNode->cost++;
+			nextNode->parent = currNode;
+			nextNode->operationName = operationNames[i];
+
+			if (nextNode->finished())
 			{
-				cout << "Level: " << level << "\n";
+				if (DEBUG)
+				{
+					cout << "Level: " << level << "\n";
+				}
+
+				return nextNode;
 			}
-			return nextNode;
-		}
 
-		if (tree.insert(nextNode).second)
-		{
-			nextNode->setH(objective);
-			nextRow.push(nextNode);
-
-			if (DEBUG)
+			if (tree.insert(nextNode).second)
 			{
-				cout << *nextNode << "\n\n";
+				nextNode->setH();
+				nextRow.push(nextNode);
+
+				if (DEBUG)
+				{
+					cout << *nextNode << "\n\n";
+				}
 			}
 		}
 	}
@@ -236,7 +253,7 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, vec
 			cout << *nextNode << "\n\n";
 		}
 
-		Node* nextCall = greedy(tree, nextNode, objective, map, operations, operationNames, level+1);
+		Node* nextCall = greedy(tree, nextNode, map, operations, operationNames, level+1);
 
 		if (nextCall != NULL)
 			return nextCall;
@@ -262,7 +279,7 @@ multiset<Node*, sortF>::iterator linearSearchSet(multiset<Node*, sortF> input, N
 }
 
 
-Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
+Node* aStar(Node* currNode, vector<vector<char>> map, vector<Operator> operations, string operationNames[], int level)
 {
 	multiset<Node*, sortF> openList;
 	multiset<Node*, sortF> closedList;
@@ -276,8 +293,8 @@ Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vect
 		multiset<Node*, sortF>::iterator it = openList.begin();
 		currNode = *(it);
 
-		if (currNode->state == objective)
-		{ 
+		if (currNode->finished())
+		{
 			return currNode;
 		}
 
@@ -288,41 +305,44 @@ Node* aStar(Node* currNode, vector<int> objective, vector<vector<int>> map, vect
 		if (DEBUG)
 			cout << *currNode << "\n";
 
-		for (int i = 0; i < operations.size(); i++)
+		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{
-			nextNode = operations[i](currNode, map);
-			nextNode->cost++;
-			nextNode->parent = currNode;
-			nextNode->operationName = operationNames[i];
-			nextNode->setH(objective);
-			
-			it = linearSearchSet(closedList, nextNode);
-
-			if (nextNode->state != currNode->state && *it == *closedList.end())
+			for (int i = 0; i < operations.size(); i++)
 			{
-				it = linearSearchSet(openList, nextNode);
+				nextNode = operations[i](currNode, robotIndex, map);
+				nextNode->cost++;
+				nextNode->parent = currNode;
+				nextNode->operationName = operationNames[i];
+				nextNode->setH();
 				
-				if (*it == *openList.end())
+				it = linearSearchSet(closedList, nextNode);
+
+				if (nextNode->state != currNode->state && *it == *closedList.end())
 				{
-					openList.insert(nextNode);
-				}
-				else
-				{
-					if (nextNode->cost < (*it)->cost)
+					it = linearSearchSet(openList, nextNode);
+					
+					if (*it == *openList.end())
 					{
-						openList.erase(it);
 						openList.insert(nextNode);
 					}
+					else
+					{
+						if (nextNode->cost < (*it)->cost)
+						{
+							openList.erase(it);
+							openList.insert(nextNode);
+						}
+					}
 				}
+				
 			}
-			
 		}
 	}
 
 	return NULL;
 }
 
-Node* aStar2(Node* currNode, vector<int> objective, vector<vector<int>> map, vector<function<Node*(Node*, vector<vector<int>>)>> operations, string operationNames[], int level)
+Node* aStar2(Node* currNode, vector<vector<char>> map, vector<Operator> operations, string operationNames[], int level)
 {
 	multiset<Node*, sortF> openList;
 	unordered_set<Node*, hashNode, hashNode> openSet;
@@ -340,7 +360,7 @@ Node* aStar2(Node* currNode, vector<int> objective, vector<vector<int>> map, vec
 		multiset<Node*, sortF>::iterator it = openList.begin();
 		currNode = *(it);
 
-		if (currNode->state == objective)
+		if (currNode->finished())
 		{ 
 			return currNode;
 		}
@@ -354,36 +374,39 @@ Node* aStar2(Node* currNode, vector<int> objective, vector<vector<int>> map, vec
 		if (DEBUG)
 			cout << *currNode << "\n";
 
-		for (int i = 0; i < operations.size(); i++)
+		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{
-			nextNode = operations[i](currNode, map);
-			nextNode->cost++;
-			nextNode->parent = currNode;
-			nextNode->operationName = operationNames[i];
-			nextNode->setH(objective);
-			
-			if (closedSet.find(nextNode) == closedSet.end())
+			for (int i = 0; i < operations.size(); i++)
 			{
-				auto it = openSet.find(nextNode);
+				nextNode = operations[i](currNode, robotIndex, map);
+				nextNode->cost++;
+				nextNode->parent = currNode;
+				nextNode->operationName = operationNames[i];
+				nextNode->setH();
 				
-				if (it == openSet.end())
+				if (closedSet.find(nextNode) == closedSet.end())
 				{
-					openList.insert(nextNode);
-					openSet.insert(nextNode);
-				}
-				else
-				{
-					if (nextNode->cost < (*it)->cost)
+					auto it = openSet.find(nextNode);
+					
+					if (it == openSet.end())
 					{
-						openList.erase(*it);
-						openSet.erase(*it);
-
 						openList.insert(nextNode);
 						openSet.insert(nextNode);
 					}
+					else
+					{
+						if (nextNode->cost < (*it)->cost)
+						{
+							openList.erase(*it);
+							openSet.erase(*it);
+
+							openList.insert(nextNode);
+							openSet.insert(nextNode);
+						}
+					}
 				}
+				
 			}
-			
 		}
 	}
 
@@ -428,23 +451,42 @@ void printPath(Node* node)
 }
 
 
-void printMap(vector<vector<int>> map, Node* node)
+void printMap(vector<vector<char>> map, Node* node)
 {
 	for (int i = 0; i < map.size(); ++i)
 	{
 		for (int j = 0; j < map[i].size(); ++j)
 		{
-			if (node != NULL && i == node->state[1] && j == node->state[0]) // robot's position
-				cout << 2;
+			int k;
+			if (node != NULL)
+			{
+				for (k = 0; k < node->state.size(); ++k)
+				{
+					if (i == node->state[k].coords[1] && j == node->state[k].coords[0]) // robot's position
+					{
+						cout << (char)(node->state[k].id + ('A' - 'a'));
+						break;
+					}
 
-			else if (map[i][j] == 2 || map[i][j] == 0)
+					else if (i == node->state[k].objective[1] && j == node->state[k].objective[0]) // robot's position
+					{
+						cout << (char)node->state[k].id;
+						break;
+					}
+				}
+			}
+			
+			if (node == NULL || k == node->state.size())
+			{
+				if (map[i][j] == '2' || map[i][j] == '0')
 				cout << " ";
 
-			else if (map[i][j] == 1)
-				cout << 0;
+				else if (map[i][j] == '1')
+					cout << 0;
 
-			else
-				cout << map[i][j];
+				else
+					cout << map[i][j];
+			}
 
 			cout << " ";
 		}
@@ -453,7 +495,7 @@ void printMap(vector<vector<int>> map, Node* node)
 	}
 }
 
-void printPath2(Node* node, vector<vector<int>> map)
+void printPath2(Node* node, vector<vector<char>> map)
 {
 	if (node == NULL)
 		return;
@@ -480,7 +522,7 @@ void printPath2(Node* node, vector<vector<int>> map)
 }
 
 
-void printPath3(Node* node, vector<vector<int>> map)
+void printPath3(Node* node, vector<vector<char>> map)
 {
 	if (node == NULL)
 		return;
@@ -498,14 +540,13 @@ void printPath3(Node* node, vector<vector<int>> map)
 
 	int flashTime = 100, walkTime = 200, stopTime = 500;
 	Node *currNode = new Node(*nodes.back()), *nextNode;
-	vector<int> stateSave = currNode->state;
+	vector<Robot> stateSave = currNode->state;
 
 	for (int i = 0; i < 15; ++i) // start flashing animation
 	{
 		if (i % 2 == 0)
 		{
-			currNode->state[0] = -1;
-			currNode->state[1] = -1;
+			currNode->state.resize(0);
 		}
 		else
 		{
@@ -530,33 +571,36 @@ void printPath3(Node* node, vector<vector<int>> map)
 		currNode = new Node(*nodes[i]);
 		nextNode = nodes[i-1];
 
-		if (currNode->state[0] == nextNode->state[0])
+		for (int j = 0; j < currNode->state.size(); ++j)
 		{
-			int deltaY = nextNode->state[1] - currNode->state[1];
-
-			for (int j = 0; j < abs(deltaY); ++j)
+			if (currNode->state[j].coords[1] != nextNode->state[j].coords[1])
 			{
-				currNode->state[1] += deltaY/abs(deltaY);
-				ui_utilities::ClearScreen();
-				printMap(map, currNode);
-				cout << "\n\n";
-				ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+				int deltaY = nextNode->state[j].coords[1] - currNode->state[j].coords[1];
 
+				for (int k = 0; k < abs(deltaY); ++k)
+				{
+					currNode->state[j].coords[1] += deltaY/abs(deltaY);
+					ui_utilities::ClearScreen();
+					printMap(map, currNode);
+					cout << "\n\n";
+					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+
+				}
 			}
-		}
-		else
-		{
-			int deltaX = nextNode->state[0] - currNode->state[0];
-
-			for (int j = 0; j < abs(deltaX); ++j)
+			else if (currNode->state[j].coords[0] != nextNode->state[j].coords[0])
 			{
-				currNode->state[0] += deltaX/abs(deltaX);
-				ui_utilities::ClearScreen();
-				printMap(map, currNode);
-				cout << "\n\n";
-				ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+				int deltaX = nextNode->state[j].coords[0] - currNode->state[j].coords[0];
 
-			}
+				for (int k = 0; k < abs(deltaX); ++k)
+				{
+					currNode->state[j].coords[0] += deltaX/abs(deltaX);
+					ui_utilities::ClearScreen();
+					printMap(map, currNode);
+					cout << "\n\n";
+					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+
+				}
+			}	
 		}
 
 		if (i >= 2)
@@ -565,12 +609,11 @@ void printPath3(Node* node, vector<vector<int>> map)
 
 
 	stateSave = currNode->state;
-	for (int i = 0; i < 15; ++i) // end flashing animation
+	for (int i = 0; i < 16; ++i) // end flashing animation
 	{
 		if (i % 2 == 0)
 		{
-			currNode->state[0] = -1;
-			currNode->state[1] = -1;
+			currNode->state.resize(0);
 		}
 		else
 		{
@@ -586,25 +629,71 @@ void printPath3(Node* node, vector<vector<int>> map)
 	cout << "Path size: " << path.size()-1 << "\n\n";
 }
 
-
-int main()
+bool validMove(Node* node, int robotIndex, vector<vector<char>> map, int x, int y)
 {
-	function<Node*(Node*, vector<vector<int>>)> up = [](Node* node, vector<vector<int>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[1]; i >= 0; i--) { if (map[i][newNode->state[0]] == 1) {break;}} newNode->state[1] = i+1; return newNode;};
-	function<Node*(Node*, vector<vector<int>>)> right = [](Node* node, vector<vector<int>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[0]; i < map[newNode->state[1]].size(); i++) { if (map[newNode->state[1]][i] == 1) {break;}} newNode->state[0] = i-1; return newNode;};
-	function<Node*(Node*, vector<vector<int>>)> down = [](Node* node, vector<vector<int>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[1]; i < map.size(); i++) { if (map[i][newNode->state[0]] == 1) {break;}} newNode->state[1] = i-1; return newNode;};
-	function<Node*(Node*, vector<vector<int>>)> left = [](Node* node, vector<vector<int>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[0]; i >= 0; i--) { if (map[newNode->state[1]][i] == 1) {break;}} newNode->state[0] = i+1; return newNode;};
+	if (x < 0 || x >= map[0].size() || y < 0 || y >= map.size() || map[y][x] == '1')
+		return false;
 
-	vector<function<Node*(Node*, vector<vector<int>>)>> operations = {up, right, down, left};
+	for (int i = 0; i < node->state.size(); ++i)
+	{
+		if (i != robotIndex && node->state[i].coords[0] == x && node->state[i].coords[1] == y)
+			return false;
+	}
+
+	return true;
+}
+
+int menu()
+{
+	ui_utilities::ClearScreen();
+
+	int input;
+
+	cout << endl << "------------------------------------" << endl;
+	cout << "|                                  |" << endl;
+	cout << "|  L A B Y R I N T H   R O B O T S |" << endl;
+	cout << "|                                  |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 1 - Play                         |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 2 - Watch an agent play          |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 3 - Info                         |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << endl << endl << "Input: ";
+
+	cin >> input;
+	while (cin.fail() || input > 3 || input < 1)
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nChoose a valid number please ! \n\n";
+			cout << "Input: ";
+			cin >> input;
+		}
+
+
+	return input;
+}
+
+
+void agent()
+{
+	Operator up = [](Node* node, int robotIndex, vector<vector<char>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[1]; i >= 0; i--) { if (!validMove(newNode, robotIndex, map, newNode->state[robotIndex].coords[0], i)) {break;}} newNode->state[robotIndex].coords[1] = i+1; return newNode;};
+	Operator right = [](Node* node, int robotIndex, vector<vector<char>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[0]; i < map[newNode->state[robotIndex].coords[1]].size(); i++) { if (!validMove(newNode, robotIndex, map, i, newNode->state[robotIndex].coords[1])) {break;}} newNode->state[robotIndex].coords[0] = i-1; return newNode;};
+	Operator down = [](Node* node, int robotIndex, vector<vector<char>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[1]; i < map.size(); i++) { if (!validMove(newNode, robotIndex, map, newNode->state[robotIndex].coords[0], i)) {break;}} newNode->state[robotIndex].coords[1] = i-1; return newNode;};
+	Operator left = [](Node* node, int robotIndex, vector<vector<char>> map) { Node* newNode = new Node(*node); int i; for (i = newNode->state[robotIndex].coords[0]; i >= 0; i--) { if (!validMove(newNode, robotIndex, map, i, newNode->state[robotIndex].coords[1])) {break;}} newNode->state[robotIndex].coords[0] = i+1; return newNode;};
+
+	vector<Operator> operations = {up, right, down, left};
 	string operationNames[] = {"up", "right", "down", "left"};
 
-	vector<int> start;
-	vector<int> objective;
+	vector<Robot> startState;
 
-	vector<vector<int>> map = loadMap("map3.txt", start, objective);
+	vector<vector<char>> map = loadMap("map.txt", startState);
 	
 	Node* rootNode = new Node();
-	rootNode->state = start;
-	rootNode->setH(objective);
+	rootNode->state = startState;
+	rootNode->setH();
 
 	vector<Node*> rootRow;
 	rootRow.push_back(rootNode);
@@ -613,19 +702,17 @@ int main()
 	tree.insert(rootNode);
 
 	Node* result = NULL;
-
-	// printMap(map, rootNode);
 	
 	clock_t time = clock();
 
 	for (int i = 0; i < 1; i++)
 	{
-		// result = breadth(rootRow, objective, map, operations, operationNames, 0);
-		// result = breadth2(tree, rootRow, objective, map, operations, operationNames, 0);
-		// result = depth(rootNode, objective, operations, operationNames, 0, 12);
-		result = greedy(tree, rootNode, objective, map, operations, operationNames, 0);
-		// result = aStar(rootNode, objective, map, operations, operationNames, 0);
-		// result = aStar2(rootNode, objective, map, operations, operationNames, 0);
+		// result = breadth(rootRow, map, operations, operationNames, 0);
+		// result = breadth2(tree, rootRow, map, operations, operationNames, 0);
+		// result = depth(rootNode, operations, operationNames, 0, 12);
+		// result = greedy(tree, rootNode, map, operations, operationNames, 0);
+		// result = aStar(rootNode, map, operations, operationNames, 0);
+		result = aStar2(rootNode, map, operations, operationNames, 0);
 	}
 
 	double deltaTime = (double)(clock()-time)/CLOCKS_PER_SEC;
@@ -638,6 +725,21 @@ int main()
 		printPath3(result, map);
 
 	printf("\nFinished in %f seconds.\n", deltaTime);
+}
+
+
+
+
+int main()
+{
+	int input = menu();
+
+	if (input == 1)
+	{
+		// play
+	}
+	else if (input == 2)
+		agent();
 
 	return 0;
 }

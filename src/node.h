@@ -6,12 +6,14 @@
 #include <iostream>
 #include <unordered_set>
 
+#include "robot.h"
+
 using namespace std;
 
 class Node
 {
 public:
-	vector<int> state;
+	vector<Robot> state;
 	
 	int cost = 0;
 	int level;
@@ -27,7 +29,9 @@ public:
 
 	Node(const Node& node);
 
-	void setH(vector<int> objective);
+	void setH();
+
+	bool finished();
 	
 	bool operator==(const Node* node) const;
 	bool operator==(const Node& node) const;
@@ -40,7 +44,7 @@ public:
 ostream& operator<<(ostream& os, const Node& node);
 
 
-string printState(vector<int> state);
+string printState(vector<Robot> state);
 
 
 struct hashNode

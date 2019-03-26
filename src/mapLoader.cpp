@@ -3,61 +3,76 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
-
-vector<vector<int>> loadMap(string filename, vector<int>& robotPos, vector<int>& goalPos)
+vector<vector<char>> loadMap(string filename, vector<Robot>& robots)
 {
 	ifstream ifs(filename);
-	vector<vector<int>> map;
+	vector<vector<char>> map;
 	string line, cell;
-	int cellValue;
+	char cellValue;
 
-	robotPos.resize(0);
-	goalPos.resize(0);
+	robots.resize(0);
 
 	while (getline(ifs, line))
 	{
-		if (line[0] >= '0' && line[0] <= '3')
-		{
-			if (line.back() != ',')
-				line.push_back(',');
+		if (!((line[0] >= 'A' && line[0] <= 'Z') || (line[0] >= 'a' && line[0] <= 'z') || (line[0] >= '0' && line[0] <= '9')))
+			continue;
+	
+		if (line.back() != ',')
+			line.push_back(',');
 
-			stringstream ss(line);
-			vector<int> row;
-			for (int i = 0; getline(ss, cell, ','); ++i)
+		stringstream ss(line);
+		vector<char> row = vector<char>();
+		for (int i = 0; getline(ss, cell, ','); ++i)
+		{
+			cellValue = cell[0];
+
+			if (!(cellValue >= '0' && cellValue <= '9')) // Not numeric 
 			{
-				cellValue = cell[0] - '0';
-								
-				if (cellValue == 2)
+				char id;
+				Robot robot;
+
+				if (cellValue >= 'A' && cellValue <= 'Z') // Converts char to lower for id
+					id = cellValue + ('a' - 'A');
+				else
+					id = cellValue;
+
+				int index = -1;
+				for (index = 0; index < robots.size() && robots[index].id != id; ++index) // Search robots for the same robot (equal id)
+				{}
+
+				if (index == robots.size())
 				{
-					robotPos.resize(2);
-					robotPos[0] = row.size();
-					robotPos[1] = map.size();
+					robot = Robot();
+					robot.id = id;
+					robots.push_back(robot);
+				}
+				else
+				{
+					robot = robots[index];
 				}
 
-				if (cellValue == 3)
+				if (cellValue >= 'a' && cellValue <= 'z') // Objective
 				{
-					goalPos.resize(2);
-					goalPos[0] = row.size();
-					goalPos[1] = map.size();
-				} 
+					robot.objective[0] = row.size();
+					robot.objective[1] = map.size();
+				}
+				else if (cellValue >= 'A' && cellValue <= 'Z') // Robot
+				{
+					robot.coords[0] = row.size();
+					robot.coords[1] = map.size();
+				}
 
-				row.push_back(cellValue);
+				robots[index] = robot;
+
+				cellValue = '0';
 			}
 
-			map.push_back(row);
+			row.push_back(cellValue);
 		}
 
-	}
-
-	if (robotPos.size() == 0)
-	{
-		cout << "Error getting robot position! robot position is character 2";
-	}
-
-	if (goalPos.size() == 0)
-	{
-		cout << "Error getting goal position! goal position is character 3";
+		map.push_back(row);
 	}
 
 	return map;

@@ -4,9 +4,11 @@
 #include <string>
 #include <vector>
 
+#include "robot.h"
+
 using namespace std;
 
-vector<vector<int>> loadMap(string filename, vector<int>& robotPos, vector<int>& goalPos);
+vector<vector<char>> loadMap(string filename, vector<Robot>& robots);
 
 
 
