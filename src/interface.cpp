@@ -2,6 +2,9 @@
 
 #include "mapLoader.h"
 
+#include <sstream> 
+#include <algorithm>
+
 void info()
 {
 	ui_utilities::ClearScreen();
@@ -37,8 +40,8 @@ void agent(string map)
 		// result = breadth(rootRow, 0);
 		// result = breadth2(tree, rootRow, 0);
 		// result = depth(rootNode, 0, 12);
-		result = greedy(tree, rootNode, 0);
-		// result = aStar(rootNode, 0);
+		//result = greedy(tree, rootNode, 0);
+		 result = aStar(rootNode, 0);
 		// result = aStar2(rootNode, 0);
 	}
 
@@ -52,10 +55,10 @@ void agent(string map)
 
 	ui_utilities::milliSleep(6000);
 
-	agent_menu2();
+	options();
 }
 
-void agent_menu2()
+void options()
 {
 	ui_utilities::ClearScreen();
 
@@ -151,7 +154,6 @@ Node* play_loop(Node* currNode)
 	
 	Node* nextNode = new Node();
 	double i = 1;
- 	double percentage;
 
 
 	while (!currNode->finished())
@@ -162,54 +164,73 @@ Node* play_loop(Node* currNode)
 		int robotIndex = 0;
 		if (currNode->state.size() > 1)
 		{
-			cout << "\nSelect robot:";
+			cout << endl << "Robot numbers: " << endl;
+			
+			vector<string> robots;
+			
+			for(int i = 0; i < currNode->state.size(); i++)
+			{
+				char c = currNode->state[i].id;			
+				string s;
+				s.push_back(c);
+				robots.push_back(s); 
+			}
+
+
+			for(int i = 0; i < currNode->state.size(); i++)
+			{
+				string tmp = robots[i];
+				
+				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::toupper);
+				
+				cout << "Robot " << tmp <<  " number -> " << i <<  endl;
+			}
+
+			cout << "\nSelect robot: ";
 			cin >> robotIndex;
+
+			while(robotIndex >= robots.size() || robotIndex < 0)
+			{
+				cout << "Please input a valid option !" << endl << endl;
+				cout << "Select robot: ";
+				cin >> robotIndex;
+			}
 		}
 
 		char input;
 		cout << "\nSelect direction: ";
 		cin >> input;
 
-		int i;
-		for (i = 0; i < operationNames.size(); i++)
+		if(input == 'l' || input == 'r' || input == 'd' || input == 'u')
 		{
-			if (operationNames[i][0] == input)
+			int i;
+			for (i = 0; i < operationNames.size(); i++)
 			{
-				nextNode = operations[i](currNode, robotIndex);
-				nextNode->cost++;
-				nextNode->parent = currNode;
-				nextNode->operationName = operationNames[i];
+				if (operationNames[i][0] == input)
+				{
+					nextNode = operations[i](currNode, robotIndex);
+					nextNode->cost++;
+					nextNode->parent = currNode;
+					nextNode->operationName = operationNames[i];
 
-				break;
+					break;
+				}
 			}
-		}
 
-		if (i == operationNames.size())
+			if (i == operationNames.size())
+			{
+				cout << "Wrong input!";
+				continue;
+			}
+
+			walkingAnimation(currNode, nextNode);
+		}
+		else 
 		{
-			cout << "Wrong input!";
-			continue;
+			cout << "Please input a valid option !" << endl << endl;
+			cout << "Select direction: ";
+			cin >> input;
 		}
-
-		walkingAnimation(currNode, nextNode);
-
-		float progress = 0.0;
-		while (progress < 1.0) {
-			int barWidth = 70;
-
-			std::cout << "[";
-			int pos = barWidth * progress;
-			for (int i = 0; i < barWidth; ++i) {
-				if (i < pos) std::cout << "=";
-				else if (i == pos) std::cout << ">";
-				else std::cout << " ";
-			}
-			std::cout << "] " << int(progress * 100.0) << " %\r";
-			std::cout.flush();
-
-			progress += 0.1; // for demonstration only
-		}
-		std::cout << std::endl;
-
 	}
 
 	return currNode;
@@ -224,14 +245,19 @@ int play()
 	cout << "- Input u,d,l,r to go up, down, left and right, respectively " << endl;
  	cout << "- By pressing one of these keys, your robot will move in that direction " << "and it will only stop if an obstacle is in its way" << endl;
 
-	ui_utilities::milliSleep(6000); 
+	// ui_utilities::milliSleep(6000); 
 	ui_utilities::ClearScreen();
 
-	Node* rootNode = initiateMap("map3.txt");
+	Node* rootNode = initiateMap("map9.txt");
 
 	play_loop(rootNode);
 
 	cout << "\n";
+
+	ui_utilities::milliSleep(4000);
+	ui_utilities::ClearScreen();
+
+	options();
 
 	return 0;
 }

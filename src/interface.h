@@ -18,7 +18,7 @@ void agent(string map);
 
 void agent_menu();
 
-void agent_menu2();
+void options();
 
 int play();
 
