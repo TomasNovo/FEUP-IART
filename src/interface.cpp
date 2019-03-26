@@ -103,7 +103,7 @@ void agent_menu()
 	cout << "|  L A B Y R I N T H   R O B O T S |" << endl;
 	cout << "|                                  |" << endl;
 	cout << "------------------------------------" << endl;
-	cout << "|      Choose the map to play  !   |" << endl;
+	cout << "|     Choose the map to watch !    |" << endl;
 	cout << "------------------------------------" << endl;
 	cout << "| 1 - MAP 1                        |" << endl;
 	cout << "------------------------------------" << endl;
@@ -145,6 +145,74 @@ void agent_menu()
 	m += ".txt";
 	agent(m);
 
+	m = "map";
+	
+}
+
+
+void play_menu()
+{
+	ui_utilities::ClearScreen();
+
+	int input;
+
+	cout << endl << "------------------------------------" << endl;
+	cout << "|                                  |" << endl;
+	cout << "|  L A B Y R I N T H   R O B O T S |" << endl;
+	cout << "|                                  |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "|      Choose the map to play  !   |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 1 - MAP 1                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 2 - MAP 2                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 3 - MAP 3                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 4 - MAP 4                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 5 - MAP 5                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 6 - MAP 6                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 7 - MAP 7                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 8 - MAP 8                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 9 - MAP 9                        |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 10 - MAP 10                      |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 11 - Random Map                  |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << endl << endl << "Option: ";
+
+	string m = "map";
+
+	cin >> input;
+	while (cin.fail() || input > 11 || input < 0)
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nChoose a valid number please ! \n\n";
+			cout << "Input: ";
+			cin >> input;
+		}
+
+	if(input == 11)
+	{
+		srand(time(NULL));
+		int randNum = rand()%(10-1 + 1) + 1;
+
+		m += std::to_string(randNum);
+	}
+	else 
+	{
+		m += std::to_string(input);
+	}
+	
+	m += ".txt";
+	play(m);
 	m = "map";
 	
 }
@@ -237,7 +305,7 @@ Node* play_loop(Node* currNode)
 	return currNode;
 }
 
-int play()
+int play(string map)
 {
 	ui_utilities::ClearScreen();
 
@@ -249,13 +317,13 @@ int play()
 	// ui_utilities::milliSleep(6000); 
 	ui_utilities::ClearScreen();
 
-	srand(time(NULL));
-	int randNum = rand()%(10-1 + 1) + 1;
+	// srand(time(NULL));
+	// int randNum = rand()%(10-1 + 1) + 1;
 
-	string map = "map";
+	// string map = "map";
 
-	map += std::to_string(randNum);
-	map += ".txt";
+	// map += std::to_string(randNum);
+	// map += ".txt";
 	Node* rootNode = initiateMap(map);
 
 	play_loop(rootNode);
@@ -301,7 +369,7 @@ int menu()
 			cout << "Option number: ";
 			cin >> input;
 		}
-	if (input == 1) play();
+	if (input == 1) play_menu();
 	else if (input == 2) agent_menu();
 	else if (input == 3) info();
 	else if(input == 0)

@@ -18,9 +18,11 @@ void agent(string map);
 
 void agent_menu();
 
+void play_menu();
+
 void options();
 
-int play();
+int play(string map);
 
 int menu();
 
