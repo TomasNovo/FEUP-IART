@@ -45,6 +45,7 @@ void loadMap(string filename, vector<Robot>& robots)
 	string line, cell;
 	char cellValue;
 
+	map.resize(0);
 	robots.resize(0);
 
 	while (getline(ifs, line))

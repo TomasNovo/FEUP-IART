@@ -10,7 +10,7 @@
 using namespace std;
 
 
-Node* play_loop(Node* currNode);
+Node* play_loop(Node* rootNode);
 
 int algorithm_menu();
 
@@ -27,6 +27,8 @@ void options();
 int play(string map);
 
 int menu();
+
+void flashingAnimation(Node* node);
 
 void walkingAnimation(Node* node1, Node* node2);
 

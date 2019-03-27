@@ -36,7 +36,9 @@ void printSet(const multiset<Node*, sortF>& tree)
 
 
 int main()
-{	
+{
+
+
 	menu();
 	
 	return 0;

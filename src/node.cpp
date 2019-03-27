@@ -17,7 +17,6 @@ Node::Node(const Node& node)
 	this->state = node.state;
 
 	this->cost = node.cost;
-	this->level = node.level;
 	this->h = node.h;
 
 	this->parent = node.parent;

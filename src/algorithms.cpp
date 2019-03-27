@@ -3,24 +3,23 @@
 #include "mapLoader.h"
 #include "macros.h"
 
-Node* breadth(vector<Node*> currRow, int level)
+Node* breadth(Node* currNode)
 {
-	if (currRow.size() == 0)
+	if (currNode == NULL)
 	{
 		return NULL;
 	}
 
-	Node* currNode = new Node();
-	Node* nextNode = new Node();
-
+	vector<Node*> currRow = {currNode};
 	vector<Node*> nextRow;
+
+	Node* nextNode;
 
 	while (1)
 	{
 		for (int i = 0; i < currRow.size(); i++)
 		{
 			currNode = currRow[i];
-			// cout << *currNode << "\n";
 
 			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 			{
@@ -30,8 +29,6 @@ Node* breadth(vector<Node*> currRow, int level)
 					nextNode->cost++;
 					nextNode->parent = currNode;
 					nextNode->operationName = operationNames[j];
-
-					// cout << *nextNode << "\n";
 
 					if (nextNode->finished())
 					{
@@ -54,75 +51,73 @@ Node* breadth(vector<Node*> currRow, int level)
 		nextRow.resize(0);
 	}
 
+	return NULL;
+}
+
+
+Node* uniformCost(Node* currNode)
+{
+	if (currNode == NULL)
+	{
+		return NULL;
+	}
+
+	unordered_set<Node*, hashNode, hashNode> tree;
+
+	vector<Node*> currRow = {currNode};
+	vector<Node*> nextRow;
+
+	Node* nextNode;
+
+	while (1)
+	{
+		for (int i = 0; i < currRow.size(); i++)
+		{
+			currNode = currRow[i];
+
+			if (DEBUG)
+				cout << *currNode << "\n";
+
+			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+			{
+				for (int j = 0; j < operations.size(); j++)
+				{
+					nextNode = operations[j](currNode, robotIndex);
+					nextNode->cost++;
+					nextNode->parent = currNode;
+					nextNode->operationName = operationNames[j];
+
+					if (nextNode->finished())
+					{
+						if (DEBUG)
+							cout << "Tree size = " << tree.size() << "\n";
+
+						return nextNode;
+					}
+
+					if (tree.insert(nextNode).second)
+					{
+						if (DEBUG)
+							cout << *nextNode << "\n";
+
+						nextRow.push_back(nextNode);
+					}
+				}
+			}
+
+		}
+
+		currRow = nextRow;
+		nextRow.resize(0);
+	}
 
 	return NULL;
 }
 
 
-Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> currRow, int level)
-{
-	if (currRow.size() == 0)
-	{
-		if (DEBUG)
-			cout << "Tree size = " << tree.size() << "\n";
-
-		return NULL;
-	}
-
-	Node* currNode;
-	Node* nextNode;
-	vector<int> operationHolder;
-
-	vector<Node*> nextRow;
-
-	for (int i = 0; i < currRow.size(); i++)
-	{
-		currNode = currRow[i];
-
-		if (DEBUG)
-			cout << *currNode << "\n";
-
-		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
-		{
-			for (int j = 0; j < operations.size(); j++)
-			{
-				nextNode = operations[j](currNode, robotIndex);
-				nextNode->cost++;
-				nextNode->parent = currNode;
-				nextNode->operationName = operationNames[j];
-
-				if (nextNode->finished())
-				{
-					if (DEBUG)
-						cout << "Tree size = " << tree.size() << "\n";
-
-					return nextNode;
-				}
-
-				if (tree.insert(nextNode).second)
-				{
-					if (DEBUG)
-						cout << *nextNode << "\n";
-
-					nextRow.push_back(nextNode);
-				}
-				else
-				{
-					delete nextNode;
-				}
-			}
-		}
-
-	}
-
-
-	return breadth2(tree, nextRow, level+1);
-}
-
-
 Node* depth(Node* currNode, int level, const int& limit)
 {
-	if (currNode == NULL || level > limit)
+	if (currNode == NULL || level >= limit)
 	{
 		return NULL;
 	}
@@ -157,58 +152,20 @@ Node* depth(Node* currNode, int level, const int& limit)
 	return NULL;
 }
 
-/* 
-Node* IDDFS(Node* currNode, int limit)
+Node* iteDeepening(Node* currNode, int limit)
 {
-	for (int depth = 0; depth < limit; depth++)
+	Node* found;
+	for (int level = 0; level < limit; level++)
 	{
-		Node* found;
-		bool remaining = DLS(currNode, depth, node);
+		found = depth(currNode, 0, level);
 
-    	if (found != null)
-           return found
-    	else if not remaining
-           return null
+		if (found != NULL)
+			return found;
 	}
-      
+
+	return NULL;
 }
    
-
-bool DLS(Node* currNode, int depth, Node* &returnedNode)
-{
-	if (depth == 0)
-	{
-		if (currNode->finished())
-		{
-			returnedNode = currNode;
-			return true;
-		}
-           
-		else // Not found, but may have children
-		{
-			returnedNode = NULL;
-			return true;
-		}
-		       
-	}
-       
-
-   else if (depth > 0)
-   {
-		any_remaining ← false
-		foreach child of node
-           found, remaining ← DLS(child, depth−1)
-           if found ≠ null
-               return (found, true)   
-           if remaining
-               any_remaining ← true    (At least one node found at depth, let IDDFS deepen)
-       return (null, any_remaining)
-   }
-       
-
-}
-   
- */
 
 Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level)
 {
@@ -280,10 +237,10 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 }
 
 
-Node* aStar(Node* currNode, int level)
+Node* aStar(Node* currNode)
 {
 	multiset<Node*, sortF> openList;
-	multiset<Node*, sortF> closedList;
+	unordered_set<Node*, hashNode, hashNode> closedSet;
 	
 	openList.insert(currNode);
 
@@ -304,7 +261,7 @@ Node* aStar(Node* currNode, int level)
 
 		openList.erase(it);
 
-		closedList.insert(currNode);
+		closedSet.insert(currNode);
 
 		if (DEBUG)
 			cout << *currNode << "\n";
@@ -322,10 +279,7 @@ Node* aStar(Node* currNode, int level)
 				if (DEBUG)
 					cout << *nextNode << "\n";
 
-				for (it = closedList.begin(); it != closedList.end() && (*it)->state != nextNode->state; ++it) // Search closedList for nextNode
-				{}
-
-				if (nextNode->state != currNode->state && it == closedList.end())
+				if (nextNode->state != currNode->state && closedSet.find(nextNode) == closedSet.end())
 				{
 					for (it = openList.begin(); it != openList.end() && (*it)->state != nextNode->state; ++it) // Search openList for nextNode
 					{}
@@ -351,12 +305,11 @@ Node* aStar(Node* currNode, int level)
 	return NULL;
 }
 
-Node* aStar2(Node* currNode, int level)
+Node* aStar2(Node* currNode)
 {
 	multiset<Node*, sortF> openList;
 	unordered_set<Node*, hashNode, hashNode> openSet;
 
-	multiset<Node*, sortF> closedList;
 	unordered_set<Node*, hashNode, hashNode> closedSet;
 
 	openList.insert(currNode);
@@ -377,7 +330,6 @@ Node* aStar2(Node* currNode, int level)
 		openList.erase(it);
 		openSet.erase(currNode);
 
-		closedList.insert(currNode);
 		closedSet.insert(currNode);
 
 		if (DEBUG)

@@ -16,7 +16,6 @@ public:
 	vector<Robot> state;
 	
 	int cost = 0;
-	int level;
 	double h = -1;
 	double f;
 

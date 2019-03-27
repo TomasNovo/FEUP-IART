@@ -13,8 +13,8 @@ void info()
 	cout << "Game devoloped based on play store game Labyrinth Robots." << endl << endl;
 	cout << "Developed by :" << endl << endl;
 	cout << "-Joana Silva  - up201208979" << endl;
-	cout << "-João Franco  - up201604828" << endl;
-	cout << "-Tomás Novo   - up201604503" << endl << endl;
+	cout << "-Joao Franco  - up201604828" << endl;
+	cout << "-Tomas Novo   - up201604503" << endl << endl;
 	
 	ui_utilities::milliSleep(6000);
 
@@ -31,19 +31,23 @@ int algorithm_menu()
 	cout << "------------------------------" << endl;
 	cout << "|    Choose an algorithm:    |" << endl;
 	cout << "------------------------------" << endl;
-	cout << "| 1 -         A*             |" << endl;
+	cout << "| 1 -      Breadth           |" << endl;
 	cout << "------------------------------" << endl;
-	cout << "| 2 -       Greedy           |" << endl;
+	cout << "| 2 -       Depth            |" << endl;
 	cout << "------------------------------" << endl;
-	cout << "| 3 -       Breadth          |" << endl;
+	cout << "| 3 - Iterative Deepening    |" << endl;
 	cout << "------------------------------" << endl;
-	cout << "| 4 -        Depth           |" << endl;
+	cout << "| 4 -    Uniform cost        |" << endl;
 	cout << "------------------------------" << endl;
-	cout << "| 0 -        Exit            |" << endl;
+	cout << "| 5 -       Greedy           |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 6 -         A*             |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 0 -       Exit             |" << endl;
 	cout << "------------------------------" << endl;
 
 	cin >> input;
-	while (cin.fail() || input > 4 || input < 0)
+	while (cin.fail() || input > 6 || input < 0)
 		{
 			cin.clear();
 			cin.ignore(1000, '\n');
@@ -52,16 +56,13 @@ int algorithm_menu()
 			cin >> input;
 		}
 
-		return input;
+	return input;
 }
 
 
 void agent(string map)
 {
 	Node* rootNode = initiateMap(map);
-
-	vector<Node*> rootRow;
-	rootRow.push_back(rootNode);
 
 	unordered_set<Node*, hashNode, hashNode> tree;
 	tree.insert(rootNode);
@@ -70,28 +71,40 @@ void agent(string map)
 	
 	int algorithm = algorithm_menu();
 
+	int limit = 18;
+
+	if (algorithm == 2 || algorithm == 3)
+	{
+		cout << "Insert a limit for the algorithm:";
+		cin >> limit;
+	}
+
 	clock_t time = clock();
 
-	if(algorithm == 1) result = aStar2(rootNode, 0);
-	else if(algorithm == 2) result = greedy(tree, rootNode, 0);
-	else if(algorithm == 3) result = breadth(rootRow, 0);
-	else if(algorithm == 4) result =  depth(rootNode, 0, 12);
-	// result = breadth(rootRow, 0);
-	// result = breadth2(tree, rootRow, 0);
-	// result = depth(rootNode, 0, 12);
-	//  result = aStar(rootNode, 0);
-	// result = aStar2(rootNode, 0);
-
+	if (algorithm == 1) result = breadth(rootNode);
+	else if (algorithm == 2) result = depth(rootNode, 0, limit);
+	else if (algorithm == 3) result = iteDeepening(rootNode, limit);
+	else if (algorithm == 4) result = uniformCost(rootNode);
+	else if (algorithm == 5) result =  greedy(tree, rootNode, 0);
+	else if (algorithm == 6) result =  aStar2(rootNode);
+	else if (algorithm == 0) return;
 
 	double deltaTime = (double)(clock()-time)/CLOCKS_PER_SEC;
 
 	cout << "\n";
 
-	printPath3(result);
+	if (result == NULL)
+		cout << "Failed to find solution!";
+	else
+	{
+		printPath3(result);
+		cout << "Agent's solution: " << result->cost << " moves.\n";
+	}
+
 
 	printf("\nFinished in %f seconds.\n", deltaTime);
 
-	ui_utilities::milliSleep(6000);
+	ui_utilities::milliSleep(4000);
 
 	options();
 }
@@ -124,9 +137,9 @@ void options()
 			cin >> input;
 		}
 
-	if(input == 0) return;
-	else if(input == 1) agent_menu();
-	else if(input == 2) menu();
+	if (input == 0) return;
+	else if (input == 1) agent_menu();
+	else if (input == 2) menu();
 }
 
 void agent_menu()
@@ -236,7 +249,7 @@ void play_menu()
 			cin >> input;
 		}
 
-	if(input == 11)
+	if (input == 11)
 	{
 		srand(time(NULL));
 		int randNum = rand()%(10-1 + 1) + 1;
@@ -255,12 +268,13 @@ void play_menu()
 }
 
 
-Node* play_loop(Node* currNode)
+Node* play_loop(Node* rootNode)
 {
-	
+	Node* currNode = rootNode;
 	Node* nextNode = new Node();
-	double i = 1;
 
+	ui_utilities::ClearScreen();
+	flashingAnimation(currNode);
 
 	while (!currNode->finished())
 	{
@@ -274,16 +288,16 @@ Node* play_loop(Node* currNode)
 			
 			vector<string> robots;
 			
-			for(int i = 0; i < currNode->state.size(); i++)
+			for (int i = 0; i < currNode->state.size(); i++)
 			{
 				char c = currNode->state[i].id;			
 				string s;
 				s.push_back(c);
-				robots.push_back(s); 
+				robots.push_back(s);
 			}
 
 
-			for(int i = 0; i < currNode->state.size(); i++)
+			for (int i = 0; i < currNode->state.size(); i++)
 			{
 				string tmp = robots[i];
 				
@@ -307,12 +321,13 @@ Node* play_loop(Node* currNode)
 		cout << "\nSelect direction: ";
 		cin >> input;
 
-		if(input == 'l' || input == 'r' || input == 'd' || input == 'u')
+		if (input == 'w' || input == 'a' || input == 's' || input == 'd')
 		{
+			vector<char> letters = {'w', 'd', 's', 'a'};
 			int i;
-			for (i = 0; i < operationNames.size(); i++)
+			for (i = 0; i < letters.size(); i++)
 			{
-				if (operationNames[i][0] == input)
+				if (letters[i] == input)
 				{
 					nextNode = operations[i](currNode, robotIndex);
 					nextNode->cost++;
@@ -323,13 +338,9 @@ Node* play_loop(Node* currNode)
 				}
 			}
 
-			if (i == operationNames.size())
-			{
-				cout << "Wrong input!";
-				continue;
-			}
-
 			walkingAnimation(currNode, nextNode);
+
+			currNode = nextNode;
 		}
 		else 
 		{
@@ -338,6 +349,11 @@ Node* play_loop(Node* currNode)
 			cin >> input;
 		}
 	}
+
+	flashingAnimation(currNode);
+
+	cout << "You completed the map in " << currNode->cost << " moves.\n";
+	cout << "The best solution is " << aStar2(rootNode)->cost << " moves.\n";
 
 	return currNode;
 }
@@ -409,7 +425,7 @@ int menu()
 	if (input == 1) play_menu();
 	else if (input == 2) agent_menu();
 	else if (input == 3) info();
-	else if(input == 0)
+	else if (input == 0)
 	{
 		cout << endl << "Bye, have a good time !" << endl;
 		ui_utilities::milliSleep(4000);
@@ -419,6 +435,32 @@ int menu()
 
 	return input;
 }
+
+
+void flashingAnimation(Node* node)
+{
+	int flashTime = 100;
+
+	vector<Robot> stateSave = node->state;
+
+	for (int i = 0; i < 16; ++i) // start flashing animation
+	{
+		if (i % 2 == 0)
+		{
+			node->state.resize(0);
+		}
+		else
+		{
+			node->state = stateSave;
+		}
+
+		ui_utilities::ClearScreen();
+		printMap(node);
+		cout << "\n\n";
+		ui_utilities::milliSleep(flashTime); //sleeps for 100 milliseconds
+	}
+}
+
 
 void walkingAnimation(Node* node1, Node* node2)
 {
@@ -456,7 +498,6 @@ void walkingAnimation(Node* node1, Node* node2)
 		}	
 	}
 }
-
 
 
 void printPath(Node* node)
@@ -583,27 +624,10 @@ void printPath3(Node* node)
 		node = node->parent;
 	}
 
-	int flashTime = 100, walkTime = 200, stopTime = 500;
+	int stopTime = 500;
 	Node *currNode = new Node(*nodes.back()), *nextNode;
-	vector<Robot> stateSave = currNode->state;
 
-	for (int i = 0; i < 15; ++i) // start flashing animation
-	{
-		if (i % 2 == 0)
-		{
-			currNode->state.resize(0);
-		}
-		else
-		{
-			currNode->state = stateSave;
-		}
-
-		ui_utilities::ClearScreen();
-		printMap(currNode);
-		cout << "\n\n";
-		ui_utilities::milliSleep(flashTime); //sleeps for 100 milliseconds
-	}
-	currNode->state = stateSave;
+	flashingAnimation(currNode);
 
 	ui_utilities::ClearScreen();
 	printMap(currNode);
@@ -616,61 +640,15 @@ void printPath3(Node* node)
 		currNode = new Node(*nodes[i]);
 		nextNode = nodes[i-1];
 
-		for (int j = 0; j < currNode->state.size(); ++j)
-		{
-			if (currNode->state[j].coords[1] != nextNode->state[j].coords[1])
-			{
-				int deltaY = nextNode->state[j].coords[1] - currNode->state[j].coords[1];
-
-				for (int k = 0; k < abs(deltaY); ++k)
-				{
-					currNode->state[j].coords[1] += deltaY/abs(deltaY);
-					ui_utilities::ClearScreen();
-					printMap(currNode);
-					cout << "\n\n";
-					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
-
-				}
-			}
-			else if (currNode->state[j].coords[0] != nextNode->state[j].coords[0])
-			{
-				int deltaX = nextNode->state[j].coords[0] - currNode->state[j].coords[0];
-
-				for (int k = 0; k < abs(deltaX); ++k)
-				{
-					currNode->state[j].coords[0] += deltaX/abs(deltaX);
-					ui_utilities::ClearScreen();
-					printMap(currNode);
-					cout << "\n\n";
-					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
-
-				}
-			}	
-		}
+		walkingAnimation(currNode, nextNode);
 
 		if (i >= 2)
 			ui_utilities::milliSleep(stopTime); //sleeps for 500 milliseconds
 	}
 
 
-	stateSave = currNode->state;
-	for (int i = 0; i < 16; ++i) // end flashing animation
-	{
-		if (i % 2 == 0)
-		{
-			currNode->state.resize(0);
-		}
-		else
-		{
-			currNode->state = stateSave;
-		}
+	flashingAnimation(currNode);
 
-		ui_utilities::ClearScreen();
-		printMap(currNode);
-		cout << "\n\n";
-		ui_utilities::milliSleep(flashTime); //sleeps for 500 milliseconds
-	}
-
-	cout << "Path size: " << path.size()-1 << "\n\n";
+	// cout << "Path size: " << path.size()-1 << "\n\n";
 }
 

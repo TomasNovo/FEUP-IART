@@ -9,17 +9,19 @@
 #include "node.h"
 
 
-Node* breadth(vector<Node*> currRow, int level);
-
-Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> currRow, int level);
+Node* breadth(Node* currNode);
 
 Node* depth(Node* currNode, int level, const int& limit);
 
+Node* iteDeepening(Node* currNode, int limit);
+
+Node* uniformCost(Node* currNode);
+
 Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
 
-Node* aStar(Node* currNode, int level);
+Node* aStar(Node* currNode);
 
-Node* aStar2(Node* currNode, int level);
+Node* aStar2(Node* currNode);
 
 
 #endif
