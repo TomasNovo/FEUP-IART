@@ -12,6 +12,8 @@ using namespace std;
 
 Node* play_loop(Node* currNode);
 
+int algorithm_menu();
+
 void info();
 
 void agent(string map);

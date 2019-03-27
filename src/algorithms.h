@@ -13,9 +13,9 @@ Node* breadth(vector<Node*> currRow, int level);
 
 Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> currRow, int level);
 
-Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
+Node* depth(Node* currNode, int level, const int& limit);
 
-multiset<Node*, sortF>::iterator linearSearchSet(multiset<Node*, sortF> input, Node* node);
+Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
 
 Node* aStar(Node* currNode, int level);
 

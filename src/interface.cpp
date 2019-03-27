@@ -22,6 +22,40 @@ void info()
 
 }
 
+int algorithm_menu()
+{
+	ui_utilities::ClearScreen();
+
+	int input;
+
+	cout << "------------------------------" << endl;
+	cout << "|    Choose an algorithm:    |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 1 -         A*             |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 2 -       Greedy           |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 3 -       Breadth          |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 4 -        Depth           |" << endl;
+	cout << "------------------------------" << endl;
+	cout << "| 0 -        Exit            |" << endl;
+	cout << "------------------------------" << endl;
+
+	cin >> input;
+	while (cin.fail() || input > 4 || input < 0)
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "\nChoose a valid number please ! \n\n";
+			cout << "Option number: ";
+			cin >> input;
+		}
+
+		return input;
+}
+
+
 void agent(string map)
 {
 	Node* rootNode = initiateMap(map);
@@ -34,17 +68,20 @@ void agent(string map)
 
 	Node* result = NULL;
 	
+	int algorithm = algorithm_menu();
+
 	clock_t time = clock();
 
-	for (int i = 0; i < 1; i++)
-	{
-		// result = breadth(rootRow, 0);
-		// result = breadth2(tree, rootRow, 0);
-		// result = depth(rootNode, 0, 12);
-		//result = greedy(tree, rootNode, 0);
-		 result = aStar(rootNode, 0);
-		// result = aStar2(rootNode, 0);
-	}
+	if(algorithm == 1) result = aStar2(rootNode, 0);
+	else if(algorithm == 2) result = greedy(tree, rootNode, 0);
+	else if(algorithm == 3) result = breadth(rootRow, 0);
+	else if(algorithm == 4) result =  depth(rootNode, 0, 12);
+	// result = breadth(rootRow, 0);
+	// result = breadth2(tree, rootRow, 0);
+	// result = depth(rootNode, 0, 12);
+	//  result = aStar(rootNode, 0);
+	// result = aStar2(rootNode, 0);
+
 
 	double deltaTime = (double)(clock()-time)/CLOCKS_PER_SEC;
 

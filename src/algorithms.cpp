@@ -119,44 +119,37 @@ Node* breadth2(unordered_set<Node*, hashNode, hashNode> tree, vector<Node*> curr
 	return breadth2(tree, nextRow, level+1);
 }
 
-/*
-Node* depth(Node* currNode, vector<Operator> operations, vector<string> operationNames, int level, int limit)
+
+Node* depth(Node* currNode, int level, const int& limit)
 {
-	if (currNode == NULL)
+	if (currNode == NULL || level > limit)
 	{
 		return NULL;
 	}
 
 	Node* nextNode = new Node();
-	vector<int> operationHolder;
 
-	vector<Node*> nextRow;
-
-	// printSet(tree);
-	for (int i = 0; i < operations.size(); i++)
+	for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 	{
-		operationHolder = operations[i](currNode->state);
-		nextNode = new Node(operationHolder[0], operationHolder[1], currNode->cost+operationHolder[2]);
-		nextNode->parent = currNode;
-		nextNode->operationName = operationNames[i];
-
-		if (nextNode->finished())
+		for (int i = 0; i < operations.size(); i++)
 		{
-			return nextNode;
-		}
+			nextNode = operations[i](currNode, robotIndex);
+			nextNode->cost++;
+			nextNode->parent = currNode;
+			nextNode->operationName = operationNames[i];
 
-		if (nextNode->parent == NULL || nextNode->state != nextNode->parent->state) // Checks if the state is the same after the operation
-		{
-			if (nextNode->parent->parent == NULL || nextNode->state != nextNode->parent->parent->state) // Checks if the state doesn't change from 2 levels above
+			if (nextNode->finished())
 			{
-				if (level+1 <= limit)
-				{
-					Node* nextCall = depth(nextNode, level+1, limit);
+				if (DEBUG)
+					cout << "Level: " << level << "\n";
 
-					if (nextCall != NULL)
-						return nextCall;
-				}
+				return nextNode;
 			}
+
+			Node* nextCall = depth(nextNode, level+1, limit);
+
+			if (nextCall != NULL)
+				return nextCall;
 		}
 	}
 
@@ -164,10 +157,58 @@ Node* depth(Node* currNode, vector<Operator> operations, vector<string> operatio
 	return NULL;
 }
 
-*/
+/* 
+Node* IDDFS(Node* currNode, int limit)
+{
+	for (int depth = 0; depth < limit; depth++)
+	{
+		Node* found;
+		bool remaining = DLS(currNode, depth, node);
 
+    	if (found != null)
+           return found
+    	else if not remaining
+           return null
+	}
+      
+}
+   
 
+bool DLS(Node* currNode, int depth, Node* &returnedNode)
+{
+	if (depth == 0)
+	{
+		if (currNode->finished())
+		{
+			returnedNode = currNode;
+			return true;
+		}
+           
+		else // Not found, but may have children
+		{
+			returnedNode = NULL;
+			return true;
+		}
+		       
+	}
+       
 
+   else if (depth > 0)
+   {
+		any_remaining ← false
+		foreach child of node
+           found, remaining ← DLS(child, depth−1)
+           if found ≠ null
+               return (found, true)   
+           if remaining
+               any_remaining ← true    (At least one node found at depth, let IDDFS deepen)
+       return (null, any_remaining)
+   }
+       
+
+}
+   
+ */
 
 Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level)
 {
@@ -236,16 +277,6 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 
 
 	return NULL;
-}
-
-
-multiset<Node*, sortF>::iterator linearSearchSet(multiset<Node*, sortF> input, Node* node)
-{
-	multiset<Node*, sortF>::iterator it;
-	for (it = input.begin(); it != input.end() && (*it)->state != node->state; ++it)
-	{}
-
-	return it;
 }
 
 
