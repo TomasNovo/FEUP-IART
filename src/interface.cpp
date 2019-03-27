@@ -103,7 +103,7 @@ void agent_menu()
 	cout << "|  L A B Y R I N T H   R O B O T S |" << endl;
 	cout << "|                                  |" << endl;
 	cout << "------------------------------------" << endl;
-	cout << "|     Choose the map to watch !    |" << endl;
+	cout << "|      Choose the map to play  !   |" << endl;
 	cout << "------------------------------------" << endl;
 	cout << "| 1 - MAP 1                        |" << endl;
 	cout << "------------------------------------" << endl;
@@ -125,12 +125,16 @@ void agent_menu()
 	cout << "------------------------------------" << endl;
 	cout << "| 10 - MAP 10                      |" << endl;
 	cout << "------------------------------------" << endl;
+	cout << "| 11 - MAP 11                      |" << endl;
+	cout << "------------------------------------" << endl;
+	cout << "| 12 - MAP 12                      |" << endl;
+	cout << "------------------------------------" << endl;
 	cout << endl << endl << "Option: ";
 
 	string m = "map";
 
 	cin >> input;
-	while (cin.fail() || input > 10 || input < 0)
+	while (cin.fail() || input > 12 || input < 0)
 		{
 			cin.clear();
 			cin.ignore(1000, '\n');
@@ -141,12 +145,8 @@ void agent_menu()
 
 
 
-	m += std::to_string(input);
-	m += ".txt";
+	m += std::to_string(input) + ".txt";
 	agent(m);
-
-	m = "map";
-	
 }
 
 

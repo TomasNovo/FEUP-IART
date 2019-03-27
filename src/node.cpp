@@ -30,6 +30,9 @@ void Node::setH()
 
 	for (int i = 0; i < state.size(); ++i)
 	{
+		if (state[i].objective[0] == -1 && state[i].objective[1] == -1)
+			continue;
+		
 		int deltaX = abs(state[i].coords[0] - state[i].objective[0]), deltaY = abs(state[i].coords[1] - state[i].objective[1]);
 		this->h += (deltaX + deltaY)/(double)16;
 	}

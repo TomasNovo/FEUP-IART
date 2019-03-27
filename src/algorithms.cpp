@@ -258,10 +258,12 @@ Node* aStar(Node* currNode, int level)
 
 	Node* nextNode;
 
+	multiset<Node*, sortF>::iterator it;
+
 	int iteCounter = 0;
 	while (openList.size() > 0)
 	{
-		multiset<Node*, sortF>::iterator it = openList.begin();
+		it = openList.begin();
 		currNode = *(it);
 
 		if (currNode->finished())
@@ -279,13 +281,7 @@ Node* aStar(Node* currNode, int level)
 		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{
 			for (int i = 0; i < operations.size(); i++)
-			{
-				cout << "iteCounter = " << iteCounter << "\n\n\n";
-				iteCounter++;
-
-				if (iteCounter == 29)
-					int a = 0;
-
+			{				
 				nextNode = operations[i](currNode, robotIndex);
 				nextNode->cost++;
 				nextNode->parent = currNode;
@@ -295,19 +291,20 @@ Node* aStar(Node* currNode, int level)
 				if (DEBUG)
 					cout << *nextNode << "\n";
 
-				it = linearSearchSet(closedList, nextNode);
+				for (it = closedList.begin(); it != closedList.end() && (*it)->state != nextNode->state; ++it) // Search closedList for nextNode
+				{}
 
-				if (nextNode->state != currNode->state && *it == *closedList.end())
+				if (nextNode->state != currNode->state && it == closedList.end())
 				{
-					it = linearSearchSet(openList, nextNode);
+					for (it = openList.begin(); it != openList.end() && (*it)->state != nextNode->state; ++it) // Search openList for nextNode
+					{}
 					
-					if (*it == *openList.end())
+					if (it == openList.end())
 					{
 						openList.insert(nextNode);
 					}
 					else
 					{
-						// cout << "i = " << i << "\n\n\n";
 						if (nextNode->cost < (*it)->cost)
 						{
 							openList.erase(it);
