@@ -108,6 +108,12 @@ void loadMap(std::string filename, std::vector<Robot>& robots)
 
 		map.push_back(row);
 	}
+
+	std::vector<char> wallRow = std::vector<char>(16, '1');
+	for (size_t i = map.size(); i < 16; i++)
+	{
+		map.push_back(wallRow);
+	}
 }
 
 

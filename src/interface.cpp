@@ -16,7 +16,7 @@ void info()
 	cout << "-Joao Franco  - up201604828" << endl;
 	cout << "-Tomas Novo   - up201604503" << endl << endl;
 	
-	ui_utilities::milliSleep(6000);
+	std::cin.get();
 
 	menu();
 
@@ -270,7 +270,7 @@ void play_menu()
 
 Node* play_loop(Node* rootNode)
 {
-	Node* currNode = rootNode;
+	Node* currNode = new Node(*rootNode);
 	Node* nextNode = new Node();
 
 	ui_utilities::ClearScreen();
