@@ -3,8 +3,6 @@
 #include <cmath>
 #include <sstream>
 
-using namespace std;
-
 
 Node::Node()
 {
@@ -72,15 +70,15 @@ bool Node::operator==(const Node& node) const
 // }
 
 
-ostream& operator<<(ostream& os, const Node& node)
+std::ostream& operator<<(std::ostream& os, const Node& node)
 {
 	return (os << "Node {state=\n" << printState(node.state) << "cost = " << node.cost << "\n" << "h = "  << node.h << "\n");
 }
 
 
-string printState(vector<Robot> state)
+std::string printState(std::vector<Robot> state)
 {
-	stringstream ss;
+	std::stringstream ss;
 	for (int i = 0; i < state.size(); ++i)
 	{
 		ss << state[i] << "\n";

@@ -23,7 +23,7 @@ bool Robot::operator==(const Robot& robot) const
 	return (this->coords == robot.coords && this->objective == robot.objective);
 }
 
-ostream& operator<<(ostream& os, const Robot& robot)
+std::ostream& operator<<(std::ostream& os, const Robot& robot)
 {
 	return (os << "[" << robot.coords[0] << ", " << robot.coords[1] << "] -> [" << robot.objective[0] << ", " << robot.objective[1] << "]");
 }

@@ -4,13 +4,11 @@
 #include <vector>
 #include <ostream>
 
-using namespace std;
-
 class Robot
 {
 public:
-	vector<int> coords;
-	vector<int> objective;
+	std::vector<int> coords;
+	std::vector<int> objective;
 
 	char id;
 
@@ -22,7 +20,7 @@ public:
 	bool operator==(const Robot& robot) const;
 };
 
-ostream& operator<<(ostream& os, const Robot& robot);
+std::ostream& operator<<(std::ostream& os, const Robot& robot);
 
 
 

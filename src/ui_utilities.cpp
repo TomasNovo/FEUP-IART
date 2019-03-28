@@ -57,21 +57,21 @@ void ui_utilities::ClearScreen()
 		HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
 		if (Handle == NULL)
 		{
-			cout << "Failure in getting the handle\n" << GetLastError();
+			std::cout << "Failure in getting the handle\n" << GetLastError();
 			return FALSE;
 		}
 
 		// Set screen buffer size to that specified in coord 
 		if (!SetConsoleScreenBufferSize(Handle, coord))
 		{
-			cout << "Failure in setting buffer size\n" << GetLastError();
+			std::cout << "Failure in setting buffer size\n" << GetLastError();
 			return FALSE;
 		}
 
 		// Set the window size to that specified in Rect 
 		if (!SetConsoleWindowInfo(Handle, TRUE, &Rect))
 		{
-			cout << "Failure in setting window size\n" << GetLastError();
+			std::cout << "Failure in setting window size\n" << GetLastError();
 			return FALSE;
 		}
 		

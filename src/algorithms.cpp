@@ -10,8 +10,8 @@ Node* breadth(Node* currNode)
 		return NULL;
 	}
 
-	vector<Node*> currRow = {currNode};
-	vector<Node*> nextRow;
+	std::vector<Node*> currRow = {currNode};
+	std::vector<Node*> nextRow;
 
 	Node* nextNode;
 
@@ -62,10 +62,10 @@ Node* uniformCost(Node* currNode)
 		return NULL;
 	}
 
-	unordered_set<Node*, hashNode, hashNode> tree;
+	std::unordered_set<Node*, hashNode, hashNode> tree;
 
-	vector<Node*> currRow = {currNode};
-	vector<Node*> nextRow;
+	std::vector<Node*> currRow = {currNode};
+	std::vector<Node*> nextRow;
 
 	Node* nextNode;
 
@@ -76,7 +76,7 @@ Node* uniformCost(Node* currNode)
 			currNode = currRow[i];
 
 			if (DEBUG)
-				cout << *currNode << "\n";
+				std::cout << *currNode << "\n";
 
 			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 			{
@@ -90,7 +90,7 @@ Node* uniformCost(Node* currNode)
 					if (nextNode->finished())
 					{
 						if (DEBUG)
-							cout << "Tree size = " << tree.size() << "\n";
+							std::cout << "Tree size = " << tree.size() << "\n";
 
 						return nextNode;
 					}
@@ -98,7 +98,7 @@ Node* uniformCost(Node* currNode)
 					if (tree.insert(nextNode).second)
 					{
 						if (DEBUG)
-							cout << *nextNode << "\n";
+							std::cout << *nextNode << "\n";
 
 						nextRow.push_back(nextNode);
 					}
@@ -136,7 +136,7 @@ Node* depth(Node* currNode, int level, const int& limit)
 			if (nextNode->finished())
 			{
 				if (DEBUG)
-					cout << "Level: " << level << "\n";
+					std::cout << "Level: " << level << "\n";
 
 				return nextNode;
 			}
@@ -167,7 +167,7 @@ Node* iteDeepening(Node* currNode, int limit)
 }
    
 
-Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level)
+Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level)
 {
 	if (currNode == NULL/* || level == 10*/)
 	{
@@ -176,12 +176,12 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 
 	if (DEBUG)
 	{
-		cout << *currNode << "\n\n";
+		std::cout << *currNode << "\n\n";
 	}
 
 	Node* nextNode;
 
-	priority_queue<Node*, vector<Node*>, sortH> nextRow;
+	std::priority_queue<Node*, std::vector<Node*>, sortH> nextRow;
 
 	for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 	{
@@ -196,7 +196,7 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 			{
 				if (DEBUG)
 				{
-					cout << "Level: " << level << "\n";
+					std::cout << "Level: " << level << "\n";
 				}
 
 				return nextNode;
@@ -209,7 +209,7 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 
 				if (DEBUG)
 				{
-					cout << *nextNode << "\n\n";
+					std::cout << *nextNode << "\n\n";
 				}
 			}
 		}
@@ -221,7 +221,7 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 
 		if (DEBUG)
 		{
-			cout << *nextNode << "\n\n";
+			std::cout << *nextNode << "\n\n";
 		}
 
 		Node* nextCall = greedy(tree, nextNode, level+1);
@@ -239,14 +239,14 @@ Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int
 
 Node* aStar(Node* currNode)
 {
-	multiset<Node*, sortF> openList;
-	unordered_set<Node*, hashNode, hashNode> closedSet;
+	std::multiset<Node*, sortF> openList;
+	std::unordered_set<Node*, hashNode, hashNode> closedSet;
 	
 	openList.insert(currNode);
 
 	Node* nextNode;
 
-	multiset<Node*, sortF>::iterator it;
+	std::multiset<Node*, sortF>::iterator it;
 
 	int iteCounter = 0;
 	while (openList.size() > 0)
@@ -264,7 +264,7 @@ Node* aStar(Node* currNode)
 		closedSet.insert(currNode);
 
 		if (DEBUG)
-			cout << *currNode << "\n";
+			std::cout << *currNode << "\n";
 
 		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{
@@ -277,7 +277,7 @@ Node* aStar(Node* currNode)
 				nextNode->setH();
 				
 				if (DEBUG)
-					cout << *nextNode << "\n";
+					std::cout << *nextNode << "\n";
 
 				if (nextNode->state != currNode->state && closedSet.find(nextNode) == closedSet.end())
 				{
@@ -307,10 +307,10 @@ Node* aStar(Node* currNode)
 
 Node* aStar2(Node* currNode)
 {
-	multiset<Node*, sortF> openList;
-	unordered_set<Node*, hashNode, hashNode> openSet;
+	std::multiset<Node*, sortF> openList;
+	std::unordered_set<Node*, hashNode, hashNode> openSet;
 
-	unordered_set<Node*, hashNode, hashNode> closedSet;
+	std::unordered_set<Node*, hashNode, hashNode> closedSet;
 
 	openList.insert(currNode);
 	openSet.insert(currNode);
@@ -319,7 +319,7 @@ Node* aStar2(Node* currNode)
 
 	while (openList.size() > 0)
 	{
-		multiset<Node*, sortF>::iterator it = openList.begin();
+		std::multiset<Node*, sortF>::iterator it = openList.begin();
 		currNode = *(it);
 
 		if (currNode->finished())
@@ -333,7 +333,7 @@ Node* aStar2(Node* currNode)
 		closedSet.insert(currNode);
 
 		if (DEBUG)
-			cout << *currNode << "\n";
+			std::cout << *currNode << "\n";
 
 		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
 		{

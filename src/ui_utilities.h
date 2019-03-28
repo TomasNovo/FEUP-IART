@@ -1,12 +1,9 @@
-#ifndef __UI_UTILITIES_INCLUDED__
-#define __UI_UTILITIES_INCLUDED__
+#ifndef _UI_UTILITIES_H
+#define _UI_UTILITIES_H
 
 #include <iostream>
 #include <string>
-#include <thread>
 #include <chrono>
-
-using namespace std;
 
 /**
  * @brief      Class with functions that facilitates both the clearing as well as resizing of the console/terminal.

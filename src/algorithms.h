@@ -17,7 +17,7 @@ Node* iteDeepening(Node* currNode, int limit);
 
 Node* uniformCost(Node* currNode);
 
-Node* greedy(unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
+Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
 
 Node* aStar(Node* currNode);
 

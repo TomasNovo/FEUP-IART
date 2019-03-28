@@ -7,22 +7,20 @@
 #include "robot.h"
 #include "node.h"
 
-using namespace std;
-
-extern vector<vector<char>> map;
+extern std::vector<std::vector<char>> map;
 
 typedef Node* (*Operator)(Node*, int);
 
-extern vector<Operator> operations;
-extern vector<string> operationNames;
+extern std::vector<Operator> operations;
+extern std::vector<std::string> operationNames;
 
 void initiateOperators();
 
 bool validMove(Node* node, int robotIndex, int x, int y);
 
-Node* initiateMap(string filename);
+Node* initiateMap(std::string filename);
 
-void loadMap(string filename, vector<Robot>& robots);
+void loadMap(std::string filename, std::vector<Robot>& robots);
 
 void initiateOperators();
 

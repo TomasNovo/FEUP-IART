@@ -4,10 +4,10 @@
 #include <sstream>
 #include <iostream>
 
-vector<vector<char>> map;
+std::vector<std::vector<char>> map;
 
-vector<Operator> operations;
-vector<string> operationNames;
+std::vector<Operator> operations;
+std::vector<std::string> operationNames;
 
 
 bool validMove(Node* node, int robotIndex, int x, int y)
@@ -24,11 +24,11 @@ bool validMove(Node* node, int robotIndex, int x, int y)
 	return true;
 }
 
-Node* initiateMap(string filename)
+Node* initiateMap(std::string filename)
 {
 	initiateOperators();
 	
-	vector<Robot> startState;
+	std::vector<Robot> startState;
 
 	loadMap(filename, startState);
 	
@@ -39,10 +39,10 @@ Node* initiateMap(string filename)
 	return rootNode;
 }
 
-void loadMap(string filename, vector<Robot>& robots)
+void loadMap(std::string filename, std::vector<Robot>& robots)
 {
-	ifstream ifs(filename);
-	string line, cell;
+	std::ifstream ifs(filename);
+	std::string line, cell;
 	char cellValue;
 
 	map.resize(0);
@@ -56,8 +56,8 @@ void loadMap(string filename, vector<Robot>& robots)
 		if (line.back() != ',')
 			line.push_back(',');
 
-		stringstream ss(line);
-		vector<char> row = vector<char>();
+		std::stringstream ss(line);
+		std::vector<char> row = std::vector<char>();
 		for (int i = 0; getline(ss, cell, ','); ++i)
 		{
 			cellValue = cell[0];

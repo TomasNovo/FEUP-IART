@@ -8,19 +8,17 @@
 
 #include "robot.h"
 
-using namespace std;
-
 class Node
 {
 public:
-	vector<Robot> state;
+	std::vector<Robot> state;
 	
 	int cost = 0;
 	double h = -1;
 	double f;
 
 	Node* parent = NULL;
-	string operationName = "";
+	std::string operationName = "";
 
 	Node();
 
@@ -40,10 +38,10 @@ public:
 
 };
 
-ostream& operator<<(ostream& os, const Node& node);
+std::ostream& operator<<(std::ostream& os, const Node& node);
 
 
-string printState(vector<Robot> state);
+std::string printState(std::vector<Robot> state);
 
 
 struct hashNode
