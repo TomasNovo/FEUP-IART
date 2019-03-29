@@ -4,6 +4,11 @@
 
 #include "FEUP-IART/src/mapLoader.h"
 #include "FEUP-IART/src/node.h"
+#include "FEUP-IART/src/algorithms.h"
+#include "FEUP-IART/src/ui_utilities.h"
+
+std::string mapFilename;
+
 
 namespace IART {
 
@@ -48,8 +53,6 @@ namespace IART {
 	private: System::Windows::Forms::Panel^  mainPanel;
 
 	private: cli::array<PictureBox^>^ boxes;
-
-	private: System::String^ mapFilename;
 
 	private: Image^ wall;
 	private: Image^ floor;
@@ -132,16 +135,17 @@ namespace IART {
 			this->button2->TabIndex = 5;
 			this->button2->Text = L"Reset map";
 			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &gui::button2_Click_1);
+			this->button2->Click += gcnew System::EventHandler(this, &gui::button2_Click);
 			// 
 			// comboBox1
 			// 
+			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->comboBox1->FormattingEnabled = true;
 			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(6) {
 				L"Breadth-first search", L"Depth-first search",
 					L"Iterative deepening", L"Uniform-cost search", L"Greedy (best-first) search", L"A*"
 			});
-			this->comboBox1->Location = System::Drawing::Point(12, 146);
+			this->comboBox1->Location = System::Drawing::Point(11, 146);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 6;
@@ -163,6 +167,7 @@ namespace IART {
 			this->button3->TabIndex = 8;
 			this->button3->Text = L"Solve";
 			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
 			// 
 			// gui
 			// 
@@ -190,66 +195,141 @@ namespace IART {
 
 	private: System::Void gui_Load(System::Object^  sender, System::EventArgs^  e)
 	{
+		initializeBoxes();
 
+		comboBox1->SelectedIndex = 5;
 	}
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		if (openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK)
 		{
-			mapFilename = openFileDialog1->FileName;
+			mapFilename = convertString(openFileDialog1->FileName);
 
-			initializeBoxes();
-
-			std::string filename = convertString(mapFilename);
-
-			currNode = initiateMap(filename);
+			rootNode = initiateMap(mapFilename);
+			currNode = new Node(*rootNode);
 
 			loadMaptoBoxes();
 
-			mapLabel->Text = "Map: " + mapFilename->Substring(mapFilename->LastIndexOf('\\')+1);
+			mapLabel->Text = "Map: " + openFileDialog1->FileName->Substring(openFileDialog1->FileName->LastIndexOf('\\')+1);
 
-			//this->Focus();
+			guiFlashingAnimation(currNode);
 		}
 	}
 
 
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-
+		resetMap();
 	}
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		//MessageBox::Show(e->KeyChar.ToString());
-
-		std::vector<char> letters = { 'w', 'd', 's', 'a' };
-		Node* nextNode;
-		int i, robotIndex = 0, index;
-		for (i = 0; i < letters.size(); i++)
+		if (!currNode->finished())
 		{
-			if (letters[i] == e->KeyChar)
+			std::vector<char> letters = { 'w', 'd', 's', 'a' };
+			Node* nextNode;
+			int i, robotIndex = 0, index;
+			for (i = 0; i < letters.size(); i++)
 			{
-				nextNode = operations[i](currNode, robotIndex);
-				nextNode->cost++;
-				nextNode->parent = currNode;
-				nextNode->operationName = operationNames[i];
+				if (letters[i] == e->KeyChar)
+				{
+					nextNode = operations[i](currNode, robotIndex);
+					nextNode->cost++;
+					nextNode->parent = currNode;
+					nextNode->operationName = operationNames[i];
 
-				index = coordsToIndex(currNode->state[robotIndex].coords[0], currNode->state[robotIndex].coords[1]);
-				boxes[index]->Image = nullptr;
+					guiWalkingAnimation(currNode, nextNode);
 
-				index = coordsToIndex(nextNode->state[robotIndex].coords[0], nextNode->state[robotIndex].coords[1]);
-				boxes[index]->Image = robot;
+					//setNode(currNode, nextNode);
 
-				currNode = nextNode;
+					if (currNode->finished())
+					{
+						int optimalCost = aStar2(rootNode)->cost;
+						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
+						resetMap();
+					}
 
-				break;
+
+					break;
+				}
 			}
 		}
+	}
+
+	void guiFlashingAnimation(Node* node)
+	{
+		int flashTime = 100;
+
+		std::vector<Robot> stateSave = node->state;
+		int index;
+		for (int i = 0; i < 16; ++i) // start flashing animation
+		{
+			if (i % 2 == 0)
+			{
+				for (size_t j = 0; j < node->state.size(); j++)
+				{
+					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
+					boxes[index]->Image = nullptr;
+
+					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
+					boxes[index]->Image = nullptr;
+				}
+			}
+			else
+			{
+				for (size_t j = 0; j < node->state.size(); j++)
+				{
+					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
+					boxes[index]->Image = robot;
+
+					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
+					boxes[index]->Image = goal;
+				}
+			}
+
+			this->Refresh();
+			ui_utilities::milliSleep(flashTime); //sleeps for 100 milliseconds
+		}
+	}
 
 
-		// walkingAnimation(currNode, nextNode);
-	
+	void guiWalkingAnimation(Node* node1, Node* node2)
+	{
+		int walkTime = 200;
+		Node* nextNode = new Node(*node1);
+
+		for (int i = 0; i < node1->state.size(); ++i)
+		{
+			if (node1->state[i].coords[1] != node2->state[i].coords[1])
+			{
+				int deltaY = node2->state[i].coords[1] - node1->state[i].coords[1];
+
+				for (int j = 0; j < abs(deltaY); ++j)
+				{
+					nextNode->state[i].coords[1] += deltaY / abs(deltaY);
+
+					setNode(node1, nextNode);
+
+					this->Refresh();
+					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+				}
+			}
+			else if (node1->state[i].coords[0] != node2->state[i].coords[0])
+			{
+				int deltaX = node2->state[i].coords[0] - node1->state[i].coords[0];
+
+				for (int j = 0; j < abs(deltaX); ++j)
+				{
+					nextNode->state[i].coords[0] += deltaX / abs(deltaX);
+					
+					setNode(node1, nextNode);
+
+					this->Refresh();
+					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+				}
+			}
+		}
 	}
 
 
@@ -295,6 +375,21 @@ namespace IART {
 		return output;
 	}
 
+	void setNode(Node* node1, Node* node2)
+	{
+		int index;
+		for (size_t i = 0; i < node1->state.size(); i++)
+		{
+			index = coordsToIndex(node1->state[i].coords[0], node1->state[i].coords[1]);
+			boxes[index]->Image = nullptr;
+
+			index = coordsToIndex(node2->state[i].coords[0], node2->state[i].coords[1]);
+			boxes[index]->Image = robot;
+		}
+
+		*node1 = *node2;
+	}
+
 	System::Void loadMaptoBoxes()
 	{
 		Image^ currImage;
@@ -311,6 +406,7 @@ namespace IART {
 					currImage = wall;
 
 				boxes[index]->BackgroundImage = currImage;
+				boxes[index]->Image = nullptr;
 			}
 		}
 
@@ -339,10 +435,17 @@ namespace IART {
 		return output;
 	}
 
-
-	private: System::Void button2_Click_1(System::Object^  sender, System::EventArgs^  e)
+	void resetMap()
 	{
-		currNode = new Node(*rootNode);
+		setNode(currNode, rootNode);
+
+		loadMaptoBoxes();
+	}
+
+	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (comboBox1->SelectedIndex > -1)
+			MessageBox::Show((String^)comboBox1->Items[comboBox1->SelectedIndex]);
 	}
 };
 }
