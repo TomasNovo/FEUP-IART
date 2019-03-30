@@ -226,7 +226,7 @@ namespace IART {
 
 			mapLabel->Text = "Map: " + openFileDialog1->FileName->Substring(openFileDialog1->FileName->LastIndexOf('\\')+1);
 
-			guiFlashingAnimation(currNode);
+			//guiFlashingAnimation(currNode);
 		}
 	}
 
@@ -243,7 +243,7 @@ namespace IART {
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
-			int i, robotIndex = 0, index;
+			int i, robotIndex = 0;
 			for (i = 0; i < letters.size(); i++)
 			{
 				if (letters[i] == e->KeyChar)
@@ -332,9 +332,25 @@ namespace IART {
 
 	void guiFlashingAnimation(Node* node)
 	{
-		int flashTime = 100;
+		int flashTime = 70;
 
+		array<Image^>^ robotImages = gcnew array<Image^>(node->state.size());
+		array<Image^>^ goalImages = gcnew array<Image^>(node->state.size());
+		
 		int index;
+
+		for (size_t i = 0; i < node->state.size(); i++)
+		{
+			index = coordsToIndex(node->state[i].coords[0], node->state[i].coords[1]);
+			if (index > 0)
+				robotImages[i] = boxes[index]->Image;
+
+			index = coordsToIndex(node->state[i].objective[0], node->state[i].objective[1]);
+			if (index > 0)
+				goalImages[i] = boxes[index]->Image;
+		}
+
+
 		for (int i = 0; i < 16; ++i) // start flashing animation
 		{
 			if (i % 2 == 0)
@@ -357,10 +373,10 @@ namespace IART {
 					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
 				
 					if (index > 0)
-						boxes[index]->Image = goal;
+						boxes[index]->Image = goalImages[j];
 
 					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
-					boxes[index]->Image = robot;
+					boxes[index]->Image = robotImages[j];
 				}
 			}
 
@@ -371,7 +387,7 @@ namespace IART {
 
 	void guiWalkingAnimation(Node* node1, Node* node2)
 	{
-		int walkTime = 200;
+		int walkTime = 60;
 		Node* nextNode = new Node(*node1);
 
 		for (int i = 0; i < node1->state.size(); ++i)
@@ -432,9 +448,6 @@ namespace IART {
 			}
 		}
 
-		Properties;
-
-
 		wall = Image::FromFile("images/wall.png");
 		floor = Image::FromFile("images/floor.png");
 		goal = Image::FromFile("images/goal.png");
@@ -491,12 +504,12 @@ namespace IART {
 		for (size_t i = 0; i < currNode->state.size(); i++)
 		{
 			index = coordsToIndex(currNode->state[i].coords[0], currNode->state[i].coords[1]);
-			boxes[index]->Image = robot;
+			boxes[index]->Image = changeColor(robot, currNode->state[i].id);
 
 			if (currNode->state[i].objective[0] != -1 || currNode->state[i].objective[1] != -1)
 			{
 				index = coordsToIndex(currNode->state[i].objective[0], currNode->state[i].objective[1]);
-				boxes[index]->Image = goal;
+				boxes[index]->Image = changeColor(goal, currNode->state[i].id);
 			}
 		}
 	}
@@ -531,6 +544,48 @@ namespace IART {
 	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
 	{
 		textBox1->Visible = (comboBox1->SelectedIndex == 1 || comboBox1->SelectedIndex == 2);
+	}
+
+	Image^ changeColor(Image^ image, char robotId)
+	{
+		if (robotId == 'a') // Red
+			return image;
+
+		Bitmap^ bitmap = (Bitmap^)image;
+		Image^ output = (gcnew Bitmap(bitmap));
+
+		for (size_t i = 0; i < image->Height; i++)
+		{
+			for (size_t j = 0; j < image->Width; j++)
+			{
+				Color pixel = bitmap->GetPixel(i, j);
+
+				if (robotId == 'b') // Blue
+				{
+					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
+					{
+						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, 0, 0, pixel.R));
+					}
+				}
+				else if (robotId == 'c') // Yellow
+				{
+					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
+					{
+						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, pixel.R, pixel.R, 0));
+					}
+				}
+				else if (robotId == 'd') // Green
+				{
+					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
+					{
+						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, 0, pixel.R, 0));
+					}
+				} 
+				
+			}
+		}
+
+		return output;
 	}
 };
 }
