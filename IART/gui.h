@@ -67,6 +67,7 @@ namespace IART {
 	private: System::Windows::Forms::ComboBox^  comboBox1;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::TextBox^  textBox1;
 
 
 
@@ -96,6 +97,7 @@ namespace IART {
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->SuspendLayout();
 			// 
 			// openFileDialog1
@@ -149,6 +151,7 @@ namespace IART {
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 6;
+			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox1_SelectedIndexChanged);
 			// 
 			// label1
 			// 
@@ -169,11 +172,21 @@ namespace IART {
 			this->button3->UseVisualStyleBackColor = true;
 			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
 			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(22, 234);
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->Size = System::Drawing::Size(100, 20);
+			this->textBox1->TabIndex = 9;
+			this->textBox1->Text = L"15";
+			this->textBox1->Visible = false;
+			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(987, 801);
+			this->ClientSize = System::Drawing::Size(950, 801);
+			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->comboBox1);
@@ -220,7 +233,8 @@ namespace IART {
 
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		resetMap();
+		if (map.size() > 0)
+			resetMap();
 	}
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
@@ -235,13 +249,17 @@ namespace IART {
 				if (letters[i] == e->KeyChar)
 				{
 					nextNode = operations[i](currNode, robotIndex);
+
+					if (*currNode == *nextNode)
+						return;
+
 					nextNode->cost++;
 					nextNode->parent = currNode;
 					nextNode->operationName = operationNames[i];
 
 					guiWalkingAnimation(currNode, nextNode);
 
-					//setNode(currNode, nextNode);
+					setNode(currNode, nextNode);
 
 					if (currNode->finished())
 					{
@@ -257,11 +275,63 @@ namespace IART {
 		}
 	}
 
+
+	void printAgent()
+	{
+		std::unordered_set<Node*, hashNode, hashNode> tree;
+		tree.insert(currNode);
+
+		Node* result = NULL;
+
+		int algorithm = comboBox1->SelectedIndex + 1;
+
+		int limit = stoi(convertString(textBox1->Text));
+
+
+		clock_t time = clock();
+
+		if (algorithm == 1) result = breadth(currNode);
+		else if (algorithm == 2) result = depth(currNode, 0, limit);
+		else if (algorithm == 3) result = iteDeepening(currNode, limit);
+		else if (algorithm == 4) result = uniformCost(currNode);
+		else if (algorithm == 5) result = greedy(tree, currNode, 0);
+		else if (algorithm == 6) result = aStar2(currNode);
+
+		double deltaTime = (double)(clock() - time) / CLOCKS_PER_SEC;
+
+
+		if (result == NULL)
+			MessageBox::Show("Failed to find solution!");
+		else
+		{
+			std::vector<Node*> path;
+			Node* node = result;
+
+			for (size_t i = 0; node != NULL; i++)
+			{
+				path.push_back(node);
+
+				node = node->parent;
+			}
+
+			for (size_t i = path.size() - 1; i >= 1; i--)
+			{
+				guiWalkingAnimation(path[i], path[i - 1]);
+			}
+
+			setNode(currNode, path.front());
+
+			guiFlashingAnimation(currNode);
+			MessageBox::Show("Agent's solution is " + currNode->cost + " moves.");
+
+			resetMap();
+		}
+	}
+
 	void guiFlashingAnimation(Node* node)
 	{
 		int flashTime = 100;
 
-		std::vector<Robot> stateSave = node->state;
 		int index;
 		for (int i = 0; i < 16; ++i) // start flashing animation
 		{
@@ -269,10 +339,12 @@ namespace IART {
 			{
 				for (size_t j = 0; j < node->state.size(); j++)
 				{
-					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
-					boxes[index]->Image = nullptr;
-
 					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
+					
+					if (index > 0)
+						boxes[index]->Image = nullptr;
+
+					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
 					boxes[index]->Image = nullptr;
 				}
 			}
@@ -280,11 +352,13 @@ namespace IART {
 			{
 				for (size_t j = 0; j < node->state.size(); j++)
 				{
+					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
+				
+					if (index > 0)
+						boxes[index]->Image = goal;
+
 					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
 					boxes[index]->Image = robot;
-
-					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
-					boxes[index]->Image = goal;
 				}
 			}
 
@@ -292,7 +366,6 @@ namespace IART {
 			ui_utilities::milliSleep(flashTime); //sleeps for 100 milliseconds
 		}
 	}
-
 
 	void guiWalkingAnimation(Node* node1, Node* node2)
 	{
@@ -333,7 +406,7 @@ namespace IART {
 	}
 
 
-	private: System::Void initializeBoxes()
+	private: void initializeBoxes()
 	{
 		boxes = (gcnew cli::array<PictureBox^>(256));
 
@@ -390,7 +463,7 @@ namespace IART {
 		*node1 = *node2;
 	}
 
-	System::Void loadMaptoBoxes()
+	void loadMaptoBoxes()
 	{
 		Image^ currImage;
 		int index;
@@ -445,7 +518,14 @@ namespace IART {
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		if (comboBox1->SelectedIndex > -1)
-			MessageBox::Show((String^)comboBox1->Items[comboBox1->SelectedIndex]);
+		{
+			printAgent();
+		}
+	}
+
+	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
+	{
+		textBox1->Visible = (comboBox1->SelectedIndex == 1 || comboBox1->SelectedIndex == 2);
 	}
 };
 }
