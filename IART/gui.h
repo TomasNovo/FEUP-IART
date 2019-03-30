@@ -263,6 +263,8 @@ namespace IART {
 
 					if (currNode->finished())
 					{
+						guiFlashingAnimation(currNode);
+
 						int optimalCost = aStar2(rootNode)->cost;
 						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
 						resetMap();
@@ -429,6 +431,9 @@ namespace IART {
 				boxes[index] = picbox;
 			}
 		}
+
+		Properties;
+
 
 		wall = Image::FromFile("images/wall.png");
 		floor = Image::FromFile("images/floor.png");
