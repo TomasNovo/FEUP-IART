@@ -250,6 +250,9 @@ namespace IART {
 			mapFilename = convertString(openFileDialog1->FileName);
 
 			rootNode = initiateMap(mapFilename);
+
+			std::sort(rootNode->state.begin(), rootNode->state.end());
+
 			currNode = new Node(*rootNode);
 
 			loadMaptoBoxes();
@@ -364,9 +367,11 @@ namespace IART {
 
 	void guiFlashingAnimation(Node* node)
 	{
-		int flashTime = 70, index;
+		this->Refresh();
 
-		for (int i = 0; i < 6; ++i) // start flashing animation
+		int flashTime = 150, index;
+
+		for (int i = 0; i < 10; ++i) // start flashing animation
 		{
 			if (i % 2 == 0)
 			{
@@ -375,10 +380,15 @@ namespace IART {
 					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
 					
 					if (index > 0)
+					{
 						boxes[index]->Image = nullptr;
+						boxes[index]->Refresh();
+					}
+						
 
 					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
 					boxes[index]->Image = nullptr;
+					boxes[index]->Refresh();
 				}
 			}
 			else
@@ -388,21 +398,24 @@ namespace IART {
 					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
 				
 					if (index > 0)
+					{
 						boxes[index]->Image = goals[j];
+						boxes[index]->Refresh();
+					}
 
 					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
 					boxes[index]->Image = robots[j];
+					boxes[index]->Refresh();
 				}
 			}
 
-			this->Refresh();
-			ui_utilities::milliSleep(flashTime); //sleeps for 100 milliseconds
+			ui_utilities::milliSleep(flashTime); //sleeps for 150 milliseconds
 		}
 	}
 
 	void guiWalkingAnimation(Node* node1, Node* node2)
 	{
-		int walkTime = 40;
+		int walkTime = 150, index;
 		Node* nextNode = new Node(*node1);
 
 		for (int i = 0; i < node1->state.size(); ++i)
@@ -413,12 +426,17 @@ namespace IART {
 
 				for (int j = 0; j < abs(deltaY); ++j)
 				{
+					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
+					boxes[index]->Image = nullptr;
+					boxes[index]->Refresh();
+
 					nextNode->state[i].coords[1] += deltaY / abs(deltaY);
 
-					setNode(node1, nextNode);
+					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
+					boxes[index]->Image = robots[i];
+					boxes[index]->Refresh();
 
-					this->Refresh();
-					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+					ui_utilities::milliSleep(walkTime); //sleeps for 80 milliseconds
 				}
 			}
 			else if (node1->state[i].coords[0] != node2->state[i].coords[0])
@@ -427,12 +445,17 @@ namespace IART {
 
 				for (int j = 0; j < abs(deltaX); ++j)
 				{
-					nextNode->state[i].coords[0] += deltaX / abs(deltaX);
-					
-					setNode(node1, nextNode);
+					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
+					boxes[index]->Image = nullptr;
+					boxes[index]->Refresh();
 
-					this->Refresh();
-					ui_utilities::milliSleep(walkTime); //sleeps for 200 milliseconds
+					nextNode->state[i].coords[0] += deltaX / abs(deltaX);
+
+					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
+					boxes[index]->Image = robots[i];
+					boxes[index]->Refresh();
+
+					ui_utilities::milliSleep(walkTime); //sleeps for 80 milliseconds
 				}
 			}
 		}

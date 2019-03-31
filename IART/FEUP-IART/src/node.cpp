@@ -31,7 +31,11 @@ void Node::setH()
 			continue;
 		
 		int deltaX = abs(state[i].coords[0] - state[i].objective[0]), deltaY = abs(state[i].coords[1] - state[i].objective[1]);
+		
+		
 		this->h += (deltaX + deltaY)/(double)16;
+
+		//this->h += sqrt(deltaX*deltaX + deltaY * deltaY) / (double)16;
 	}
 
 	this->f = this->cost + this->h;
