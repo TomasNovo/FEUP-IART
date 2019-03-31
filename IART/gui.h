@@ -56,11 +56,13 @@ namespace IART {
 
 	private: Image^ wall;
 	private: Image^ floor;
-	private: Image^	goal;
-	private: Image^ robot;
+	private: array<Image^>^ robots;
+	private: array<Image^>^	goals;
 
 	private: Node* rootNode;
 	private: Node* currNode;
+
+	private: int selectedRobot = 0;
 	
 	private: System::Windows::Forms::Label^  mapLabel;
 	private: System::Windows::Forms::Button^  button2;
@@ -68,6 +70,14 @@ namespace IART {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Button^  button3;
 	private: System::Windows::Forms::TextBox^  textBox1;
+
+	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::Panel^  robotPanel;
+
+
+
+
+
 
 
 
@@ -98,6 +108,8 @@ namespace IART {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->robotPanel = (gcnew System::Windows::Forms::Panel());
 			this->SuspendLayout();
 			// 
 			// openFileDialog1
@@ -131,7 +143,7 @@ namespace IART {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(28, 64);
+			this->button2->Location = System::Drawing::Point(28, 74);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 23);
 			this->button2->TabIndex = 5;
@@ -164,7 +176,7 @@ namespace IART {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(28, 182);
+			this->button3->Location = System::Drawing::Point(32, 182);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 8;
@@ -174,18 +186,36 @@ namespace IART {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(22, 234);
+			this->textBox1->Location = System::Drawing::Point(21, 234);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(100, 20);
 			this->textBox1->TabIndex = 9;
 			this->textBox1->Text = L"15";
 			this->textBox1->Visible = false;
 			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(37, 275);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(73, 13);
+			this->label2->TabIndex = 11;
+			this->label2->Text = L"Current Robot";
+			// 
+			// robotPanel
+			// 
+			this->robotPanel->Location = System::Drawing::Point(17, 304);
+			this->robotPanel->Name = L"robotPanel";
+			this->robotPanel->Size = System::Drawing::Size(117, 421);
+			this->robotPanel->TabIndex = 12;
+			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(950, 801);
+			this->Controls->Add(this->robotPanel);
+			this->Controls->Add(this->label2);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->label1);
@@ -226,7 +256,9 @@ namespace IART {
 
 			mapLabel->Text = "Map: " + openFileDialog1->FileName->Substring(openFileDialog1->FileName->LastIndexOf('\\')+1);
 
-			//guiFlashingAnimation(currNode);
+			loadRobotsPanel();
+
+			guiFlashingAnimation(currNode);
 		}
 	}
 
@@ -243,12 +275,12 @@ namespace IART {
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
-			int i, robotIndex = 0;
+			int i;
 			for (i = 0; i < letters.size(); i++)
 			{
 				if (letters[i] == e->KeyChar)
 				{
-					nextNode = operations[i](currNode, robotIndex);
+					nextNode = operations[i](currNode, selectedRobot);
 
 					if (*currNode == *nextNode)
 						return;
@@ -332,26 +364,9 @@ namespace IART {
 
 	void guiFlashingAnimation(Node* node)
 	{
-		int flashTime = 70;
+		int flashTime = 70, index;
 
-		array<Image^>^ robotImages = gcnew array<Image^>(node->state.size());
-		array<Image^>^ goalImages = gcnew array<Image^>(node->state.size());
-		
-		int index;
-
-		for (size_t i = 0; i < node->state.size(); i++)
-		{
-			index = coordsToIndex(node->state[i].coords[0], node->state[i].coords[1]);
-			if (index > 0)
-				robotImages[i] = boxes[index]->Image;
-
-			index = coordsToIndex(node->state[i].objective[0], node->state[i].objective[1]);
-			if (index > 0)
-				goalImages[i] = boxes[index]->Image;
-		}
-
-
-		for (int i = 0; i < 16; ++i) // start flashing animation
+		for (int i = 0; i < 6; ++i) // start flashing animation
 		{
 			if (i % 2 == 0)
 			{
@@ -373,10 +388,10 @@ namespace IART {
 					index = coordsToIndex(node->state[j].objective[0], node->state[j].objective[1]);
 				
 					if (index > 0)
-						boxes[index]->Image = goalImages[j];
+						boxes[index]->Image = goals[j];
 
 					index = coordsToIndex(node->state[j].coords[0], node->state[j].coords[1]);
-					boxes[index]->Image = robotImages[j];
+					boxes[index]->Image = robots[j];
 				}
 			}
 
@@ -387,7 +402,7 @@ namespace IART {
 
 	void guiWalkingAnimation(Node* node1, Node* node2)
 	{
-		int walkTime = 60;
+		int walkTime = 40;
 		Node* nextNode = new Node(*node1);
 
 		for (int i = 0; i < node1->state.size(); ++i)
@@ -447,11 +462,6 @@ namespace IART {
 				boxes[index] = picbox;
 			}
 		}
-
-		wall = Image::FromFile("images/wall.png");
-		floor = Image::FromFile("images/floor.png");
-		goal = Image::FromFile("images/goal.png");
-		robot = Image::FromFile("images/robot.png");
 	}
 
 	std::string convertString(System::String^ input)
@@ -475,7 +485,7 @@ namespace IART {
 			boxes[index]->Image = nullptr;
 
 			index = coordsToIndex(node2->state[i].coords[0], node2->state[i].coords[1]);
-			boxes[index]->Image = robot;
+			boxes[index]->Image = robots[i];
 		}
 
 		*node1 = *node2;
@@ -483,6 +493,11 @@ namespace IART {
 
 	void loadMaptoBoxes()
 	{
+		wall = Image::FromFile("images/wall.png");
+		floor = Image::FromFile("images/floor.png");
+		robots = gcnew array<Image^>(currNode->state.size());
+		goals = gcnew array<Image^>(currNode->state.size());
+
 		Image^ currImage;
 		int index;
 		for (size_t i = 0; i < map.size(); i++)
@@ -501,15 +516,19 @@ namespace IART {
 			}
 		}
 
+
 		for (size_t i = 0; i < currNode->state.size(); i++)
 		{
+			robots[i] = changeColor(Image::FromFile("images/robot.png"), currNode->state[i].id);
+			goals[i] = changeColor(Image::FromFile("images/goal.png"), currNode->state[i].id);
+
 			index = coordsToIndex(currNode->state[i].coords[0], currNode->state[i].coords[1]);
-			boxes[index]->Image = changeColor(robot, currNode->state[i].id);
+			boxes[index]->Image = changeColor(robots[i], currNode->state[i].id);
 
 			if (currNode->state[i].objective[0] != -1 || currNode->state[i].objective[1] != -1)
 			{
 				index = coordsToIndex(currNode->state[i].objective[0], currNode->state[i].objective[1]);
-				boxes[index]->Image = changeColor(goal, currNode->state[i].id);
+				boxes[index]->Image = changeColor(goals[i], currNode->state[i].id);
 			}
 		}
 	}
@@ -587,5 +606,53 @@ namespace IART {
 
 		return output;
 	}
+
+	void robotPicturePanelClick(System::Object^  sender, System::EventArgs^  e)
+	{
+		PictureBox^ box = (PictureBox^)sender;
+		selectRobotButton(box->Name[box->Name->Length - 1] - '0');
+	}
+
+	void robotPanelButtonClick(System::Object^  sender, System::EventArgs^  e)
+	{
+		RadioButton^ button = (RadioButton^)sender;
+		selectRobotButton(button->Name[button->Name->Length - 1] - '0');
+	}
+
+	void loadRobotsPanel()
+	{
+		PictureBox^ picbox;
+		RadioButton^ button;
+		robotPanel->Controls->Clear();
+
+		for (size_t i = 0; i < currNode->state.size(); i++)
+		{
+			picbox = gcnew PictureBox();
+
+			picbox->Image = robots[i];
+			picbox->Name = "robotSelectorPicture" + i;
+			picbox->Location = System::Drawing::Point(0, i * (50+10));
+			picbox->Size = System::Drawing::Size(50, 50);
+			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
+			robotPanel->Controls->Add(picbox);
+
+			button = gcnew RadioButton();
+
+			button->Name = "robotSelectorButton" + i;
+			button->Location = System::Drawing::Point(90, i * (50 + 10) + 12);
+			button->Click += gcnew System::EventHandler(this, &gui::robotPanelButtonClick);
+			robotPanel->Controls->Add(button);
+		}
+
+		selectRobotButton(0);
+	}
+
+	void selectRobotButton(int index)
+	{
+		selectedRobot = index;
+	
+		((RadioButton^)robotPanel->Controls->Find("robotSelectorButton" + index, true)[0])->Checked = true;
+	}
+	
 };
 }
