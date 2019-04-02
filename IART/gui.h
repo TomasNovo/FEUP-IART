@@ -337,8 +337,11 @@ namespace IART {
 
 	void printAgent()
 	{
+		Node* newCurrNode = new Node(*currNode);
+		newCurrNode->parent = NULL;
+
 		std::unordered_set<Node*, hashNode, hashNode> tree;
-		tree.insert(currNode);
+		tree.insert(newCurrNode);
 
 		Node* result = NULL;
 
@@ -350,12 +353,12 @@ namespace IART {
 
 		clock_t time = clock();
 
-		if (algorithm == 1) result = breadth(currNode);
-		else if (algorithm == 2) result = depth(currNode, 0, limit);
-		else if (algorithm == 3) result = iteDeepening(currNode, limit);
-		else if (algorithm == 4) result = uniformCost(currNode);
-		else if (algorithm == 5) result = greedy(tree, currNode, 0, limit, heuristic);
-		else if (algorithm == 6) result = aStar2(currNode, heuristic);
+		if (algorithm == 1) result = breadth(newCurrNode);
+		else if (algorithm == 2) result = depth(newCurrNode, 0, limit);
+		else if (algorithm == 3) result = iteDeepening(newCurrNode, limit);
+		else if (algorithm == 4) result = uniformCost(newCurrNode);
+		else if (algorithm == 5) result = greedy(tree, newCurrNode, 0, limit, heuristic);
+		else if (algorithm == 6) result = aStar2(newCurrNode, heuristic);
 
 		double deltaTime = (double)(clock() - time) / CLOCKS_PER_SEC;
 
