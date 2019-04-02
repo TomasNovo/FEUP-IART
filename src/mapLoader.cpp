@@ -34,7 +34,7 @@ Node* initiateMap(std::string filename)
 	
 	Node* rootNode = new Node();
 	rootNode->state = startState;
-	rootNode->setH();
+	rootNode->setH(0);
 
 	return rootNode;
 }

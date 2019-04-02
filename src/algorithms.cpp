@@ -141,10 +141,16 @@ Node* depth(Node* currNode, int level, const int& limit)
 				return nextNode;
 			}
 
-			Node* nextCall = depth(nextNode, level+1, limit);
+			if (nextNode->parent == NULL || nextNode->state != nextNode->parent->state) // Checks if the state is the same after the operation
+			{
+				if (nextNode->parent->parent == NULL || nextNode->state != nextNode->parent->parent->state) // Checks if the state doesn't change from 2 levels above
+				{
+					Node* nextCall = depth(nextNode, level + 1, limit);
 
-			if (nextCall != NULL)
-				return nextCall;
+					if (nextCall != NULL)
+						return nextCall;
+				}
+			}
 		}
 	}
 
@@ -167,11 +173,11 @@ Node* iteDeepening(Node* currNode, int limit)
 }
    
 
-Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level)
+Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level, int limit, int heuristic)
 {
-	if (currNode == NULL/* || level == 10*/)
+	if (currNode == NULL || level >= limit)
 	{
-		return new Node();
+		return NULL;
 	}
 
 	if (DEBUG)
@@ -204,7 +210,7 @@ Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode
 
 			if (tree.insert(nextNode).second)
 			{
-				nextNode->setH();
+				nextNode->setH(heuristic);
 				nextRow.push(nextNode);
 
 				if (DEBUG)
@@ -223,8 +229,8 @@ Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode
 		{
 			std::cout << *nextNode << "\n\n";
 		}
-
-		Node* nextCall = greedy(tree, nextNode, level+1);
+		
+		Node* nextCall = greedy(tree, nextNode, level+1, limit, heuristic);
 
 		if (nextCall != NULL)
 			return nextCall;
@@ -237,7 +243,7 @@ Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode
 }
 
 
-Node* aStar(Node* currNode)
+Node* aStar(Node* currNode, int heuristic)
 {
 	std::multiset<Node*, sortF> openList;
 	std::unordered_set<Node*, hashNode, hashNode> closedSet;
@@ -274,7 +280,7 @@ Node* aStar(Node* currNode)
 				nextNode->cost++;
 				nextNode->parent = currNode;
 				nextNode->operationName = operationNames[i];
-				nextNode->setH();
+				nextNode->setH(heuristic);
 				
 				if (DEBUG)
 					std::cout << *nextNode << "\n";
@@ -305,7 +311,7 @@ Node* aStar(Node* currNode)
 	return NULL;
 }
 
-Node* aStar2(Node* currNode)
+Node* aStar2(Node* currNode, int heuristic)
 {
 	std::multiset<Node*, sortF> openList;
 	std::unordered_set<Node*, hashNode, hashNode> openSet;
@@ -343,7 +349,7 @@ Node* aStar2(Node* currNode)
 				nextNode->cost++;
 				nextNode->parent = currNode;
 				nextNode->operationName = operationNames[i];
-				nextNode->setH();
+				nextNode->setH(heuristic);
 				
 				if (closedSet.find(nextNode) == closedSet.end())
 				{

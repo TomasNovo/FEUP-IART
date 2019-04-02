@@ -16,8 +16,10 @@ public:
 	
 	bool finished();
 
-	bool operator==(const Robot* robot) const;
 	bool operator==(const Robot& robot) const;
+	
+	bool operator<(const Robot& robot) const;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const Robot& robot);

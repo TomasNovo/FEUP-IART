@@ -73,10 +73,18 @@ void agent(string map)
 
 	int limit = 18;
 
-	if (algorithm == 2 || algorithm == 3)
+	int heuristic = 0;
+
+	if (algorithm == 2 || algorithm == 3 || algorithm == 5)
 	{
 		cout << "Insert a limit for the algorithm:";
 		cin >> limit;
+	}
+
+	if (algorithm == 5 || algorithm == 6)
+	{
+		cout << "Choose between manhattan distance(0) or euclidean distance(1):";
+		cin >> heuristic;
 	}
 
 	clock_t time = clock();
@@ -85,8 +93,8 @@ void agent(string map)
 	else if (algorithm == 2) result = depth(rootNode, 0, limit);
 	else if (algorithm == 3) result = iteDeepening(rootNode, limit);
 	else if (algorithm == 4) result = uniformCost(rootNode);
-	else if (algorithm == 5) result =  greedy(tree, rootNode, 0);
-	else if (algorithm == 6) result =  aStar2(rootNode);
+	else if (algorithm == 5) result =  greedy(tree, rootNode, 0, limit, heuristic);
+	else if (algorithm == 6) result =  aStar2(rootNode, heuristic);
 	else if (algorithm == 0) return;
 
 	double deltaTime = (double)(clock()-time)/CLOCKS_PER_SEC;
@@ -346,7 +354,7 @@ Node* play_loop(Node* rootNode)
 	flashingAnimation(currNode);
 
 	cout << "You completed the map in " << currNode->cost << " moves.\n";
-	cout << "The best solution is " << aStar2(rootNode)->cost << " moves.\n";
+	cout << "The best solution is " << aStar2(rootNode, 0)->cost << " moves.\n";
 
 	return currNode;
 }

@@ -13,14 +13,15 @@ bool Robot::finished()
 	return (objective[0] == -1 && objective[1] == -1) ? true : (coords == objective);
 }
 
-bool Robot::operator==(const Robot* robot) const
-{
-	return (this->coords == robot->coords && this->objective == robot->objective);
-}
 
 bool Robot::operator==(const Robot& robot) const
 {
 	return (this->coords == robot.coords && this->objective == robot.objective);
+}
+
+bool Robot::operator<(const Robot& robot) const
+{
+	return (this->id < robot.id);
 }
 
 std::ostream& operator<<(std::ostream& os, const Robot& robot)
