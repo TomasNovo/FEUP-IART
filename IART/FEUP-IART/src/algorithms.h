@@ -17,11 +17,11 @@ Node* iteDeepening(Node* currNode, int limit);
 
 Node* uniformCost(Node* currNode);
 
-Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level);
+Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode, int level, int limit, int heuristic);
 
-Node* aStar(Node* currNode);
+Node* aStar(Node* currNode, int heuristic);
 
-Node* aStar2(Node* currNode);
+Node* aStar2(Node* currNode, int heuristic);
 
 
 #endif

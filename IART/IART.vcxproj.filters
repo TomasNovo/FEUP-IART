@@ -18,9 +18,6 @@
     <ClCompile Include="FEUP-IART\src\algorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FEUP-IART\src\interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FEUP-IART\src\mapLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,9 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FEUP-IART\src\algorithms.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FEUP-IART\src\interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FEUP-IART\src\macros.h">

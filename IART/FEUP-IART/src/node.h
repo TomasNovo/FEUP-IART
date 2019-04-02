@@ -26,7 +26,7 @@ public:
 
 	Node(const Node& node);
 
-	void setH();
+	void setH(int heuristic);
 
 	bool finished();
 	

@@ -73,6 +73,7 @@ namespace IART {
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Panel^  robotPanel;
+	private: System::Windows::Forms::ComboBox^  comboBox2;
 
 
 
@@ -99,6 +100,7 @@ namespace IART {
 
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(gui::typeid));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
@@ -110,6 +112,7 @@ namespace IART {
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
+			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
 			this->SuspendLayout();
 			// 
 			// openFileDialog1
@@ -136,14 +139,14 @@ namespace IART {
 			// mapLabel
 			// 
 			this->mapLabel->AutoSize = true;
-			this->mapLabel->Location = System::Drawing::Point(12, 51);
+			this->mapLabel->Location = System::Drawing::Point(30, 51);
 			this->mapLabel->Name = L"mapLabel";
 			this->mapLabel->Size = System::Drawing::Size(0, 13);
 			this->mapLabel->TabIndex = 4;
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(28, 74);
+			this->button2->Location = System::Drawing::Point(28, 72);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 23);
 			this->button2->TabIndex = 5;
@@ -159,7 +162,7 @@ namespace IART {
 				L"Breadth-first search", L"Depth-first search",
 					L"Iterative deepening", L"Uniform-cost search", L"Greedy (best-first) search", L"A*"
 			});
-			this->comboBox1->Location = System::Drawing::Point(11, 146);
+			this->comboBox1->Location = System::Drawing::Point(11, 134);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 6;
@@ -168,15 +171,15 @@ namespace IART {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(25, 128);
+			this->label1->Location = System::Drawing::Point(25, 113);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(87, 13);
+			this->label1->Size = System::Drawing::Size(90, 13);
 			this->label1->TabIndex = 7;
-			this->label1->Text = L"Agent\'s algorithm";
+			this->label1->Text = L"Agent\'s algorithm:";
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(32, 182);
+			this->button3->Location = System::Drawing::Point(33, 228);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 8;
@@ -186,7 +189,7 @@ namespace IART {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(21, 234);
+			this->textBox1->Location = System::Drawing::Point(22, 168);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(100, 20);
 			this->textBox1->TabIndex = 9;
@@ -196,7 +199,7 @@ namespace IART {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(37, 275);
+			this->label2->Location = System::Drawing::Point(37, 283);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(73, 13);
 			this->label2->TabIndex = 11;
@@ -204,16 +207,27 @@ namespace IART {
 			// 
 			// robotPanel
 			// 
-			this->robotPanel->Location = System::Drawing::Point(17, 304);
+			this->robotPanel->Location = System::Drawing::Point(17, 312);
 			this->robotPanel->Name = L"robotPanel";
 			this->robotPanel->Size = System::Drawing::Size(117, 421);
 			this->robotPanel->TabIndex = 12;
+			// 
+			// comboBox2
+			// 
+			this->comboBox2->FormattingEnabled = true;
+			this->comboBox2->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manhattan distance", L"Euclidean distance" });
+			this->comboBox2->Location = System::Drawing::Point(13, 197);
+			this->comboBox2->Name = L"comboBox2";
+			this->comboBox2->Size = System::Drawing::Size(121, 21);
+			this->comboBox2->TabIndex = 13;
+			this->comboBox2->Visible = false;
 			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(950, 801);
+			this->Controls->Add(this->comboBox2);
 			this->Controls->Add(this->robotPanel);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->textBox1);
@@ -224,7 +238,11 @@ namespace IART {
 			this->Controls->Add(this->mapLabel);
 			this->Controls->Add(this->mainPanel);
 			this->Controls->Add(this->button1);
+			this->DoubleBuffered = true;
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->KeyPreview = true;
+			this->MaximizeBox = false;
 			this->Name = L"gui";
 			this->Text = L"Labyrinth Robots";
 			this->Load += gcnew System::EventHandler(this, &gui::gui_Load);
@@ -241,6 +259,8 @@ namespace IART {
 		initializeBoxes();
 
 		comboBox1->SelectedIndex = 5;
+
+		comboBox2->SelectedIndex = 0;
 	}
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
@@ -261,6 +281,8 @@ namespace IART {
 
 			loadRobotsPanel();
 
+			this->Refresh();
+
 			guiFlashingAnimation(currNode);
 		}
 	}
@@ -274,7 +296,7 @@ namespace IART {
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		if (!currNode->finished())
+		if (currNode != NULL && !currNode->finished() && map.size() > 0)
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
@@ -300,7 +322,7 @@ namespace IART {
 					{
 						guiFlashingAnimation(currNode);
 
-						int optimalCost = aStar2(rootNode)->cost;
+						int optimalCost = aStar2(rootNode, 0)->cost;
 						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
 						resetMap();
 					}
@@ -324,6 +346,7 @@ namespace IART {
 
 		int limit = stoi(convertString(textBox1->Text));
 
+		int heuristic = comboBox2->SelectedIndex;
 
 		clock_t time = clock();
 
@@ -331,11 +354,10 @@ namespace IART {
 		else if (algorithm == 2) result = depth(currNode, 0, limit);
 		else if (algorithm == 3) result = iteDeepening(currNode, limit);
 		else if (algorithm == 4) result = uniformCost(currNode);
-		else if (algorithm == 5) result = greedy(tree, currNode, 0);
-		else if (algorithm == 6) result = aStar2(currNode);
+		else if (algorithm == 5) result = greedy(tree, currNode, 0, limit, heuristic);
+		else if (algorithm == 6) result = aStar2(currNode, heuristic);
 
 		double deltaTime = (double)(clock() - time) / CLOCKS_PER_SEC;
-
 
 		if (result == NULL)
 			MessageBox::Show("Failed to find solution!");
@@ -351,15 +373,21 @@ namespace IART {
 				node = node->parent;
 			}
 
+			int stopTime = 150;
+
 			for (size_t i = path.size() - 1; i >= 1; i--)
 			{
 				guiWalkingAnimation(path[i], path[i - 1]);
-			}
 
-			setNode(currNode, path.front());
+				ui_utilities::milliSleep(stopTime);
+			}
+			
+
+			setNode(currNode, result);
 
 			guiFlashingAnimation(currNode);
-			MessageBox::Show("Agent's solution is " + currNode->cost + " moves.");
+
+			MessageBox::Show("Agent's solution is " + currNode->cost + " moves." + "Finished in " + deltaTime + " seconds.");
 
 			resetMap();
 		}
@@ -367,8 +395,6 @@ namespace IART {
 
 	void guiFlashingAnimation(Node* node)
 	{
-		this->Refresh();
-
 		int flashTime = 150, index;
 
 		for (int i = 0; i < 10; ++i) // start flashing animation
@@ -577,7 +603,7 @@ namespace IART {
 
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		if (comboBox1->SelectedIndex > -1)
+		if (comboBox1->SelectedIndex > -1 && map.size() > 0)
 		{
 			printAgent();
 		}
@@ -585,8 +611,11 @@ namespace IART {
 
 	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
 	{
-		textBox1->Visible = (comboBox1->SelectedIndex == 1 || comboBox1->SelectedIndex == 2);
+		textBox1->Visible = (comboBox1->SelectedIndex == 1 || comboBox1->SelectedIndex == 2 || comboBox1->SelectedIndex == 4);
+
+		comboBox2->Visible = (comboBox1->SelectedIndex == 4 || comboBox1->SelectedIndex == 5);
 	}
+
 
 	Image^ changeColor(Image^ image, char robotId)
 	{
@@ -676,6 +705,7 @@ namespace IART {
 	
 		((RadioButton^)robotPanel->Controls->Find("robotSelectorButton" + index, true)[0])->Checked = true;
 	}
+	
 	
 };
 }

@@ -134,7 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FEUP-IART\src\algorithms.cpp" />
-    <ClCompile Include="FEUP-IART\src\interface.cpp" />
     <ClCompile Include="FEUP-IART\src\mapLoader.cpp" />
     <ClCompile Include="FEUP-IART\src\node.cpp" />
     <ClCompile Include="FEUP-IART\src\robot.cpp" />
@@ -143,7 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FEUP-IART\src\algorithms.h" />
-    <ClInclude Include="FEUP-IART\src\interface.h" />
     <ClInclude Include="FEUP-IART\src\macros.h" />
     <ClInclude Include="FEUP-IART\src\mapLoader.h" />
     <ClInclude Include="FEUP-IART\src\node.h" />

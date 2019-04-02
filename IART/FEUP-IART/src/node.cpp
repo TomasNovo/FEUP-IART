@@ -21,7 +21,7 @@ Node::Node(const Node& node)
 	this->operationName = node.operationName;
 }
 
-void Node::setH()
+void Node::setH(int heuristic)
 {
 	this->h = 0;
 
@@ -32,10 +32,12 @@ void Node::setH()
 		
 		int deltaX = abs(state[i].coords[0] - state[i].objective[0]), deltaY = abs(state[i].coords[1] - state[i].objective[1]);
 		
-		
-		this->h += (deltaX + deltaY)/(double)16;
+		if (heuristic == 0)
+			this->h += (deltaX + deltaY)/(double)16;
+		else if (heuristic == 1)
+			this->h += sqrt(deltaX*deltaX + deltaY * deltaY) / (double)16;
 
-		//this->h += sqrt(deltaX*deltaX + deltaY * deltaY) / (double)16;
+
 	}
 
 	this->f = this->cost + this->h;
