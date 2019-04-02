@@ -85,6 +85,9 @@ void agent(string map)
 	{
 		cout << "Choose between manhattan distance(0) or euclidean distance(1):";
 		cin >> heuristic;
+
+		if (heuristic != 0 && heuristic != 1)
+			heuristic = 0;
 	}
 
 	clock_t time = clock();
