@@ -455,15 +455,9 @@ namespace IART {
 
 				for (int j = 0; j < abs(deltaY); ++j)
 				{
-					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
-					boxes[index]->Image = nullptr;
-					boxes[index]->Refresh();
-
 					nextNode->state[i].coords[1] += deltaY / abs(deltaY);
 
-					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
-					boxes[index]->Image = robots[i];
-					boxes[index]->Refresh();
+					setNode(node1, nextNode);
 
 					ui_utilities::milliSleep(walkTime); //sleeps for 80 milliseconds
 				}
@@ -474,15 +468,9 @@ namespace IART {
 
 				for (int j = 0; j < abs(deltaX); ++j)
 				{
-					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
-					boxes[index]->Image = nullptr;
-					boxes[index]->Refresh();
-
 					nextNode->state[i].coords[0] += deltaX / abs(deltaX);
 
-					index = coordsToIndex(nextNode->state[i].coords[0], nextNode->state[i].coords[1]);
-					boxes[index]->Image = robots[i];
-					boxes[index]->Refresh();
+					setNode(node1, nextNode);
 
 					ui_utilities::milliSleep(walkTime); //sleeps for 80 milliseconds
 				}
@@ -534,10 +522,28 @@ namespace IART {
 		for (size_t i = 0; i < node1->state.size(); i++)
 		{
 			index = coordsToIndex(node1->state[i].coords[0], node1->state[i].coords[1]);
-			boxes[index]->Image = nullptr;
+			
+			bool flag = false;
+			for (size_t j = 0; j < node1->state.size(); j++)
+			{
+				if (node1->state[j].objective == node1->state[i].coords)
+				{
+					boxes[index]->Image = goals[j];
+					flag = true;
+					break;
+				}
+			}
+
+			if (!flag)
+			{
+				boxes[index]->Image = nullptr;
+			}
+
+			boxes[index]->Refresh();
 
 			index = coordsToIndex(node2->state[i].coords[0], node2->state[i].coords[1]);
 			boxes[index]->Image = robots[i];
+			boxes[index]->Refresh();
 		}
 
 		*node1 = *node2;
