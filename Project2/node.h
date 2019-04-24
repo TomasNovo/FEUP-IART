@@ -16,9 +16,9 @@ class Node
 public:
 	vector<vector<int>> state;
 
-	int cost;
-	int h;
-	int f;
+	int cost = 0;
+	double h = 0;
+	double f = 0;
 
 	Node* parent = NULL;
 	string operationName = "";

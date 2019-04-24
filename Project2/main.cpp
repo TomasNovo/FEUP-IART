@@ -112,7 +112,6 @@ void gameLoop()
 
 	for (numPlays = 0; ; numPlays++)
 	{
-
 		if (numPlays % 2 == 0)
 			cout << "Your turn\n\n";
 		else
