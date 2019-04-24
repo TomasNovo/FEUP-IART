@@ -6,38 +6,29 @@
 #include <iostream>
 #include <unordered_set>
 
-#define BRDWDTH 7
-#define BRDHGHT 6
-
-using namespace std;
+#include "character.h"
 
 class Node
 {
 public:
-	vector<vector<int>> state;
-
+	std::vector<Character> state;
+	
 	int cost = 0;
-	double h = 0;
-	double f = 0;
+	double h = -1;
+	double f;
 
 	Node* parent = NULL;
-	string operationName = "";
+	std::string operationName = "";
 
 	Node();
 
+	Node(int n);
+
 	Node(const Node& node);
 
-	void setH();
+	void setH(int heuristic);
 
-	int nlinhas4(int player);
-	int checkWinFour(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
-
-	int nlinhas3(int player);
-	int checkWinThree(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
-
-	int central(int player);
-
-	bool play(int x);
+	bool finished();
 	
 	bool operator==(const Node* node) const;
 	bool operator==(const Node& node) const;
@@ -47,10 +38,10 @@ public:
 
 };
 
-ostream& operator<<(ostream& os, const Node& node);
+std::ostream& operator<<(std::ostream& os, const Node& node);
 
 
-string printState(vector<vector<int>> state);
+std::string printState(std::vector<Character> state);
 
 
 struct hashNode
@@ -65,6 +56,9 @@ struct sortH
 	bool operator() (const Node* node1, const Node* node2) const;
 };
 
-
+struct sortF
+{
+	bool operator() (const Node* node1, const Node* node2) const;
+};
 
 #endif
