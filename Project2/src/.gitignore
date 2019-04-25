@@ -1,6 +1,0 @@
-main
-main.exe
-*.o
-
-.vscode/*
-log.txt
