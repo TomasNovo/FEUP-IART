@@ -4,4 +4,8 @@
 
 #define DEBUG 0
 
+#define MAPHEIGHT 9
+#define MAPWIDTH 9
+
+
 #endif

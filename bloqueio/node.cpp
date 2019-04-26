@@ -6,7 +6,31 @@
 
 Node::Node()
 {
+	Character character;
 
+	character.coords[0] = 4;
+	character.coords[1] = 0;
+	character.objective[1] = 8;
+	character.id = 'a';
+	state.push_back(character);
+
+	character.coords[0] = 8;
+	character.coords[1] = 4;
+	character.objective[0] = 0;
+	character.id = 'b';
+	state.push_back(character);
+
+	character.coords[0] = 4;
+	character.coords[1] = 8;
+	character.objective[1] = 0;
+	character.id = 'c';
+	state.push_back(character);
+
+	character.coords[0] = 0;
+	character.coords[1] = 4;
+	character.objective[0] = 8;
+	character.id = 'd';
+	state.push_back(character);
 }
 
 
@@ -16,6 +40,7 @@ Node::Node(const Node& node)
 
 	this->cost = node.cost;
 	this->h = node.h;
+	this->f = node.f;
 
 	this->parent = node.parent;
 	this->operationName = node.operationName;
@@ -25,20 +50,7 @@ void Node::setH(int heuristic)
 {
 	this->h = 0;
 
-	for (int i = 0; i < state.size(); ++i)
-	{
-		if (state[i].objective[0] == -1 && state[i].objective[1] == -1)
-			continue;
-		
-		int deltaX = abs(state[i].coords[0] - state[i].objective[0]), deltaY = abs(state[i].coords[1] - state[i].objective[1]);
-		
-		if (heuristic == 0)
-			this->h += (deltaX + deltaY)/(double)16;
-		else if (heuristic == 1)
-			this->h += sqrt(deltaX*deltaX + deltaY * deltaY) / (double)16;
-
-
-	}
+	// h is sorthest distance to border subtracted distances of other players.
 
 	this->f = this->cost + this->h;
 }
@@ -82,7 +94,7 @@ std::ostream& operator<<(std::ostream& os, const Node& node)
 }
 
 
-std::string printState(std::vector<Robot> state)
+std::string printState(std::vector<Character> state)
 {
 	std::stringstream ss;
 	for (int i = 0; i < state.size(); ++i)
@@ -103,7 +115,7 @@ int hashNode::operator() (const Node* node) const
 	{
 		hash += std::hash<int>()(node->state[i].coords[0]);
 		hash += std::hash<int>()(node->state[i].coords[1]);
-		// hash += std::hash<int>()(node->state[i].objective[0]);
+		// hash += std::hash<int>()(node->state[i].objective[0]);\
 		// hash += std::hash<int>()(node->state[i].objective[1]);
 	}
 

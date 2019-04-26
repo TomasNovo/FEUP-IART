@@ -6,12 +6,12 @@
 #include <iostream>
 #include <unordered_set>
 
-#include "robot.h"
+#include "character.h"
 
 class Node
 {
 public:
-	std::vector<Robot> state;
+	std::vector<Character> state;
 	
 	int cost = 0;
 	double h = -1;
@@ -41,7 +41,7 @@ public:
 std::ostream& operator<<(std::ostream& os, const Node& node);
 
 
-std::string printState(std::vector<Robot> state);
+std::string printState(std::vector<Character> state);
 
 
 struct hashNode

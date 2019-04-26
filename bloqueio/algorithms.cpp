@@ -21,11 +21,11 @@ Node* breadth(Node* currNode)
 		{
 			currNode = currRow[i];
 
-			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+			for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 			{
 				for (int j = 0; j < operations.size(); j++)
 				{
-					nextNode = operations[j](currNode, robotIndex);
+					nextNode = operations[j](currNode, characterIndex);
 					nextNode->cost++;
 					nextNode->parent = currNode;
 					nextNode->operationName = operationNames[j];
@@ -78,11 +78,11 @@ Node* uniformCost(Node* currNode)
 			if (DEBUG)
 				std::cout << *currNode << "\n";
 
-			for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+			for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 			{
 				for (int j = 0; j < operations.size(); j++)
 				{
-					nextNode = operations[j](currNode, robotIndex);
+					nextNode = operations[j](currNode, characterIndex);
 					nextNode->cost++;
 					nextNode->parent = currNode;
 					nextNode->operationName = operationNames[j];
@@ -124,11 +124,11 @@ Node* depth(Node* currNode, int level, const int& limit)
 
 	Node* nextNode = new Node();
 
-	for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+	for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = operations[i](currNode, robotIndex);
+			nextNode = operations[i](currNode, characterIndex);
 			nextNode->cost++;
 			nextNode->parent = currNode;
 			nextNode->operationName = operationNames[i];
@@ -189,11 +189,11 @@ Node* greedy(std::unordered_set<Node*, hashNode, hashNode>& tree, Node* currNode
 
 	std::priority_queue<Node*, std::vector<Node*>, sortH> nextRow;
 
-	for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+	for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = operations[i](currNode, robotIndex);
+			nextNode = operations[i](currNode, characterIndex);
 			nextNode->cost++;
 			nextNode->parent = currNode;
 			nextNode->operationName = operationNames[i];
@@ -272,11 +272,11 @@ Node* aStar(Node* currNode, int heuristic)
 		if (DEBUG)
 			std::cout << *currNode << "\n";
 
-		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+		for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 		{
 			for (int i = 0; i < operations.size(); i++)
 			{				
-				nextNode = operations[i](currNode, robotIndex);
+				nextNode = operations[i](currNode, characterIndex);
 				nextNode->cost++;
 				nextNode->parent = currNode;
 				nextNode->operationName = operationNames[i];
@@ -341,11 +341,11 @@ Node* aStar2(Node* currNode, int heuristic)
 		if (DEBUG)
 			std::cout << *currNode << "\n";
 
-		for (int robotIndex = 0; robotIndex < currNode->state.size(); robotIndex++)
+		for (int characterIndex = 0; characterIndex < currNode->state.size(); characterIndex++)
 		{
 			for (int i = 0; i < operations.size(); i++)
 			{
-				nextNode = operations[i](currNode, robotIndex);
+				nextNode = operations[i](currNode, characterIndex);
 				nextNode->cost++;
 				nextNode->parent = currNode;
 				nextNode->operationName = operationNames[i];
@@ -378,4 +378,50 @@ Node* aStar2(Node* currNode, int heuristic)
 	}
 
 	return NULL;
+}
+
+
+Node* minimax(Node* currNode, int characterIndex, int depth, bool maximizing)
+{
+	if (depth == 0)
+		return currNode;
+
+	Node* nextNode = new Node();
+	Node* bestNode = NULL;
+	int value;
+
+	if (maximizing)
+	{
+		for (int i = 0; i < operations.size(); i++)
+		{
+			nextNode = operations[i](currNode, characterIndex);
+
+			if (nextNode == NULL)
+				continue;
+
+			nextNode = minimax(nextNode, characterIndex, depth - 1, false);
+
+			if (bestNode == NULL || nextNode->h > bestNode->h)
+				bestNode = nextNode;
+		}
+
+		return bestNode;
+	}
+	else
+	{
+		for (int i = 0; i < operations.size(); i++)
+		{
+			nextNode = operations[i](currNode, characterIndex);
+
+			if (nextNode == NULL)
+				continue;
+
+			nextNode = minimax(nextNode, characterIndex, depth - 1, true);
+			
+			if (bestNode == NULL || nextNode->h < bestNode->h)
+				bestNode = nextNode;
+		}
+
+		return bestNode;
+	}
 }

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "robot.h"
+#include "character.h"
 #include "node.h"
 
 extern std::vector<std::vector<char>> map;
@@ -16,11 +16,11 @@ extern std::vector<std::string> operationNames;
 
 void initiateOperators();
 
-bool validMove(Node* node, int robotIndex, int x, int y);
+bool validMove(Node* node, int characterIndex, int x, int y);
 
-Node* initiateMap(std::string filename);
+Node* initiateMap();
 
-void loadMap(std::string filename, std::vector<Robot>& robots);
+void loadMap(std::string filename, std::vector<Character>& characters);
 
 void initiateOperators();
 
