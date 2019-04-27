@@ -3,13 +3,15 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "character.h"
 #include "node.h"
 
 extern std::vector<std::vector<char>> map;
 
-typedef Node* (*Operator)(Node*, int);
+typedef std::function<Node*(Node*, int)>  Operator;
+
 
 extern std::vector<Operator> operations;
 extern std::vector<std::string> operationNames;
@@ -20,9 +22,11 @@ bool validMove(Node* node, int characterIndex, int x, int y);
 
 Node* initiateMap();
 
-void loadMap(std::string filename, std::vector<Character>& characters);
-
 void initiateOperators();
+
+Node* doOperation(Node* currNode, int i, int characterIndex);
+
+bool removeOperation(std::string operationName);
 
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <ostream>
+#include <set>
 
 class Character
 {
@@ -10,7 +11,7 @@ public:
 	std::vector<int> coords;
 	std::vector<int> objective;
 
-	std::vector<std::vector<int>> walls;
+	std::set<std::string> walls;
 
 	char id;
 
@@ -18,12 +19,11 @@ public:
 	
 	bool finished();
 
+	bool addWall(std::string wallName);
+
 	bool operator==(const Character& character) const;
 	
 	bool operator<(const Character& character) const;
-
-	
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Character& character);

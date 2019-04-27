@@ -56,14 +56,14 @@ namespace IART {
 	private: cli::array<cli::array<PictureBox^>^>^ boxes;
 	private: cli::array<PictureBox^>^ bars;
 
-	private: Image^ wall;
-	private: Image^ floor;
+	private: Image^ block;
+	private: Image^ bar;
 	private: array<Image^>^ characters;
 
 	private: Node* rootNode;
 	private: Node* currNode;
 
-	private: int selectedRobot = 0;
+	private: int selectedCharacter = 0;
 	
 	private: System::Windows::Forms::Label^  mapLabel;
 	private: System::Windows::Forms::Button^  button2;
@@ -252,19 +252,17 @@ namespace IART {
 
 	private: void initializeBoxes()
 	{
-		boxes = (gcnew cli::array<cli::array<PictureBox^>^>(MAPHEIGHT));
-		bars = (gcnew cli::array<PictureBox^>(MAPHEIGHT*2 - 1));
+		mainPanel->Size = System::Drawing::Size((MAPWIDTH - 1) * 60 + 50, (MAPHEIGHT - 1) * 60 + 50);
+		mainPanel->MouseClick += gcnew MouseEventHandler(this, &gui::placeBar);
 
 		PictureBox^ picbox;
-		int index, posX = 0, posY = 0, adder = 0;
+		int posX = 0, posY = 0, adder = 0;
 		for (size_t i = 0; i < MAPHEIGHT; i++)
 		{
-			boxes[i] = (gcnew cli::array<PictureBox^>(MAPWIDTH));
+			//boxes[i] = (gcnew cli::array<PictureBox^>(MAPWIDTH));
 
 			for (size_t j = 0; j < MAPWIDTH; j++)
 			{
-				index = coordsToIndex(j, i);
-
 				// Box
 				picbox = gcnew PictureBox();
 
@@ -272,63 +270,87 @@ namespace IART {
 				posY = i * 60;
 
 				picbox->Location = System::Drawing::Point(posX, posY);
-				picbox->Name = L"box" + index;
+				picbox->Name = L"box" + i + j;
 				picbox->Size = System::Drawing::Size(50, 50);
 
 				mainPanel->Controls->Add(picbox);
-
-				boxes[i][j] = picbox;
-
-				picbox->MouseUp += gcnew MouseEventHandler(this, &gui::dragDrop);
-				
-
-
-				//if (j < MAPWIDTH-1)
-				//{
-				//	// Bar
-				//	picbox = gcnew PictureBox();
-
-				//	posX = j * 60 + 50;
-				//	posY = i * 60;
-
-				//	picbox->Location = System::Drawing::Point(posX, posY);
-				//	picbox->Name = L"bar" + index;
-				//	picbox->Size = System::Drawing::Size(10, 50);
-
-				//	mainPanel->Controls->Add(picbox);
-
-				//	//bars[index] = picbox;
-				//}
-
-				//if (i < MAPHEIGHT - 1)
-				//{
-				//	// Bar
-				//	picbox = gcnew PictureBox();
-
-				//	posX = j * 60;
-				//	posY = i * 60 + 50;
-
-				//	picbox->Location = System::Drawing::Point(posX, posY);
-				//	picbox->Name = L"bar" + index;
-				//	picbox->Size = System::Drawing::Size(50, 10);
-
-				//	mainPanel->Controls->Add(picbox);
-
-				//	//bars[index] = picbox;
-				//}
 			}
 		}
 	}
 
-	void dragDrop(System::Object^  sender, MouseEventArgs^  e)
+	void placeBar(System::Object^  sender, MouseEventArgs^  e)
 	{
+		if (e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
+		{
+			return;
+		}
 
+		if (e->X % 60 >= 50) // Vertical line
+		{
+			int j = e->X / 60;
+			int i = e->Y / 60;
+
+			if (i == MAPWIDTH - 1)
+				i--;
+
+			if (getPictureBox("barVer"+i+j) == nullptr && getPictureBox("barVer" + (i+1) + j) == nullptr && getPictureBox("barHor" + i + j) == nullptr)
+			{
+				PictureBox^ picbox = gcnew PictureBox();
+
+				int posX = j * 60 + 50;
+				int posY = i * 60;
+
+				picbox->Location = System::Drawing::Point(posX, posY);
+				picbox->Name = L"barVer" + i + j;
+				picbox->Size = System::Drawing::Size(10, 110);
+				picbox->Image = bar;
+
+				mainPanel->Controls->Add(picbox);
+
+				currNode->state[selectedCharacter].addWall(convertString(picbox->Name));
+
+				removeOperation("barVer" + std::to_string(i) + std::to_string(j));
+				removeOperation("barVer" + std::to_string(i+1) + std::to_string(j));
+				removeOperation("barHor" + std::to_string(i) + std::to_string(j));
+			}
+		}
+
+		else if (e->Y % 60 >= 50) // Horizontal line
+		{
+			int j = e->X / 60;
+			int i = e->Y / 60;
+
+			if (j == MAPWIDTH - 1)
+				j--;
+
+			if (getPictureBox("barHor" + i + j) == nullptr && getPictureBox("barHor" + i + (j+1)) == nullptr && getPictureBox("barVer" + i + j) == nullptr)
+			{
+				PictureBox^ picbox = gcnew PictureBox();
+
+				int posX = j * 60;
+				int posY = i * 60 + 50;
+
+				picbox->Location = System::Drawing::Point(posX, posY);
+				picbox->Name = L"barHor" + i + j;
+				picbox->Size = System::Drawing::Size(110, 10);
+				picbox->Image = RotateImage(bar);
+
+				mainPanel->Controls->Add(picbox);
+
+				currNode->state[selectedCharacter].addWall(convertString(picbox->Name));
+
+				removeOperation("barHor" + std::to_string(i) + std::to_string(j));
+				removeOperation("barHor" + std::to_string(i) + std::to_string(j + 1));
+				removeOperation("barVer" + std::to_string(i) + std::to_string(j));
+			}
+		}
 	}
+
 
 	void loadBoxes()
 	{
-		wall = Image::FromFile("images/wall.png");
-		floor = Image::FromFile("images/floor.png");
+		block = Image::FromFile("images/wall.png");
+		bar = Image::FromFile("images/bar.png");
 		characters = gcnew array<Image^>(currNode->state.size());
 
 		Image^ currImage;
@@ -337,27 +359,39 @@ namespace IART {
 		{
 			for (size_t j = 0; j < MAPWIDTH; j++)
 			{
-				boxes[i][j]->BackgroundImage = wall;
+				getPictureBox("box" + i + j)->BackgroundImage = block;
 			}
 		}
 
 		for (size_t i = 0; i < currNode->state.size(); i++)
 		{
 			characters[i] = changeColor(Image::FromFile("images/robot.png"), currNode->state[i].id);
-			boxes[currNode->state[i].coords[1]][currNode->state[i].coords[0]]->Image = characters[i];
+			getPictureBox("box" + currNode->state[i].coords[1] + currNode->state[i].coords[0])->Image = characters[i];
 		}
 	}
 
 
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		if (map.size() > 0)
-			resetMap();
+		/*if (map.size() > 0)
+			resetMap();*/
+
+		Node* bestMove;
+
+		for (size_t i = 0; i < currNode->state.size(); i++)
+		{
+			if (i != selectedCharacter)
+			{
+				bestMove = minimax(currNode, i, 3);
+
+				bestMove->h;
+			}
+		}
 	}
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		if (currNode != NULL && !currNode->finished() && map.size() > 0)
+		if (currNode != NULL && !currNode->finished())
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
@@ -366,7 +400,7 @@ namespace IART {
 			{
 				if (letters[i] == e->KeyChar)
 				{
-					nextNode = operations[i](currNode, selectedRobot);
+					nextNode = doOperation(currNode, i, selectedCharacter);
 
 					if (*currNode == *nextNode)
 						return;
@@ -383,7 +417,6 @@ namespace IART {
 						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
 						resetMap();
 					}
-
 
 					break;
 				}
@@ -464,50 +497,19 @@ namespace IART {
 
 	void setNode(Node* node1, Node* node2)
 	{
-		/*int index;
+		int index;
 		for (size_t i = 0; i < node1->state.size(); i++)
 		{
-			index = coordsToIndex(node1->state[i].coords[0], node1->state[i].coords[1]);
-			
-			bool flag = false;
-			for (size_t j = 0; j < node1->state.size(); j++)
-			{
-				if (node1->state[j].objective == node1->state[i].coords)
-				{
-					boxes[index]->Image = goals[j];
-					flag = true;
-					break;
-				}
-			}
+			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Image = nullptr;
+			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Refresh();
 
-			if (!flag)
-			{
-				boxes[index]->Image = nullptr;
-			}
-
-			boxes[index]->Refresh();
-
-			index = coordsToIndex(node2->state[i].coords[0], node2->state[i].coords[1]);
-			boxes[index]->Image = robots[i];
-			boxes[index]->Refresh();
-		}*/
+			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Image = characters[i];
+			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Refresh();
+		}
 
 		*node1 = *node2;
 	}
 
-	
-
-	int coordsToIndex(int x, int y)
-	{
-		return (x + y * 16);
-	}
-
-	cli::array<int>^ indexToCoords(int index)
-	{
-		cli::array<int>^ output = { index % 16, index / 16 };
-
-		return output;
-	}
 
 	void resetMap()
 	{
@@ -616,11 +618,33 @@ namespace IART {
 
 	void selectRobotButton(int index)
 	{
-		selectedRobot = index;
+		selectedCharacter = index;
 	
 		((RadioButton^)robotPanel->Controls->Find("robotSelectorButton" + index, true)[0])->Checked = true;
 	}
 	
+
+	PictureBox^ getPictureBox(System::String^ name)
+	{
+		auto findings = mainPanel->Controls->Find(name, true);
+
+		if (findings->Length == 0)
+			return nullptr;
+		else
+			return (PictureBox^)findings[0];
+	}
+
+	Image^ RotateImage(Image^ img)
+	{
+		Bitmap^ bmp = gcnew Bitmap(img);
+
+		Graphics^ gfx = Graphics::FromImage(bmp);
+		gfx->Clear(Color::White);
+		gfx->DrawImage(img, 0, 0, img->Width, img->Height);
+
+		bmp->RotateFlip(RotateFlipType::Rotate90FlipNone);
+		return bmp;
+	}
 	
 };
 }

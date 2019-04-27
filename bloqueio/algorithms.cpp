@@ -380,29 +380,40 @@ Node* aStar2(Node* currNode, int heuristic)
 	return NULL;
 }
 
-
-Node* minimax(Node* currNode, int characterIndex, int depth, bool maximizing)
+Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, double beta, bool maximizing)
 {
-	if (depth == 0)
+	if (depth == 0 || currNode->finished())
 		return currNode;
 
-	Node* nextNode = new Node();
+	Node* nextNode = NULL;
 	Node* bestNode = NULL;
-	int value;
 
 	if (maximizing)
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = operations[i](currNode, characterIndex);
+			nextNode = doOperation(currNode, i, characterIndex);
+
+			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, false);
 
 			if (nextNode == NULL)
 				continue;
 
-			nextNode = minimax(nextNode, characterIndex, depth - 1, false);
+			alpha = std::max(alpha, nextNode->h);
+
+			if (nextNode->h > alpha)
+				alpha = nextNode->h;
+
+			if (alpha >= beta)
+				break;
 
 			if (bestNode == NULL || nextNode->h > bestNode->h)
+			{
+				delete bestNode;
 				bestNode = nextNode;
+			}
+			else
+				delete nextNode;
 		}
 
 		return bestNode;
@@ -411,17 +422,34 @@ Node* minimax(Node* currNode, int characterIndex, int depth, bool maximizing)
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = operations[i](currNode, characterIndex);
+			nextNode = doOperation(currNode, i, characterIndex);
+
+			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, true);
 
 			if (nextNode == NULL)
 				continue;
 
-			nextNode = minimax(nextNode, characterIndex, depth - 1, true);
-			
+			if (nextNode->h < beta)
+				beta = nextNode->h;
+
+			if (alpha >= beta)
+				break;
+
 			if (bestNode == NULL || nextNode->h < bestNode->h)
+			{
+				delete bestNode;
 				bestNode = nextNode;
+			}
+			else
+				delete nextNode;
 		}
 
 		return bestNode;
 	}
 }
+
+Node* minimax(Node* currNode, int characterIndex, int depth)
+{
+	return minimax(currNode, characterIndex, depth, -DBL_MAX, DBL_MAX, true);
+}
+

@@ -13,6 +13,11 @@ bool Character::finished()
 	return (coords[0] == objective[0] || coords[1] == objective[1]);
 }
 
+bool Character::addWall(std::string wallName)
+{
+	return walls.insert(wallName).second;
+}
+
 
 bool Character::operator==(const Character& character) const
 {
