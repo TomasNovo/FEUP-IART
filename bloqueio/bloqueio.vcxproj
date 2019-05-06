@@ -118,6 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -141,11 +142,18 @@
   <ItemGroup>
     <ClInclude Include="algorithms.h" />
     <ClInclude Include="character.h" />
-    <ClInclude Include="gui.h" />
+    <ClInclude Include="gui.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="macros.h" />
     <ClInclude Include="mapLoader.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="ui_utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gui.resx">
+      <DependentUpon>gui.h</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

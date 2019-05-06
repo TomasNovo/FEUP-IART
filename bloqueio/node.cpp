@@ -3,6 +3,8 @@
 #include <cmath>
 #include <sstream>
 
+#include "macros.h"
+#include  "mapLoader.h"
 
 Node::Node()
 {
@@ -52,8 +54,101 @@ void Node::setH(int heuristic)
 
 	// h is sorthest distance to border subtracted distances of other players.
 
+	for (size_t i = 0; i < state.size(); i++)
+	{
+		int characterH = getDistance(i);
+
+		if (i == 0)
+			this->h -= characterH;
+		else
+			this->h += characterH;
+	}
+	
 	this->f = this->cost + this->h;
 }
+
+
+int Node::getDistance(int characterIndex)
+{
+	Node* currNode = new Node(*this);
+	Node* nextNode;
+
+	std::multiset<Node*, sortF> openList;
+	std::unordered_set<Node*, hashNode, hashNode> openSet;
+
+	std::unordered_set<Node*, hashNode, hashNode> closedSet;
+
+	openList.insert(currNode);
+	openSet.insert(currNode);
+
+	while (openList.size() > 0)
+	{
+		std::multiset<Node*, sortF>::iterator it = openList.begin();
+		currNode = *(it);
+
+		if (currNode->state[characterIndex].finished())
+		{
+			int result = currNode->cost - this->cost;
+
+			// Erase nodes
+			for (auto ite = openList.begin(); ite != openList.end(); ++ite)
+				delete *ite;
+
+			for (auto ite = closedSet.begin(); ite != closedSet.end(); ++ite)
+				delete *ite;
+
+			return result;
+		}
+
+		openList.erase(it);
+		openSet.erase(currNode);
+
+		closedSet.insert(currNode);
+
+		if (DEBUG)
+			std::cout << *currNode << "\n";
+
+		for (int i = 0; i < 4; i++)
+		{
+			nextNode = operations[i](currNode, characterIndex);
+			nextNode->cost++;
+			nextNode->h = nextNode->state[characterIndex].H();
+			nextNode->f = nextNode->cost + nextNode->h;
+
+			if (closedSet.find(nextNode) == closedSet.end())
+			{
+				auto it = openSet.find(nextNode);
+
+				if (it == openSet.end())
+				{
+					openList.insert(nextNode);
+					openSet.insert(nextNode);
+				}
+				else
+				{
+					if (nextNode->cost < (*it)->cost)
+					{
+						Node* itNode = (*it);
+
+						openList.erase(*it);
+						openSet.erase(*it);
+
+						delete itNode;
+
+						openList.insert(nextNode);
+						openSet.insert(nextNode);
+					}
+				}
+			}
+			else
+				delete nextNode;
+		}
+	}
+
+	return -1;
+}
+
+
 
 bool Node::finished()
 {

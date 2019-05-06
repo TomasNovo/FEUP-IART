@@ -1,7 +1,10 @@
 #include "algorithms.h"
 
+#include <cfloat>
+
 #include "mapLoader.h"
 #include "macros.h"
+
 
 Node* breadth(Node* currNode)
 {
@@ -392,7 +395,16 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = doOperation(currNode, i, characterIndex);
+			nextNode = operations[i](currNode, characterIndex);
+
+			if (*nextNode == *currNode)
+			{
+				delete nextNode;
+				continue;
+			}
+
+			nextNode->cost++;
+			nextNode->setH(0);
 
 			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, false);
 
@@ -422,7 +434,16 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = doOperation(currNode, i, characterIndex);
+			nextNode = operations[i](currNode, characterIndex);
+
+			if (*nextNode == *currNode)
+			{
+				delete nextNode;
+				continue;
+			}
+
+			nextNode->cost++;
+			nextNode->setH(0);
 
 			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, true);
 

@@ -48,7 +48,7 @@ namespace IART {
 			}
 		}
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
-	private: System::Windows::Forms::Button^  button1;
+
 
 
 	private: System::Windows::Forms::Panel^  mainPanel;
@@ -64,17 +64,20 @@ namespace IART {
 	private: Node* currNode;
 
 	private: int selectedCharacter = 0;
-	
+
 	private: System::Windows::Forms::Label^  mapLabel;
-	private: System::Windows::Forms::Button^  button2;
-	private: System::Windows::Forms::ComboBox^  comboBox1;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Button^  button3;
-	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::Button^  button1;
+
+
+
+
+
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Panel^  robotPanel;
-	private: System::Windows::Forms::ComboBox^  comboBox2;
+	private: System::Windows::Forms::Button^  button2;
+	private: System::Windows::Forms::Button^  button3;
+
 
 
 
@@ -101,19 +104,14 @@ namespace IART {
 
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(gui::typeid));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
-			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->button3 = (gcnew System::Windows::Forms::Button());
-			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
-			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
+			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// mainPanel
@@ -131,62 +129,21 @@ namespace IART {
 			this->mapLabel->Size = System::Drawing::Size(0, 13);
 			this->mapLabel->TabIndex = 4;
 			// 
-			// button2
+			// button1
 			// 
-			this->button2->Location = System::Drawing::Point(28, 72);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 5;
-			this->button2->Text = L"Reset map";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &gui::button2_Click);
-			// 
-			// comboBox1
-			// 
-			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(6) {
-				L"Breadth-first search", L"Depth-first search",
-					L"Iterative deepening", L"Uniform-cost search", L"Greedy (best-first) search", L"A*"
-			});
-			this->comboBox1->Location = System::Drawing::Point(11, 134);
-			this->comboBox1->Name = L"comboBox1";
-			this->comboBox1->Size = System::Drawing::Size(121, 21);
-			this->comboBox1->TabIndex = 6;
-			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox1_SelectedIndexChanged);
-			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(25, 113);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(90, 13);
-			this->label1->TabIndex = 7;
-			this->label1->Text = L"Agent\'s algorithm:";
-			// 
-			// button3
-			// 
-			this->button3->Location = System::Drawing::Point(33, 228);
-			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(75, 23);
-			this->button3->TabIndex = 8;
-			this->button3->Text = L"Solve";
-			this->button3->UseVisualStyleBackColor = true;
-			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
-			// 
-			// textBox1
-			// 
-			this->textBox1->Location = System::Drawing::Point(22, 168);
-			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(100, 20);
-			this->textBox1->TabIndex = 9;
-			this->textBox1->Text = L"15";
-			this->textBox1->Visible = false;
+			this->button1->ImageAlign = System::Drawing::ContentAlignment::BottomLeft;
+			this->button1->Location = System::Drawing::Point(33, 25);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(75, 23);
+			this->button1->TabIndex = 8;
+			this->button1->Text = L"Minimax";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &gui::button1_Click);
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(37, 283);
+			this->label2->Location = System::Drawing::Point(35, 188);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(73, 13);
 			this->label2->TabIndex = 11;
@@ -194,37 +151,43 @@ namespace IART {
 			// 
 			// robotPanel
 			// 
-			this->robotPanel->Location = System::Drawing::Point(17, 312);
+			this->robotPanel->Location = System::Drawing::Point(12, 215);
 			this->robotPanel->Name = L"robotPanel";
-			this->robotPanel->Size = System::Drawing::Size(117, 421);
+			this->robotPanel->Size = System::Drawing::Size(117, 205);
 			this->robotPanel->TabIndex = 12;
 			// 
-			// comboBox2
+			// button2
 			// 
-			this->comboBox2->FormattingEnabled = true;
-			this->comboBox2->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manhattan distance", L"Euclidean distance" });
-			this->comboBox2->Location = System::Drawing::Point(13, 197);
-			this->comboBox2->Name = L"comboBox2";
-			this->comboBox2->Size = System::Drawing::Size(121, 21);
-			this->comboBox2->TabIndex = 13;
-			this->comboBox2->Visible = false;
+			this->button2->Location = System::Drawing::Point(33, 63);
+			this->button2->Name = L"button2";
+			this->button2->Size = System::Drawing::Size(75, 23);
+			this->button2->TabIndex = 13;
+			this->button2->Text = L"NodeH";
+			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &gui::button2_Click);
+			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(33, 106);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(75, 23);
+			this->button3->TabIndex = 14;
+			this->button3->Text = L"CharacterH";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
 			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(700, 600);
-			this->Controls->Add(this->comboBox2);
+			this->ClientSize = System::Drawing::Size(693, 540);
+			this->Controls->Add(this->button3);
+			this->Controls->Add(this->button2);
 			this->Controls->Add(this->robotPanel);
 			this->Controls->Add(this->label2);
-			this->Controls->Add(this->textBox1);
-			this->Controls->Add(this->button3);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->comboBox1);
-			this->Controls->Add(this->button2);
+			this->Controls->Add(this->button1);
 			this->Controls->Add(this->mapLabel);
 			this->Controls->Add(this->mainPanel);
-			this->Controls->Add(this->button1);
 			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->KeyPreview = true;
@@ -293,7 +256,7 @@ namespace IART {
 			if (i == MAPWIDTH - 1)
 				i--;
 
-			if (getPictureBox("barVer"+i+j) == nullptr && getPictureBox("barVer" + (i+1) + j) == nullptr && getPictureBox("barHor" + i + j) == nullptr)
+			if (validBar(currNode, selectedCharacter, "barVer", i, j))
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
@@ -310,7 +273,7 @@ namespace IART {
 				currNode->state[selectedCharacter].addWall(convertString(picbox->Name));
 
 				removeOperation("barVer" + std::to_string(i) + std::to_string(j));
-				removeOperation("barVer" + std::to_string(i+1) + std::to_string(j));
+				removeOperation("barVer" + std::to_string(i + 1) + std::to_string(j));
 				removeOperation("barHor" + std::to_string(i) + std::to_string(j));
 			}
 		}
@@ -323,7 +286,7 @@ namespace IART {
 			if (j == MAPWIDTH - 1)
 				j--;
 
-			if (getPictureBox("barHor" + i + j) == nullptr && getPictureBox("barHor" + i + (j+1)) == nullptr && getPictureBox("barVer" + i + j) == nullptr)
+			if (validBar(currNode, selectedCharacter, "barHor", i, j))
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
@@ -370,25 +333,6 @@ namespace IART {
 		}
 	}
 
-
-	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		/*if (map.size() > 0)
-			resetMap();*/
-
-		Node* bestMove;
-
-		for (size_t i = 0; i < currNode->state.size(); i++)
-		{
-			if (i != selectedCharacter)
-			{
-				bestMove = minimax(currNode, i, 3);
-
-				bestMove->h;
-			}
-		}
-	}
-
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
 		if (currNode != NULL && !currNode->finished())
@@ -403,7 +347,10 @@ namespace IART {
 					nextNode = doOperation(currNode, i, selectedCharacter);
 
 					if (*currNode == *nextNode)
+					{
+						delete nextNode;
 						return;
+					}
 
 					nextNode->cost++;
 					nextNode->parent = currNode;
@@ -423,65 +370,6 @@ namespace IART {
 			}
 		}
 	}
-
-
-	void printAgent()
-	{
-		Node* newCurrNode = new Node(*currNode);
-		newCurrNode->parent = NULL;
-
-		std::unordered_set<Node*, hashNode, hashNode> tree;
-		tree.insert(newCurrNode);
-
-		Node* result = NULL;
-
-		int algorithm = comboBox1->SelectedIndex + 1;
-
-		int limit = stoi(convertString(textBox1->Text));
-
-		int heuristic = comboBox2->SelectedIndex;
-
-		clock_t time = clock();
-
-		if (algorithm == 1) result = breadth(newCurrNode);
-		else if (algorithm == 2) result = depth(newCurrNode, 0, limit);
-		else if (algorithm == 3) result = iteDeepening(newCurrNode, limit);
-		else if (algorithm == 4) result = uniformCost(newCurrNode);
-		else if (algorithm == 5) result = greedy(tree, newCurrNode, 0, limit, heuristic);
-		else if (algorithm == 6) result = aStar2(newCurrNode, heuristic);
-
-		double deltaTime = (double)(clock() - time) / CLOCKS_PER_SEC;
-
-		if (result == NULL)
-			MessageBox::Show("Failed to find solution!");
-		else
-		{
-			std::vector<Node*> path;
-			Node* node = result;
-
-			for (size_t i = 0; node != NULL; i++)
-			{
-				path.push_back(node);
-
-				node = node->parent;
-			}
-
-			int stopTime = 150;
-
-			for (size_t i = path.size() - 1; i >= 1; i--)
-			{
-				ui_utilities::milliSleep(stopTime);
-			}
-			
-
-			setNode(currNode, result);
-
-			MessageBox::Show("Agent's solution is " + currNode->cost + " moves." + "Finished in " + deltaTime + " seconds.");
-
-			resetMap();
-		}
-	}
-
 
 	std::string convertString(System::String^ input)
 	{
@@ -508,6 +396,7 @@ namespace IART {
 		}
 
 		*node1 = *node2;
+		delete node2;
 	}
 
 
@@ -516,21 +405,6 @@ namespace IART {
 		setNode(currNode, rootNode);
 
 		loadBoxes();
-	}
-
-	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		if (comboBox1->SelectedIndex > -1 && map.size() > 0)
-		{
-			printAgent();
-		}
-	}
-
-	private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
-	{
-		textBox1->Visible = (comboBox1->SelectedIndex == 1 || comboBox1->SelectedIndex == 2 || comboBox1->SelectedIndex == 4);
-
-		comboBox2->Visible = (comboBox1->SelectedIndex == 4 || comboBox1->SelectedIndex == 5);
 	}
 
 
@@ -568,8 +442,8 @@ namespace IART {
 					{
 						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, 0, pixel.R, 0));
 					}
-				} 
-				
+				}
+
 			}
 		}
 
@@ -588,41 +462,13 @@ namespace IART {
 		selectRobotButton(button->Name[button->Name->Length - 1] - '0');
 	}
 
-	void loadRobotsPanel()
-	{
-		/*PictureBox^ picbox;
-		RadioButton^ button;
-		robotPanel->Controls->Clear();
-
-		for (size_t i = 0; i < currNode->state.size(); i++)
-		{
-			picbox = gcnew PictureBox();
-
-			picbox->Image = robots[i];
-			picbox->Name = "robotSelectorPicture" + i;
-			picbox->Location = System::Drawing::Point(0, i * (50+10));
-			picbox->Size = System::Drawing::Size(50, 50);
-			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
-			robotPanel->Controls->Add(picbox);
-
-			button = gcnew RadioButton();
-
-			button->Name = "robotSelectorButton" + i;
-			button->Location = System::Drawing::Point(90, i * (50 + 10) + 12);
-			button->Click += gcnew System::EventHandler(this, &gui::robotPanelButtonClick);
-			robotPanel->Controls->Add(button);
-		}
-
-		selectRobotButton(0);*/
-	}
-
 	void selectRobotButton(int index)
 	{
 		selectedCharacter = index;
-	
+
 		((RadioButton^)robotPanel->Controls->Find("robotSelectorButton" + index, true)[0])->Checked = true;
 	}
-	
+
 
 	PictureBox^ getPictureBox(System::String^ name)
 	{
@@ -645,6 +491,24 @@ namespace IART {
 		bmp->RotateFlip(RotateFlipType::Rotate90FlipNone);
 		return bmp;
 	}
+
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		Node* bestMove;
+
+		bestMove = minimax(currNode, selectedCharacter, 2);
+	}
+
+	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		MessageBox::Show("Heuristic is " + currNode->h);
+	}
+
+	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		MessageBox::Show("Heuristic is " + currNode->getDistance(0));
+	}
+
 	
 };
 }

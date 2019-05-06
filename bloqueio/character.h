@@ -21,6 +21,8 @@ public:
 
 	bool addWall(std::string wallName);
 
+	int H();
+
 	bool operator==(const Character& character) const;
 	
 	bool operator<(const Character& character) const;

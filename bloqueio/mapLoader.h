@@ -19,6 +19,7 @@ extern std::vector<std::string> operationNames;
 void initiateOperators();
 
 bool validMove(Node* node, int characterIndex, int x, int y);
+bool validBar(Node* node, int characterIndex, std::string type, int i, int j);
 
 Node* initiateMap();
 

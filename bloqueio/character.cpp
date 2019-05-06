@@ -1,5 +1,7 @@
 #include "character.h"
 
+//#include <cmath>
+
 
 Character::Character()
 {
@@ -18,10 +20,24 @@ bool Character::addWall(std::string wallName)
 	return walls.insert(wallName).second;
 }
 
+int Character::H()
+{
+	for (int i = 0; i < objective.size(); i++)
+	{
+		if (objective[i] == -1)
+		{
+			int j = (i + 1) % objective.size();
+
+			return std::abs(coords[j] - objective[j]);
+		}
+	}
+
+	return -1;
+}
 
 bool Character::operator==(const Character& character) const
 {
-	return (this->coords == character.coords && this->objective == character.objective);
+	return (this->coords == character.coords && this->objective == character.objective && this->walls == character.walls);
 }
 
 bool Character::operator<(const Character& character) const

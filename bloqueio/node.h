@@ -27,6 +27,7 @@ public:
 	Node(const Node& node);
 
 	void setH(int heuristic);
+	int getDistance(int characterIndex);
 
 	bool finished();
 	

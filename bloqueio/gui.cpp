@@ -13,4 +13,3 @@ void main()
 	IART::gui form;
 	Application::Run(%form);
 }
-

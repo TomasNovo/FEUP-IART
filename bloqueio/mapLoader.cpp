@@ -64,7 +64,61 @@ bool validMove(Node* node, int characterIndex, int deltaX, int deltaY)
 		}
 	}
 
+	return true;
+}
 
+bool validBar(Node* node, int characterIndex, std::string type, int i, int j)
+{
+	if (i < 0 || i >= MAPWIDTH-1 || j < 0 || j >= MAPHEIGHT-1)
+		return false;
+
+	for (int k = 0; k < node->state.size(); ++k)
+	{
+		for (auto wall : node->state[k].walls)
+		{
+			std::string wallType = wall.substr(0, 6);
+			int wallI = stoi(wall.substr(6, 1));
+			int wallJ = stoi(wall.substr(7, 1));
+
+			if (type == "barVer")
+			{
+				if (wallType == "barVer" && wallI == i && wallJ == j)
+					return false;
+
+				if (wallType == "barVer" && wallI == i + 1 && wallJ == j)
+					return false;
+
+				if (wallType == "barHor" && wallI == i && wallJ == j)
+					return false;
+			}
+			else if (type == "barHor")
+			{
+				if (wallType == "barHor" && wallI == i && wallJ == j)
+					return false;
+
+				if (wallType == "barHor" && wallI == i && wallJ == j + 1)
+					return false;
+
+				if (wallType == "barVer" && wallI == i && wallJ == j)
+					return false;
+			}
+
+		}
+	}
+
+	node = new Node(*node);
+	node->state[characterIndex].addWall(type + std::to_string(i) + std::to_string(j));
+
+	for (int k = 0; k < node->state.size(); ++k)
+	{
+		if (node->getDistance(k) == -1)
+		{
+			delete node;
+			return false;
+		}
+	}
+
+	delete node;
 	return true;
 }
 
@@ -106,20 +160,22 @@ void initiateOperators()
 	{
 		for (size_t j = 0; j < MAPWIDTH - 1; j++)
 		{
-			Operator opVer = [=](Node* node, int characterIndex)
+			Operator opVer = [&](Node* node, int characterIndex)
 			{
 				Node* newNode = new Node(*node);
 				
-				newNode->state[characterIndex].addWall("barVer" + std::to_string(i) + std::to_string(j));
+				if (validBar(newNode, characterIndex,  "barVer", i , j))
+					newNode->state[characterIndex].addWall("barVer" + std::to_string(i) + std::to_string(j));
 
 				return newNode;
 			};
 
-			Operator opHor = [=](Node* node, int characterIndex)
+			Operator opHor = [&](Node* node, int characterIndex)
 			{
 				Node* newNode = new Node(*node);
 
-				newNode->state[characterIndex].addWall("barHor" + std::to_string(i) + std::to_string(j));
+				if (validBar(newNode, characterIndex, "barHor", i, j))
+					newNode->state[characterIndex].addWall("barHor" + std::to_string(i) + std::to_string(j));
 
 				return newNode;
 			};
