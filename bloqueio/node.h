@@ -31,12 +31,10 @@ public:
 
 	bool finished();
 	
+	std::string toString() const;
+
 	bool operator==(const Node* node) const;
 	bool operator==(const Node& node) const;
-
-	// bool operator>(const Node* node) const;
-	// bool operator>(const Node& node) const;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Node& node);

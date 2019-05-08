@@ -383,7 +383,7 @@ Node* aStar2(Node* currNode, int heuristic)
 	return NULL;
 }
 
-Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, double beta, bool maximizing)
+Node* minimax(Node* currNode, int maxCharacter, int characterIndex, int depth, double alpha, double beta)
 {
 	if (depth == 0 || currNode->finished())
 		return currNode;
@@ -391,7 +391,9 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 	Node* nextNode = NULL;
 	Node* bestNode = NULL;
 
-	if (maximizing)
+	int nextCharacter = (characterIndex + 1) % currNode->state.size();
+
+	if (characterIndex == maxCharacter)
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
@@ -404,9 +406,11 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 			}
 
 			nextNode->cost++;
-			nextNode->setH(0);
+			nextNode->setH(maxCharacter);
+			nextNode->parent = currNode;
+			nextNode->operationName = operationNames[i];
 
-			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, false);
+			nextNode = minimax(nextNode, maxCharacter, nextCharacter, depth - 1, alpha, beta);
 
 			if (nextNode == NULL)
 				continue;
@@ -427,8 +431,6 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 			else
 				delete nextNode;
 		}
-
-		return bestNode;
 	}
 	else
 	{
@@ -443,9 +445,11 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 			}
 
 			nextNode->cost++;
-			nextNode->setH(0);
+			nextNode->setH(maxCharacter);
+			nextNode->parent = currNode;
+			nextNode->operationName = operationNames[i];
 
-			nextNode = minimax(nextNode, characterIndex, depth - 1, alpha, beta, true);
+			nextNode = minimax(nextNode, maxCharacter, nextCharacter, depth - 1, alpha, beta);
 
 			if (nextNode == NULL)
 				continue;
@@ -464,13 +468,13 @@ Node* minimax(Node* currNode, int characterIndex, int depth, double alpha, doubl
 			else
 				delete nextNode;
 		}
-
-		return bestNode;
 	}
+
+	return bestNode;
 }
 
 Node* minimax(Node* currNode, int characterIndex, int depth)
 {
-	return minimax(currNode, characterIndex, depth, -DBL_MAX, DBL_MAX, true);
+	return minimax(currNode, characterIndex, characterIndex, depth, -DBL_MAX, DBL_MAX);
 }
 

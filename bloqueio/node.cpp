@@ -16,18 +16,21 @@ Node::Node()
 	character.id = 'a';
 	state.push_back(character);
 
+	character = Character();
 	character.coords[0] = 8;
 	character.coords[1] = 4;
 	character.objective[0] = 0;
 	character.id = 'b';
 	state.push_back(character);
 
+	character = Character();
 	character.coords[0] = 4;
 	character.coords[1] = 8;
 	character.objective[1] = 0;
 	character.id = 'c';
 	state.push_back(character);
 
+	character = Character();
 	character.coords[0] = 0;
 	character.coords[1] = 4;
 	character.objective[0] = 8;
@@ -48,7 +51,7 @@ Node::Node(const Node& node)
 	this->operationName = node.operationName;
 }
 
-void Node::setH(int heuristic)
+void Node::setH(int characterIndex)
 {
 	this->h = 0;
 
@@ -56,12 +59,12 @@ void Node::setH(int heuristic)
 
 	for (size_t i = 0; i < state.size(); i++)
 	{
-		int characterH = getDistance(i);
+		int characterH = getDistance(i); // The lower the distance the better the avaluation of each player becomes, hence the inverted operations
 
-		if (i == 0)
+		if (i == characterIndex)
 			this->h -= characterH;
 		else
-			this->h += characterH;
+			this->h += characterH/(double)(state.size()-1);
 	}
 	
 	this->f = this->cost + this->h;
@@ -162,6 +165,16 @@ bool Node::finished()
 }
 
 
+std::string Node::toString() const
+{
+	std::stringstream ss;
+
+	ss << *this;
+
+	return ss.str();
+}
+
+
 bool Node::operator==(const Node* node) const
 {
 	return (this->state == node->state);
@@ -171,16 +184,6 @@ bool Node::operator==(const Node& node) const
 {
 	return (this->state == node.state);
 }
-
-// bool Node::operator>(const Node* node) const
-// {
-// 	return (this->h < node->h);
-// }
-
-// bool Node::operator>(const Node& node) const
-// {
-// 	return (this->h < node.h);
-// }
 
 
 std::ostream& operator<<(std::ostream& os, const Node& node)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 #include "mapLoader.h"
@@ -256,7 +257,25 @@ namespace IART {
 			if (i == MAPWIDTH - 1)
 				i--;
 
-			if (validBar(currNode, selectedCharacter, "barVer", i, j))
+			addBar("barVer", i, j);
+		}
+		else if (e->Y % 60 >= 50) // Horizontal line
+		{
+			int j = e->X / 60;
+			int i = e->Y / 60;
+
+			if (j == MAPWIDTH - 1)
+				j--;
+
+			addBar("barHor", i, j);
+		}
+	}
+
+	void addBar(String^ type, int i, int j)
+	{
+		if (validBar(currNode, selectedCharacter, convertString(type), i, j))
+		{
+			if (type == "barVer")
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
@@ -269,24 +288,8 @@ namespace IART {
 				picbox->Image = bar;
 
 				mainPanel->Controls->Add(picbox);
-
-				currNode->state[selectedCharacter].addWall(convertString(picbox->Name));
-
-				removeOperation("barVer" + std::to_string(i) + std::to_string(j));
-				removeOperation("barVer" + std::to_string(i + 1) + std::to_string(j));
-				removeOperation("barHor" + std::to_string(i) + std::to_string(j));
 			}
-		}
-
-		else if (e->Y % 60 >= 50) // Horizontal line
-		{
-			int j = e->X / 60;
-			int i = e->Y / 60;
-
-			if (j == MAPWIDTH - 1)
-				j--;
-
-			if (validBar(currNode, selectedCharacter, "barHor", i, j))
+			else if (type == "barHor")
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
@@ -299,12 +302,6 @@ namespace IART {
 				picbox->Image = RotateImage(bar);
 
 				mainPanel->Controls->Add(picbox);
-
-				currNode->state[selectedCharacter].addWall(convertString(picbox->Name));
-
-				removeOperation("barHor" + std::to_string(i) + std::to_string(j));
-				removeOperation("barHor" + std::to_string(i) + std::to_string(j + 1));
-				removeOperation("barVer" + std::to_string(i) + std::to_string(j));
 			}
 		}
 	}
@@ -363,12 +360,45 @@ namespace IART {
 						int optimalCost = aStar2(rootNode, 0)->cost;
 						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
 						resetMap();
+						break;
 					}
+
+					incrementPlayer();
+					playBots();
 
 					break;
 				}
 			}
 		}
+	}
+
+
+	void playBots()
+	{
+		for (size_t i = 1; i < currNode->state.size(); i++)
+		{
+			playCharacter();
+			incrementPlayer();
+
+			ui_utilities::milliSleep(1000);
+		}
+	}
+
+	void playCharacter()
+	{
+		Node* bestMove = minimax(currNode, selectedCharacter, 2);
+
+		while (bestMove->parent != currNode)
+		{
+			bestMove = bestMove->parent;
+		}
+
+		setNode(currNode, bestMove);
+	}
+
+	void incrementPlayer()
+	{
+		selectedCharacter = (selectedCharacter + 1) % currNode->state.size();
 	}
 
 	std::string convertString(System::String^ input)
@@ -383,17 +413,42 @@ namespace IART {
 		return output;
 	}
 
+	System::String^ convertString(std::string input)
+	{
+		System::String^ output = "";
+
+		for (size_t i = 0; i < input.size(); i++) // copy
+		{
+			output->Concat((char)input[i]);
+		}
+
+		return output;
+	}
+
 	void setNode(Node* node1, Node* node2)
 	{
 		int index;
-		for (size_t i = 0; i < node1->state.size(); i++)
+		for (size_t i = 0; i < node2->state.size(); i++)
 		{
 			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Image = nullptr;
 			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Refresh();
 
 			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Image = characters[i];
 			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Refresh();
+
+			for (auto wall : node2->state[i].walls)
+			{
+				String^ wallType = convertString(wall.substr(0, 6));
+				int wallI = stoi(wall.substr(6, 1));
+				int wallJ = stoi(wall.substr(7, 1));
+
+				PictureBox^ picbox = getPictureBox(wallType + wallI + wallJ);
+
+				if (picbox == nullptr)
+					addBar(wallType, wallI, wallJ);
+			}
 		}
+
 
 		*node1 = *node2;
 		delete node2;
@@ -494,9 +549,7 @@ namespace IART {
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		Node* bestMove;
-
-		bestMove = minimax(currNode, selectedCharacter, 2);
+		playCharacter();
 	}
 
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
