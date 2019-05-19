@@ -223,8 +223,6 @@ namespace IART {
 		int posX = 0, posY = 0, adder = 0;
 		for (size_t i = 0; i < MAPHEIGHT; i++)
 		{
-			//boxes[i] = (gcnew cli::array<PictureBox^>(MAPWIDTH));
-
 			for (size_t j = 0; j < MAPWIDTH; j++)
 			{
 				// Box
@@ -258,6 +256,9 @@ namespace IART {
 				i--;
 
 			addBar("barVer", i, j);
+
+			incrementPlayer();
+			playBots();
 		}
 		else if (e->Y % 60 >= 50) // Horizontal line
 		{
@@ -268,12 +269,15 @@ namespace IART {
 				j--;
 
 			addBar("barHor", i, j);
+
+			incrementPlayer();
+			playBots();
 		}
 	}
 
-	void addBar(String^ type, int i, int j)
+	bool addBar(std::string type, int i, int j)
 	{
-		if (validBar(currNode, selectedCharacter, convertString(type), i, j))
+		if (validBar(currNode, selectedCharacter, type, i, j))
 		{
 			if (type == "barVer")
 			{
@@ -285,9 +289,14 @@ namespace IART {
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"barVer" + i + j;
 				picbox->Size = System::Drawing::Size(10, 110);
-				picbox->Image = bar;
+				picbox->Image = changeColor(bar, currNode->state[selectedCharacter].id);
 
 				mainPanel->Controls->Add(picbox);
+				picbox->Refresh();
+
+				currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j));
+
+				return true;
 			}
 			else if (type == "barHor")
 			{
@@ -299,11 +308,18 @@ namespace IART {
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"barHor" + i + j;
 				picbox->Size = System::Drawing::Size(110, 10);
-				picbox->Image = RotateImage(bar);
+				picbox->Image = RotateImage(changeColor(bar, currNode->state[selectedCharacter].id));
 
 				mainPanel->Controls->Add(picbox);
+				picbox->Refresh();
+
+				currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j));
+
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 
@@ -349,44 +365,56 @@ namespace IART {
 						return;
 					}
 
-					nextNode->cost++;
-					nextNode->parent = currNode;
-					nextNode->operationName = operationNames[i];
-
 					setNode(currNode, nextNode);
 
-					if (currNode->finished())
-					{
-						int optimalCost = aStar2(rootNode, 0)->cost;
-						MessageBox::Show("You finsihed the map in " + currNode->cost + " moves. The optimal solution is " + optimalCost + ".");
-						resetMap();
-						break;
-					}
+					if (checkWin())
+						return;
 
 					incrementPlayer();
+					
 					playBots();
 
-					break;
+					return;
 				}
 			}
 		}
 	}
+	
 
+	bool checkWin()
+	{
+		if (currNode->finished())
+		{
+			return true;
+			MessageBox::Show("Player " + (selectedCharacter + 1) + " won!");
+		}
+
+		return false;
+	}
 
 	void playBots()
 	{
 		for (size_t i = 1; i < currNode->state.size(); i++)
 		{
-			playCharacter();
-			incrementPlayer();
+			//ui_utilities::milliSleep(250);
 
-			ui_utilities::milliSleep(1000);
+			auto begin = std::chrono::high_resolution_clock::now();
+			
+			playCharacter();
+
+			double deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e9;
+			std::cout << "\nFinished in : " << deltaTime << " seconds.\n";
+
+			if (checkWin())
+				return;
+
+			incrementPlayer();
 		}
 	}
 
 	void playCharacter()
 	{
-		Node* bestMove = minimax(currNode, selectedCharacter, 2);
+		Node* bestMove = minimax(currNode, selectedCharacter, 1);
 
 		while (bestMove->parent != currNode)
 		{
@@ -413,21 +441,21 @@ namespace IART {
 		return output;
 	}
 
-	System::String^ convertString(std::string input)
-	{
-		System::String^ output = "";
+	//System::String^ convertString(std::string input)
+	//{
+	//	System::String^ output = "";
 
-		for (size_t i = 0; i < input.size(); i++) // copy
-		{
-			output->Concat((char)input[i]);
-		}
+	//	for (size_t i = 0; i < input.size(); i++) // copy
+	//	{
+	//		output = output + convertString(std::to_string(input[i]));
+	//	}
 
-		return output;
-	}
+	//	return output;
+	//}
 
 	void setNode(Node* node1, Node* node2)
 	{
-		int index;
+		int index = 0;
 		for (size_t i = 0; i < node2->state.size(); i++)
 		{
 			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Image = nullptr;
@@ -438,14 +466,14 @@ namespace IART {
 
 			for (auto wall : node2->state[i].walls)
 			{
-				String^ wallType = convertString(wall.substr(0, 6));
+				String^ wallType = gcnew String(wall.substr(0, 6).c_str());
 				int wallI = stoi(wall.substr(6, 1));
 				int wallJ = stoi(wall.substr(7, 1));
 
 				PictureBox^ picbox = getPictureBox(wallType + wallI + wallJ);
 
 				if (picbox == nullptr)
-					addBar(wallType, wallI, wallJ);
+					addBar(convertString(wallType), wallI, wallJ);
 			}
 		}
 
@@ -475,28 +503,33 @@ namespace IART {
 		{
 			for (size_t j = 0; j < image->Width; j++)
 			{
-				Color pixel = bitmap->GetPixel(i, j);
+				Color pixel = bitmap->GetPixel(j, i);
 
 				if (robotId == 'b') // Blue
 				{
 					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
 					{
-						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, 0, 0, pixel.R));
+						((Bitmap^)output)->SetPixel(j, i, Color::FromArgb(pixel.A, 0, 0, pixel.R));
 					}
 				}
 				else if (robotId == 'c') // Yellow
 				{
 					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
 					{
-						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, pixel.R, pixel.R, 0));
+						((Bitmap^)output)->SetPixel(j, i, Color::FromArgb(pixel.A, pixel.R, pixel.R, 0));
 					}
 				}
 				else if (robotId == 'd') // Green
 				{
 					if (pixel.R > 0 && pixel.B == 0 && pixel.G == 0)
 					{
-						((Bitmap^)output)->SetPixel(i, j, Color::FromArgb(pixel.A, 0, pixel.R, 0));
+						((Bitmap^)output)->SetPixel(j, i, Color::FromArgb(pixel.A, 0, pixel.R, 0));
 					}
+				}
+				else
+				{
+					int a = 0;
+					// Error
 				}
 
 			}

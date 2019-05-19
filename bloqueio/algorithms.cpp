@@ -395,20 +395,20 @@ Node* minimax(Node* currNode, int maxCharacter, int characterIndex, int depth, d
 
 	if (characterIndex == maxCharacter)
 	{
-		for (int i = 0; i < operations.size(); i++)
+		for (int i = 0; i < operations.size() ; i++)
 		{
-			nextNode = operations[i](currNode, characterIndex);
+			nextNode = doOperationEfficient(currNode, i, characterIndex, maxCharacter);
+
+			if (nextNode == currNode)
+			{
+				continue;
+			}
 
 			if (*nextNode == *currNode)
 			{
 				delete nextNode;
 				continue;
 			}
-
-			nextNode->cost++;
-			nextNode->setH(maxCharacter);
-			nextNode->parent = currNode;
-			nextNode->operationName = operationNames[i];
 
 			nextNode = minimax(nextNode, maxCharacter, nextCharacter, depth - 1, alpha, beta);
 
@@ -436,18 +436,18 @@ Node* minimax(Node* currNode, int maxCharacter, int characterIndex, int depth, d
 	{
 		for (int i = 0; i < operations.size(); i++)
 		{
-			nextNode = operations[i](currNode, characterIndex);
+			nextNode = doOperationEfficient(currNode, i, characterIndex, maxCharacter);
+
+			if (nextNode == currNode)
+			{
+				continue;
+			}
 
 			if (*nextNode == *currNode)
 			{
 				delete nextNode;
 				continue;
 			}
-
-			nextNode->cost++;
-			nextNode->setH(maxCharacter);
-			nextNode->parent = currNode;
-			nextNode->operationName = operationNames[i];
 
 			nextNode = minimax(nextNode, maxCharacter, nextCharacter, depth - 1, alpha, beta);
 

@@ -36,6 +36,7 @@ Node::Node()
 	character.objective[0] = 8;
 	character.id = 'd';
 	state.push_back(character);
+
 }
 
 
@@ -117,6 +118,11 @@ int Node::getDistance(int characterIndex)
 			nextNode->cost++;
 			nextNode->h = nextNode->state[characterIndex].H();
 			nextNode->f = nextNode->cost + nextNode->h;
+
+			if (nextNode == currNode)
+			{
+				continue;
+			}
 
 			if (closedSet.find(nextNode) == closedSet.end())
 			{
@@ -211,11 +217,10 @@ int hashNode::operator() (const Node* node) const
 
 	for (int i = 0; i < node->state.size(); ++i)
 	{
+		hash += MAPWIDTH * std::hash<int>()(node->state[i].coords[1]);
 		hash += std::hash<int>()(node->state[i].coords[0]);
-		hash += std::hash<int>()(node->state[i].coords[1]);
-		// hash += std::hash<int>()(node->state[i].objective[0]);\
-		// hash += std::hash<int>()(node->state[i].objective[1]);
 	}
+
 
 	return static_cast<int>(std::hash<int>()(hash));
 }

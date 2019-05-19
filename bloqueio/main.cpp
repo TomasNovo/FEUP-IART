@@ -10,7 +10,7 @@ int main()
 
 	auto begin = std::chrono::high_resolution_clock::now();
 
-	Node* bestMove = minimax(currNode, 0, 5); 
+	Node* bestMove = minimax(currNode, 0, 1); 
 
 	double deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e9;
 

@@ -20,6 +20,8 @@ public:
 	Node* parent = NULL;
 	std::string operationName = "";
 
+	//std::vector<std::vector<long long>> zobristTable;
+
 	Node();
 
 	Node(int n);
