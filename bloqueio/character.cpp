@@ -1,6 +1,6 @@
 #include "character.h"
 
-//#include <cmath>
+#include "macros.h"
 
 
 Character::Character()
@@ -17,6 +17,9 @@ bool Character::finished()
 
 bool Character::addWall(std::string wallName)
 {
+	if (walls.size() >= MAXWALLCOUNT)
+		return false;
+
 	return walls.insert(wallName).second;
 }
 

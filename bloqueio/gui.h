@@ -66,18 +66,17 @@ namespace IART {
 
 	private: int selectedCharacter = 0;
 
+	private: bool playing = false;
+
 	private: System::Windows::Forms::Label^  mapLabel;
 	private: System::Windows::Forms::Button^  button1;
-
-
-
-
 
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Panel^  robotPanel;
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::Button^  button4;
 
 
 
@@ -113,6 +112,7 @@ namespace IART {
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// mainPanel
@@ -177,11 +177,22 @@ namespace IART {
 			this->button3->UseVisualStyleBackColor = true;
 			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
 			// 
+			// button4
+			// 
+			this->button4->Location = System::Drawing::Point(33, 151);
+			this->button4->Name = L"button4";
+			this->button4->Size = System::Drawing::Size(75, 23);
+			this->button4->TabIndex = 15;
+			this->button4->Text = L"Reset";
+			this->button4->UseVisualStyleBackColor = true;
+			this->button4->Click += gcnew System::EventHandler(this, &gui::button4_Click);
+			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(693, 540);
+			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->robotPanel);
@@ -240,89 +251,6 @@ namespace IART {
 		}
 	}
 
-	void placeBar(System::Object^  sender, MouseEventArgs^  e)
-	{
-		if (e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
-		{
-			return;
-		}
-
-		if (e->X % 60 >= 50) // Vertical line
-		{
-			int j = e->X / 60;
-			int i = e->Y / 60;
-
-			if (i == MAPWIDTH - 1)
-				i--;
-
-			addBar("barVer", i, j);
-
-			incrementPlayer();
-			playBots();
-		}
-		else if (e->Y % 60 >= 50) // Horizontal line
-		{
-			int j = e->X / 60;
-			int i = e->Y / 60;
-
-			if (j == MAPWIDTH - 1)
-				j--;
-
-			addBar("barHor", i, j);
-
-			incrementPlayer();
-			playBots();
-		}
-	}
-
-	bool addBar(std::string type, int i, int j)
-	{
-		if (validBar(currNode, selectedCharacter, type, i, j))
-		{
-			if (type == "barVer")
-			{
-				PictureBox^ picbox = gcnew PictureBox();
-
-				int posX = j * 60 + 50;
-				int posY = i * 60;
-
-				picbox->Location = System::Drawing::Point(posX, posY);
-				picbox->Name = L"barVer" + i + j;
-				picbox->Size = System::Drawing::Size(10, 110);
-				picbox->Image = changeColor(bar, currNode->state[selectedCharacter].id);
-
-				mainPanel->Controls->Add(picbox);
-				picbox->Refresh();
-
-				currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j));
-
-				return true;
-			}
-			else if (type == "barHor")
-			{
-				PictureBox^ picbox = gcnew PictureBox();
-
-				int posX = j * 60;
-				int posY = i * 60 + 50;
-
-				picbox->Location = System::Drawing::Point(posX, posY);
-				picbox->Name = L"barHor" + i + j;
-				picbox->Size = System::Drawing::Size(110, 10);
-				picbox->Image = RotateImage(changeColor(bar, currNode->state[selectedCharacter].id));
-
-				mainPanel->Controls->Add(picbox);
-				picbox->Refresh();
-
-				currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j));
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-
 	void loadBoxes()
 	{
 		block = Image::FromFile("images/wall.png");
@@ -346,9 +274,94 @@ namespace IART {
 		}
 	}
 
+	void placeBar(System::Object^  sender, MouseEventArgs^  e)
+	{
+		if (e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
+		{
+			return;
+		}
+
+		if (e->X % 60 >= 50) // Vertical line
+		{
+			int j = e->X / 60;
+			int i = e->Y / 60;
+
+			if (i == MAPWIDTH - 1)
+				i--;
+
+			addBar("barVer", i, j);
+
+			//incrementPlayer();
+			//playBots();
+		}
+		else if (e->Y % 60 >= 50) // Horizontal line
+		{
+			int j = e->X / 60;
+			int i = e->Y / 60;
+
+			if (j == MAPWIDTH - 1)
+				j--;
+
+			addBar("barHor", i, j);
+
+			//incrementPlayer();
+			//playBots();
+		}
+	}
+
+	bool addBar(std::string type, int i, int j)
+	{
+		if (validBar(currNode, selectedCharacter, type, i, j))
+		{
+			if (type == "barVer")
+			{
+				PictureBox^ picbox = gcnew PictureBox();
+
+				int posX = j * 60 + 50;
+				int posY = i * 60;
+
+				picbox->Location = System::Drawing::Point(posX, posY);
+				picbox->Name = L"barVer" + i + j;
+				picbox->Size = System::Drawing::Size(10, 110);
+				picbox->Image = changeColor(bar, currNode->state[selectedCharacter].id);
+
+				mainPanel->Controls->Add(picbox);
+				picbox->Refresh();
+
+				if (!currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j)))
+					return false;
+
+				return true;
+			}
+			else if (type == "barHor")
+			{
+				PictureBox^ picbox = gcnew PictureBox();
+
+				int posX = j * 60;
+				int posY = i * 60 + 50;
+
+				picbox->Location = System::Drawing::Point(posX, posY);
+				picbox->Name = L"barHor" + i + j;
+				picbox->Size = System::Drawing::Size(110, 10);
+				picbox->Image = RotateImage(changeColor(bar, currNode->state[selectedCharacter].id));
+
+				mainPanel->Controls->Add(picbox);
+				picbox->Refresh();
+
+				if (!currNode->state[selectedCharacter].addWall(type + std::to_string(i) + std::to_string(j)))
+					return false;
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		if (currNode != NULL && !currNode->finished())
+		if (currNode != NULL && !playing && !currNode->finished())
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
@@ -359,13 +372,12 @@ namespace IART {
 				{
 					nextNode = doOperation(currNode, i, selectedCharacter);
 
-					if (*currNode == *nextNode)
+					if (currNode == nextNode)
 					{
-						delete nextNode;
 						return;
 					}
 
-					setNode(currNode, nextNode);
+					setNode(&currNode, &nextNode);
 
 					if (checkWin())
 						return;
@@ -385,8 +397,8 @@ namespace IART {
 	{
 		if (currNode->finished())
 		{
-			return true;
 			MessageBox::Show("Player " + (selectedCharacter + 1) + " won!");
+			return true;
 		}
 
 		return false;
@@ -394,6 +406,7 @@ namespace IART {
 
 	void playBots()
 	{
+		playing = true;
 		for (size_t i = 1; i < currNode->state.size(); i++)
 		{
 			//ui_utilities::milliSleep(250);
@@ -410,6 +423,8 @@ namespace IART {
 
 			incrementPlayer();
 		}
+
+		playing = false;
 	}
 
 	void playCharacter()
@@ -421,7 +436,7 @@ namespace IART {
 			bestMove = bestMove->parent;
 		}
 
-		setNode(currNode, bestMove);
+		setNode(&currNode, &bestMove);
 	}
 
 	void incrementPlayer()
@@ -453,18 +468,26 @@ namespace IART {
 	//	return output;
 	//}
 
-	void setNode(Node* node1, Node* node2)
+	void setNode(interior_ptr<Node*> node1, interior_ptr<Node*> node2)
+	{
+		pin_ptr<Node*> ptr1 = node1;
+		pin_ptr<Node*> ptr2 = node2;
+
+		setNode2(ptr1, ptr2);
+	}
+
+	void setNode2(Node** node1, Node** node2)
 	{
 		int index = 0;
-		for (size_t i = 0; i < node2->state.size(); i++)
+		for (size_t i = 0; i < (*node2)->state.size(); i++)
 		{
-			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Image = nullptr;
-			getPictureBox("box" + node1->state[i].coords[1] + node1->state[i].coords[0])->Refresh();
+			getPictureBox("box" + (*node1)->state[i].coords[1] + (*node1)->state[i].coords[0])->Image = nullptr;
+			getPictureBox("box" + (*node1)->state[i].coords[1] + (*node1)->state[i].coords[0])->Refresh();
 
-			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Image = characters[i];
-			getPictureBox("box" + node2->state[i].coords[1] + node2->state[i].coords[0])->Refresh();
+			getPictureBox("box" + (*node2)->state[i].coords[1] + (*node2)->state[i].coords[0])->Image = characters[i];
+			getPictureBox("box" + (*node2)->state[i].coords[1] + (*node2)->state[i].coords[0])->Refresh();
 
-			for (auto wall : node2->state[i].walls)
+			for (auto wall : (*node2)->state[i].walls)
 			{
 				String^ wallType = gcnew String(wall.substr(0, 6).c_str());
 				int wallI = stoi(wall.substr(6, 1));
@@ -479,13 +502,16 @@ namespace IART {
 
 
 		*node1 = *node2;
-		delete node2;
 	}
 
 
 	void resetMap()
 	{
-		setNode(currNode, rootNode);
+		mainPanel->Controls->Clear();
+
+		initializeBoxes();
+
+		setNode(&currNode, &rootNode);
 
 		loadBoxes();
 	}
@@ -596,5 +622,9 @@ namespace IART {
 	}
 
 	
+	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		resetMap();
+	}
 };
 }

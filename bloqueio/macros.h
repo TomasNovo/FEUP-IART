@@ -7,5 +7,7 @@
 #define MAPHEIGHT 9
 #define MAPWIDTH 9
 
+#define MAXWALLCOUNT 5
+
 
 #endif

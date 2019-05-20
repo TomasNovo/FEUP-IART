@@ -163,11 +163,11 @@ bool Node::finished()
 {
 	for (int i = 0; i < state.size(); ++i)
 	{
-		if (!state[i].finished())
-			return false;
+		if (state[i].finished())
+			return true;
 	}
 
-	return true;
+	return false;
 }
 
 

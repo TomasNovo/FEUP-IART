@@ -70,7 +70,7 @@ bool validMove(Node* node, int characterIndex, int deltaX, int deltaY)
 
 bool validBar(Node* node, int characterIndex, std::string type, int i, int j)
 {
-	if (i < 0 || i >= MAPWIDTH-1 || j < 0 || j >= MAPHEIGHT-1)
+	if (i < 0 || i >= MAPWIDTH-1 || j < 0 || j >= MAPHEIGHT-1 || node->state[characterIndex].walls.size() == MAXWALLCOUNT)
 		return false;
 
 	for (int k = 0; k < node->state.size(); ++k)
@@ -107,7 +107,7 @@ bool validBar(Node* node, int characterIndex, std::string type, int i, int j)
 
 bool validBarEfficient(Node* node, int characterIndex, std::string type, int i, int j, int maxCharacter)
 {
-	if (i < 0 || i >= MAPWIDTH - 1 || j < 0 || j >= MAPHEIGHT - 1)
+	if (i < 0 || i >= MAPWIDTH - 1 || j < 0 || j >= MAPHEIGHT - 1 || node->state[characterIndex].walls.size() == MAXWALLCOUNT)
 		return false;
 
 	for (int k = 0; k < node->state.size(); ++k)
@@ -263,11 +263,14 @@ Node* doOperation(Node* currNode, int i, int characterIndex)
 {
 	Node* newNode = operations[i](currNode, characterIndex);
 
-	newNode->cost++;
-	newNode->setH(0);
+	if (newNode != currNode)
+	{
+		newNode->cost++;
+		newNode->setH(0);
 
-	newNode->parent = currNode;
-	newNode->operationName = operationNames[i];
+		newNode->parent = currNode;
+		newNode->operationName = operationNames[i];
+	}
 
 	return newNode;
 }
@@ -279,7 +282,14 @@ Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCha
 	if (i < 4)
 	{
 		newNode = operations[i](currNode, characterIndex);
-		newNode->setH(maxCharacter);
+
+		if (newNode != currNode)
+		{
+			newNode->setH(maxCharacter);
+			newNode->parent = currNode;
+			newNode->cost++;
+			newNode->operationName = operationNames[i];
+		}
 	}
 	else
 	{
