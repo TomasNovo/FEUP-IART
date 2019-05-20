@@ -129,7 +129,7 @@ bool validBarEfficient(Node* node, int characterIndex, std::string type, int i, 
 
 	testNode->h = 0;
 
-	for (size_t i = 0; i < testNode->state.size(); i++) // Runs testNode->setH(0)
+	for (size_t i = 0; i < testNode->state.size(); i++) // Runs testNode->setH(maxCharacter)
 	{
 		int characterH = testNode->getDistance(i);
 
@@ -168,6 +168,9 @@ bool wallsCollide(std::string type1, int i1, int j1, std::string type2, int i2, 
 		if (type2 == "barVer" && i2 == i1 + 1 && j2 == j1)
 			return true;
 
+		if (type2 == "barVer" && i2 + 1 == i1 && j2 == j1)
+			return true;
+
 		if (type2 == "barHor" && i2 == i1 && j2 == j1)
 			return true;
 	}
@@ -177,6 +180,9 @@ bool wallsCollide(std::string type1, int i1, int j1, std::string type2, int i2, 
 			return true;
 
 		if (type2 == "barHor" && i2 == i1 && j2 == j1 + 1)
+			return true;
+
+		if (type2 == "barHor" && i2 == i1 && j2 + 1 == j1)
 			return true;
 
 		if (type2 == "barVer" && i2 == i1 && j2 == j1)

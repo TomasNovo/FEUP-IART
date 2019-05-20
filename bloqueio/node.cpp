@@ -58,6 +58,7 @@ void Node::setH(int characterIndex)
 
 	// h is sorthest distance to border subtracted distances of other players.
 
+	int closestOponentDistance = -2;
 	for (size_t i = 0; i < state.size(); i++)
 	{
 		int characterH = getDistance(i); // The lower the distance the better the avaluation of each player becomes, hence the inverted operations
@@ -65,8 +66,13 @@ void Node::setH(int characterIndex)
 		if (i == characterIndex)
 			this->h -= characterH;
 		else
-			this->h += characterH/(double)(state.size()-1);
+		{
+			if (closestOponentDistance == -2 || characterH < closestOponentDistance)
+				closestOponentDistance = characterH;
+		}
 	}
+
+	this->h += closestOponentDistance;
 	
 	this->f = this->cost + this->h;
 }

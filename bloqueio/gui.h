@@ -276,7 +276,7 @@ namespace IART {
 
 	void placeBar(System::Object^  sender, MouseEventArgs^  e)
 	{
-		if (e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
+		if (playing || e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
 		{
 			return;
 		}
@@ -289,10 +289,11 @@ namespace IART {
 			if (i == MAPWIDTH - 1)
 				i--;
 
-			addBar("barVer", i, j);
-
-			//incrementPlayer();
-			//playBots();
+			if (addBar("barHor", i, j))
+			{
+				incrementPlayer();
+				playBots();
+			}
 		}
 		else if (e->Y % 60 >= 50) // Horizontal line
 		{
@@ -302,10 +303,11 @@ namespace IART {
 			if (j == MAPWIDTH - 1)
 				j--;
 
-			addBar("barHor", i, j);
-
-			//incrementPlayer();
-			//playBots();
+			if (addBar("barHor", i, j))
+			{
+				incrementPlayer();
+				playBots();
+			}
 		}
 	}
 
@@ -512,6 +514,7 @@ namespace IART {
 		initializeBoxes();
 
 		setNode(&currNode, &rootNode);
+		playing = false;
 
 		loadBoxes();
 	}
