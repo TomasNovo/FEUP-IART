@@ -54,12 +54,11 @@ namespace IART {
 
 	private: System::Windows::Forms::Panel^  mainPanel;
 
-	private: cli::array<cli::array<PictureBox^>^>^ boxes;
-	private: cli::array<PictureBox^>^ bars;
-
 	private: Image^ block;
 	private: Image^ bar;
 	private: array<Image^>^ characters;
+	private: array<Image^>^ goals;
+
 
 	private: Node* rootNode;
 	private: Node* currNode;
@@ -191,7 +190,7 @@ namespace IART {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(693, 540);
+			this->ClientSize = System::Drawing::Size(720, 555);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
@@ -217,17 +216,16 @@ namespace IART {
 
 	private: System::Void gui_Load(System::Object^  sender, System::EventArgs^  e)
 	{
-		initializeBoxes();
-
 		rootNode = initiateMap();
 		currNode = new Node(*rootNode);
 
+		initializeBoxes();
 		loadBoxes();
 	}
 
 	private: void initializeBoxes()
 	{
-		mainPanel->Size = System::Drawing::Size((MAPWIDTH - 1) * 60 + 50, (MAPHEIGHT - 1) * 60 + 50);
+		mainPanel->Size = System::Drawing::Size((MAPWIDTH - 1) * 60 + 50 + 20, (MAPHEIGHT - 1) * 60 + 50 + 20);
 		mainPanel->MouseClick += gcnew MouseEventHandler(this, &gui::placeBar);
 
 		PictureBox^ picbox;
@@ -239,8 +237,8 @@ namespace IART {
 				// Box
 				picbox = gcnew PictureBox();
 
-				posX = j * 60;
-				posY = i * 60;
+				posX = j * 60 + 10;
+				posY = i * 60 + 10;
 
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"box" + i + j;
@@ -249,13 +247,49 @@ namespace IART {
 				mainPanel->Controls->Add(picbox);
 			}
 		}
+
+		for (size_t i = 0; i < currNode->state.size(); i++)
+		{
+			// Goal
+			picbox = gcnew PictureBox();
+
+			int x = currNode->state[i].objective[0];
+			int y = currNode->state[i].objective[1];
+
+			posX = 0;
+			posY = 0;
+
+			if (x == -1)
+			{
+				posY = y * 60;
+
+				if (y == 8)
+					posX += 10;
+
+				picbox->Size = System::Drawing::Size(530, 10);
+			}
+			else
+			{
+				posX = x * 60;
+
+				if (x == 8)
+					posY += 10;
+
+				picbox->Size = System::Drawing::Size(10, 530);
+			}
+
+			picbox->Location = System::Drawing::Point(posX, posY);
+			picbox->Name = L"goal" + i;
+			
+
+			mainPanel->Controls->Add(picbox);
+		}
 	}
 
 	void loadBoxes()
 	{
 		block = Image::FromFile("images/wall.png");
 		bar = Image::FromFile("images/bar.png");
-		characters = gcnew array<Image^>(currNode->state.size());
 
 		Image^ currImage;
 		int index;
@@ -267,11 +301,23 @@ namespace IART {
 			}
 		}
 
+		characters = gcnew array<Image^>(currNode->state.size());
+		goals = gcnew array<Image^>(currNode->state.size());
+
 		for (size_t i = 0; i < currNode->state.size(); i++)
 		{
 			characters[i] = changeColor(Image::FromFile("images/robot.png"), currNode->state[i].id);
 			getPictureBox("box" + currNode->state[i].coords[1] + currNode->state[i].coords[0])->Image = characters[i];
+
+			goals[i] = changeColor(Image::FromFile("images/goal.png"), currNode->state[i].id);
+
+			if (i % 2 == 0)
+				goals[i] = rotateImage(goals[i]);
+
+			getPictureBox("goal" + i)->Image = goals[i];
 		}
+
+
 	}
 
 	void placeBar(System::Object^  sender, MouseEventArgs^  e)
@@ -345,7 +391,7 @@ namespace IART {
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"barHor" + i + j;
 				picbox->Size = System::Drawing::Size(110, 10);
-				picbox->Image = RotateImage(changeColor(bar, currNode->state[selectedCharacter].id));
+				picbox->Image = rotateImage(changeColor(bar, currNode->state[selectedCharacter].id));
 
 				mainPanel->Controls->Add(picbox);
 				picbox->Refresh();
@@ -567,6 +613,18 @@ namespace IART {
 		return output;
 	}
 
+	Image^ rotateImage(Image^ img)
+	{
+		Bitmap^ bmp = gcnew Bitmap(img);
+
+		Graphics^ gfx = Graphics::FromImage(bmp);
+		gfx->Clear(Color::White);
+		gfx->DrawImage(img, 0, 0, img->Width, img->Height);
+
+		bmp->RotateFlip(RotateFlipType::Rotate90FlipNone);
+		return bmp;
+	}
+
 	void robotPicturePanelClick(System::Object^  sender, System::EventArgs^  e)
 	{
 		PictureBox^ box = (PictureBox^)sender;
@@ -595,18 +653,6 @@ namespace IART {
 			return nullptr;
 		else
 			return (PictureBox^)findings[0];
-	}
-
-	Image^ RotateImage(Image^ img)
-	{
-		Bitmap^ bmp = gcnew Bitmap(img);
-
-		Graphics^ gfx = Graphics::FromImage(bmp);
-		gfx->Clear(Color::White);
-		gfx->DrawImage(img, 0, 0, img->Width, img->Height);
-
-		bmp->RotateFlip(RotateFlipType::Rotate90FlipNone);
-		return bmp;
 	}
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
