@@ -68,14 +68,14 @@ namespace IART {
 	private: bool playing = false;
 
 	private: System::Windows::Forms::Label^  mapLabel;
-	private: System::Windows::Forms::Button^  button1;
+
 
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Panel^  robotPanel;
-	private: System::Windows::Forms::Button^  button2;
-	private: System::Windows::Forms::Button^  button3;
 	private: System::Windows::Forms::Button^  button4;
+
+
 
 
 
@@ -106,79 +106,49 @@ namespace IART {
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
-			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// mainPanel
 			// 
-			this->mainPanel->Location = System::Drawing::Point(150, 0);
+			this->mainPanel->Location = System::Drawing::Point(200, 0);
+			this->mainPanel->Margin = System::Windows::Forms::Padding(4);
 			this->mainPanel->Name = L"mainPanel";
-			this->mainPanel->Size = System::Drawing::Size(800, 800);
+			this->mainPanel->Size = System::Drawing::Size(1067, 985);
 			this->mainPanel->TabIndex = 3;
 			// 
 			// mapLabel
 			// 
 			this->mapLabel->AutoSize = true;
-			this->mapLabel->Location = System::Drawing::Point(30, 51);
+			this->mapLabel->Location = System::Drawing::Point(40, 63);
+			this->mapLabel->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->mapLabel->Name = L"mapLabel";
-			this->mapLabel->Size = System::Drawing::Size(0, 13);
+			this->mapLabel->Size = System::Drawing::Size(0, 17);
 			this->mapLabel->TabIndex = 4;
-			// 
-			// button1
-			// 
-			this->button1->ImageAlign = System::Drawing::ContentAlignment::BottomLeft;
-			this->button1->Location = System::Drawing::Point(33, 25);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 8;
-			this->button1->Text = L"Minimax";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &gui::button1_Click);
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(35, 188);
+			this->label2->Location = System::Drawing::Point(40, 25);
+			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(73, 13);
+			this->label2->Size = System::Drawing::Size(129, 17);
 			this->label2->TabIndex = 11;
-			this->label2->Text = L"Current Robot";
+			this->label2->Text = L"Select Robot Roles";
 			// 
 			// robotPanel
 			// 
-			this->robotPanel->Location = System::Drawing::Point(12, 215);
+			this->robotPanel->Location = System::Drawing::Point(13, 46);
+			this->robotPanel->Margin = System::Windows::Forms::Padding(4);
 			this->robotPanel->Name = L"robotPanel";
-			this->robotPanel->Size = System::Drawing::Size(117, 205);
+			this->robotPanel->Size = System::Drawing::Size(179, 281);
 			this->robotPanel->TabIndex = 12;
-			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(33, 63);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 13;
-			this->button2->Text = L"NodeH";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &gui::button2_Click);
-			// 
-			// button3
-			// 
-			this->button3->Location = System::Drawing::Point(33, 106);
-			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(75, 23);
-			this->button3->TabIndex = 14;
-			this->button3->Text = L"CharacterH";
-			this->button3->UseVisualStyleBackColor = true;
-			this->button3->Click += gcnew System::EventHandler(this, &gui::button3_Click);
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(33, 151);
+			this->button4->Location = System::Drawing::Point(65, 362);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(75, 23);
 			this->button4->TabIndex = 15;
@@ -188,23 +158,21 @@ namespace IART {
 			// 
 			// gui
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(720, 555);
+			this->ClientSize = System::Drawing::Size(960, 683);
 			this->Controls->Add(this->button4);
-			this->Controls->Add(this->button3);
-			this->Controls->Add(this->button2);
 			this->Controls->Add(this->robotPanel);
 			this->Controls->Add(this->label2);
-			this->Controls->Add(this->button1);
 			this->Controls->Add(this->mapLabel);
 			this->Controls->Add(this->mainPanel);
 			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->KeyPreview = true;
+			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximizeBox = false;
 			this->Name = L"gui";
-			this->Text = L"Labyrinth Robots";
+			this->Text = L"Bloqueio";
 			this->Load += gcnew System::EventHandler(this, &gui::gui_Load);
 			this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &gui::gui_KeyPress);
 			this->ResumeLayout(false);
@@ -221,6 +189,8 @@ namespace IART {
 
 		initializeBoxes();
 		loadBoxes();
+
+		loadRobotsPanel();
 	}
 
 	private: void initializeBoxes()
@@ -321,6 +291,57 @@ namespace IART {
 
 
 	}
+
+	void loadRobotsPanel()
+	{
+		PictureBox^ picbox;
+		RadioButton^ button;
+		ComboBox^  comboBox1;
+
+		robotPanel->Controls->Clear();
+
+		for (size_t i = 0; i < currNode->state.size(); i++)
+		{
+			picbox = gcnew PictureBox();
+
+			picbox->Image = characters[i];
+			picbox->Name = "robotSelectorPicture" + i;
+			picbox->Location = System::Drawing::Point(0, i * (50 + 10));
+			picbox->Size = System::Drawing::Size(50, 50);
+			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
+			robotPanel->Controls->Add(picbox);
+
+			comboBox1 = gcnew ComboBox();
+			comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			comboBox1->FormattingEnabled = true;
+			comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(2) {
+				L"Player", L"Bot"
+			});
+			comboBox1->Location = System::Drawing::Point(70, i * (50 + 10) + 12);
+			comboBox1->Name = L"comboBox1";
+			comboBox1->Size = System::Drawing::Size(60, 21);
+			if(i != 0)
+				comboBox1->SelectedIndex = 1;
+			else 
+				comboBox1->SelectedIndex = 0;
+
+			robotPanel->Controls->Add(comboBox1); 
+
+			//this->comboBox1->TabIndex = 6;
+			//this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox1_SelectedIndexChanged);
+
+			
+			/*button = gcnew RadioButton();
+
+			button->Name = "robotSelectorButton" + i;
+			button->Location = System::Drawing::Point(90, i * (50 + 10) + 12);
+			//button->Click += gcnew System::EventHandler(this, &gui::robotPanelButtonClick);
+			robotPanel->Controls->Add(button);*/
+		}
+
+		//selectRobotButton(0);
+	}
+
 
 	void placeBar(System::Object^  sender, MouseEventArgs^  e)
 	{
