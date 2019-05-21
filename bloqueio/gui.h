@@ -261,19 +261,21 @@ namespace IART {
 
 			if (x == -1)
 			{
+				posX += 10;
 				posY = y * 60;
 
 				if (y == 8)
-					posX += 10;
+					posY += 60;
 
 				picbox->Size = System::Drawing::Size(530, 10);
 			}
 			else
 			{
 				posX = x * 60;
+				posY += 10;
 
 				if (x == 8)
-					posY += 10;
+					posX += 60;
 
 				picbox->Size = System::Drawing::Size(10, 530);
 			}
