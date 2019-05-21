@@ -11,8 +11,6 @@ std::vector<std::vector<char>> map;
 std::vector<Operator> operations;
 std::vector<std::string> operationNames;
 
-std::mt19937_64 rng;
-
 bool validMove(Node* node, int characterIndex, int deltaX, int deltaY)
 {
 	int x = node->state[characterIndex].coords[0];

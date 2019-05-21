@@ -64,6 +64,7 @@ namespace IART {
 	private: Node* currNode;
 
 	private: int selectedCharacter = 0;
+	private: int botPlayTime = 500;
 
 	private: bool playing = false;
 
@@ -189,7 +190,6 @@ namespace IART {
 
 		initializeBoxes();
 		loadBoxes();
-
 		loadRobotsPanel();
 	}
 
@@ -345,30 +345,30 @@ namespace IART {
 
 	void placeBar(System::Object^  sender, MouseEventArgs^  e)
 	{
-		if (playing || e->X % 60 >= 50 && e->Y % 60 >= 50) // Ambigous position
+		int x = e->X - 10;
+		int y = e->Y - 10;
+
+		int j = x / 60;
+		int i = y / 60;
+
+		if (playing || x % 60 >= 50 && y % 60 >= 50) // Ambigous position
 		{
 			return;
 		}
 
-		if (e->X % 60 >= 50) // Vertical line
+		if (x % 60 >= 50) // Vertical line
 		{
-			int j = e->X / 60;
-			int i = e->Y / 60;
-
-			if (i == MAPWIDTH - 1)
+			if (i == MAPHEIGHT - 1)
 				i--;
 
-			if (addBar("barHor", i, j))
+			if (addBar("barVer", i, j))
 			{
 				incrementPlayer();
 				playBots();
 			}
 		}
-		else if (e->Y % 60 >= 50) // Horizontal line
+		else if (y % 60 >= 50) // Horizontal line
 		{
-			int j = e->X / 60;
-			int i = e->Y / 60;
-
 			if (j == MAPWIDTH - 1)
 				j--;
 
@@ -388,8 +388,8 @@ namespace IART {
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
-				int posX = j * 60 + 50;
-				int posY = i * 60;
+				int posX = j * 60 + 50 + 10;
+				int posY = i * 60 + 10;
 
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"barVer" + i + j;
@@ -408,8 +408,8 @@ namespace IART {
 			{
 				PictureBox^ picbox = gcnew PictureBox();
 
-				int posX = j * 60;
-				int posY = i * 60 + 50;
+				int posX = j * 60 + 10;
+				int posY = i * 60 + 50 + 10;
 
 				picbox->Location = System::Drawing::Point(posX, posY);
 				picbox->Name = L"barHor" + i + j;
@@ -480,14 +480,7 @@ namespace IART {
 		playing = true;
 		for (size_t i = 1; i < currNode->state.size(); i++)
 		{
-			//ui_utilities::milliSleep(250);
-
-			auto begin = std::chrono::high_resolution_clock::now();
-			
 			playCharacter();
-
-			double deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e9;
-			std::cout << "\nFinished in : " << deltaTime << " seconds.\n";
 
 			if (checkWin())
 				return;
@@ -500,12 +493,21 @@ namespace IART {
 
 	void playCharacter()
 	{
-		Node* bestMove = minimax(currNode, selectedCharacter, 1);
+		auto begin = std::chrono::high_resolution_clock::now();
 
+		Node* bestMove = minimax(currNode, selectedCharacter, 1);
 		while (bestMove->parent != currNode)
 		{
 			bestMove = bestMove->parent;
 		}
+
+		int deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e6;
+		std::cout << "\nFinished in : " << deltaTime << " milliseconds.\n";
+
+		int remainingTime = botPlayTime - deltaTime;
+
+		if (remainingTime > 0)
+			ui_utilities::milliSleep(remainingTime);
 
 		setNode(&currNode, &bestMove);
 	}
