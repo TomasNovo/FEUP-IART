@@ -76,6 +76,10 @@ namespace IART {
 	private: System::Windows::Forms::Panel^  robotPanel;
 	private: System::Windows::Forms::Button^  button4;
 
+	private: System::Windows::Forms::ComboBox^  comboBox1;
+	private: System::Windows::Forms::ComboBox^  comboBox2;
+	private: System::Windows::Forms::ComboBox^  comboBox3;
+	private: System::Windows::Forms::ComboBox^  comboBox4;
 
 
 
@@ -109,6 +113,10 @@ namespace IART {
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
+			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox3 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox4 = (gcnew System::Windows::Forms::ComboBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
@@ -146,6 +154,60 @@ namespace IART {
 			this->robotPanel->Name = L"robotPanel";
 			this->robotPanel->Size = System::Drawing::Size(179, 281);
 			this->robotPanel->TabIndex = 12;
+			//
+			// comboBox1
+			//
+			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox1->FormattingEnabled = true;
+			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+				L"Player", L"Bot", L"Out"
+			});
+			this->comboBox1->Location = System::Drawing::Point(70, 0 * (50 + 10) + 12);
+			this->comboBox1->Name = L"comboBox1";
+			this->comboBox1->Size = System::Drawing::Size(60, 21);
+			this->comboBox1->SelectedIndex = 0;
+			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
+			//
+			// comboBox2
+			//
+			this->comboBox2->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox2->FormattingEnabled = true;
+			this->comboBox2->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+				L"Player", L"Bot", L"Out"
+			});
+			this->comboBox2->Location = System::Drawing::Point(70, 1 * (50 + 10) + 12);
+			this->comboBox2->Name = L"comboBox2";
+			this->comboBox2->Size = System::Drawing::Size(60, 21);
+			this->comboBox2->SelectedIndex = 1;
+			this->comboBox2->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
+
+			//
+			// comboBox3
+			//
+			this->comboBox3->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox3->FormattingEnabled = true;
+			this->comboBox3->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+				L"Player", L"Bot", L"Out"
+			});
+			this->comboBox3->Location = System::Drawing::Point(70, 2 * (50 + 10) + 12);
+			this->comboBox3->Name = L"comboBox2";
+			this->comboBox3->Size = System::Drawing::Size(60, 21);
+			this->comboBox3->SelectedIndex = 1;
+			this->comboBox3->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
+			//
+			// comboBox4
+			//
+			this->comboBox4->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox4->FormattingEnabled = true;
+			this->comboBox4->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+				L"Player", L"Bot", L"Out"
+			});
+			this->comboBox4->Location = System::Drawing::Point(70, 3 * (50 + 10) + 12);
+			this->comboBox4->Name = L"comboBox2";
+			this->comboBox4->Size = System::Drawing::Size(60, 21);
+			this->comboBox4->SelectedIndex = 1;
+			this->comboBox4->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
+
 			// 
 			// button4
 			// 
@@ -296,7 +358,6 @@ namespace IART {
 	{
 		PictureBox^ picbox;
 		RadioButton^ button;
-		ComboBox^  comboBox1;
 
 		robotPanel->Controls->Clear();
 
@@ -310,36 +371,12 @@ namespace IART {
 			picbox->Size = System::Drawing::Size(50, 50);
 			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
 			robotPanel->Controls->Add(picbox);
-
-			comboBox1 = gcnew ComboBox();
-			comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			comboBox1->FormattingEnabled = true;
-			comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(2) {
-				L"Player", L"Bot"
-			});
-			comboBox1->Location = System::Drawing::Point(70, i * (50 + 10) + 12);
-			comboBox1->Name = L"comboBox1";
-			comboBox1->Size = System::Drawing::Size(60, 21);
-			if(i != 0)
-				comboBox1->SelectedIndex = 1;
-			else 
-				comboBox1->SelectedIndex = 0;
-
-			robotPanel->Controls->Add(comboBox1); 
-
-			//this->comboBox1->TabIndex = 6;
-			//this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox1_SelectedIndexChanged);
-
-			
-			/*button = gcnew RadioButton();
-
-			button->Name = "robotSelectorButton" + i;
-			button->Location = System::Drawing::Point(90, i * (50 + 10) + 12);
-			//button->Click += gcnew System::EventHandler(this, &gui::robotPanelButtonClick);
-			robotPanel->Controls->Add(button);*/
 		}
 
-		//selectRobotButton(0);
+		this->robotPanel->Controls->Add(comboBox1);
+		this->robotPanel->Controls->Add(comboBox2);
+		this->robotPanel->Controls->Add(comboBox3);
+		this->robotPanel->Controls->Add(comboBox4);
 	}
 
 
@@ -697,6 +734,11 @@ namespace IART {
 
 	
 	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		resetMap();
+	}
+
+	private: System::Void comboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
 	{
 		resetMap();
 	}
