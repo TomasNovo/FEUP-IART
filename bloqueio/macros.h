@@ -9,7 +9,7 @@
 
 #define MAXWALLCOUNT 5
 
-#define MINIMAXDEPTH 2
+#define MINIMAXDEPTH 1
 
 
 #endif
