@@ -190,11 +190,14 @@ bool wallsCollide(std::string type1, int i1, int j1, std::string type2, int i2, 
 	return false;
 }
 
-Node* initiateMap()
+Node* initiateMap(std::vector<char> characters)
 {
+	operations.clear();
+	operationNames.clear();
+
 	initiateOperators();
 		
-	Node* rootNode = new Node();
+	Node* rootNode = new Node(characters);
 	rootNode->setH(0);
 
 	return rootNode;

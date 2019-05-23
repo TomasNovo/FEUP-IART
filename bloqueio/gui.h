@@ -68,6 +68,9 @@ namespace IART {
 
 	private: bool playing = false;
 
+	private: array<int>^ playerType;
+
+
 	private: System::Windows::Forms::Label^  mapLabel;
 
 
@@ -76,13 +79,17 @@ namespace IART {
 	private: System::Windows::Forms::Panel^  robotPanel;
 	private: System::Windows::Forms::Button^  button4;
 
-	private: System::Windows::Forms::ComboBox^  comboBox1;
-	private: System::Windows::Forms::ComboBox^  comboBox2;
-	private: System::Windows::Forms::ComboBox^  comboBox3;
+	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
+	private: System::Windows::Forms::PictureBox^  pictureBox4;
+	private: System::Windows::Forms::PictureBox^  pictureBox3;
+	private: System::Windows::Forms::PictureBox^  pictureBox2;
 	private: System::Windows::Forms::ComboBox^  comboBox4;
-
-
-
+	private: System::Windows::Forms::ComboBox^  comboBox3;
+	private: System::Windows::Forms::ComboBox^  comboBox2;
+	private: System::Windows::Forms::ComboBox^  comboBox1;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::PictureBox^  pictureBox5;
 
 
 
@@ -113,105 +120,141 @@ namespace IART {
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel = (gcnew System::Windows::Forms::Panel());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
-			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
-			this->comboBox3 = (gcnew System::Windows::Forms::ComboBox());
 			this->comboBox4 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox3 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox2 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->pictureBox4 = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox3 = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->pictureBox5 = (gcnew System::Windows::Forms::PictureBox());
+			this->robotPanel->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox4))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox5))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// mainPanel
 			// 
-			this->mainPanel->Location = System::Drawing::Point(200, 0);
-			this->mainPanel->Margin = System::Windows::Forms::Padding(4);
+			this->mainPanel->Location = System::Drawing::Point(150, 0);
 			this->mainPanel->Name = L"mainPanel";
-			this->mainPanel->Size = System::Drawing::Size(1067, 985);
+			this->mainPanel->Size = System::Drawing::Size(800, 800);
 			this->mainPanel->TabIndex = 3;
 			// 
 			// mapLabel
 			// 
 			this->mapLabel->AutoSize = true;
-			this->mapLabel->Location = System::Drawing::Point(40, 63);
-			this->mapLabel->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->mapLabel->Location = System::Drawing::Point(30, 51);
 			this->mapLabel->Name = L"mapLabel";
-			this->mapLabel->Size = System::Drawing::Size(0, 17);
+			this->mapLabel->Size = System::Drawing::Size(0, 13);
 			this->mapLabel->TabIndex = 4;
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(40, 25);
-			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->label2->Location = System::Drawing::Point(30, 20);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(129, 17);
+			this->label2->Size = System::Drawing::Size(99, 13);
 			this->label2->TabIndex = 11;
 			this->label2->Text = L"Select Robot Roles";
 			// 
 			// robotPanel
 			// 
-			this->robotPanel->Location = System::Drawing::Point(13, 46);
-			this->robotPanel->Margin = System::Windows::Forms::Padding(4);
+			this->robotPanel->Controls->Add(this->comboBox4);
+			this->robotPanel->Controls->Add(this->comboBox3);
+			this->robotPanel->Controls->Add(this->comboBox2);
+			this->robotPanel->Controls->Add(this->comboBox1);
+			this->robotPanel->Controls->Add(this->pictureBox4);
+			this->robotPanel->Controls->Add(this->pictureBox3);
+			this->robotPanel->Controls->Add(this->pictureBox2);
+			this->robotPanel->Controls->Add(this->pictureBox1);
+			this->robotPanel->Location = System::Drawing::Point(10, 37);
 			this->robotPanel->Name = L"robotPanel";
-			this->robotPanel->Size = System::Drawing::Size(179, 281);
+			this->robotPanel->Size = System::Drawing::Size(134, 232);
 			this->robotPanel->TabIndex = 12;
-			//
-			// comboBox1
-			//
-			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
-				L"Player", L"Bot", L"Out"
-			});
-			this->comboBox1->Location = System::Drawing::Point(70, 0 * (50 + 10) + 12);
-			this->comboBox1->Name = L"comboBox1";
-			this->comboBox1->Size = System::Drawing::Size(60, 21);
-			this->comboBox1->SelectedIndex = 0;
-			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
-			//
-			// comboBox2
-			//
-			this->comboBox2->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox2->FormattingEnabled = true;
-			this->comboBox2->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
-				L"Player", L"Bot", L"Out"
-			});
-			this->comboBox2->Location = System::Drawing::Point(70, 1 * (50 + 10) + 12);
-			this->comboBox2->Name = L"comboBox2";
-			this->comboBox2->Size = System::Drawing::Size(60, 21);
-			this->comboBox2->SelectedIndex = 1;
-			this->comboBox2->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
-
-			//
-			// comboBox3
-			//
-			this->comboBox3->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox3->FormattingEnabled = true;
-			this->comboBox3->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
-				L"Player", L"Bot", L"Out"
-			});
-			this->comboBox3->Location = System::Drawing::Point(70, 2 * (50 + 10) + 12);
-			this->comboBox3->Name = L"comboBox2";
-			this->comboBox3->Size = System::Drawing::Size(60, 21);
-			this->comboBox3->SelectedIndex = 1;
-			this->comboBox3->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
-			//
+			// 
 			// comboBox4
-			//
+			// 
 			this->comboBox4->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->comboBox4->FormattingEnabled = true;
-			this->comboBox4->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
-				L"Player", L"Bot", L"Out"
-			});
-			this->comboBox4->Location = System::Drawing::Point(70, 3 * (50 + 10) + 12);
-			this->comboBox4->Name = L"comboBox2";
+			this->comboBox4->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"Player", L"Bot", L"Out" });
+			this->comboBox4->Location = System::Drawing::Point(70, 192);
+			this->comboBox4->Name = L"comboBox4";
 			this->comboBox4->Size = System::Drawing::Size(60, 21);
-			this->comboBox4->SelectedIndex = 1;
-			this->comboBox4->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::comboBox_SelectedIndexChanged);
-
+			this->comboBox4->TabIndex = 7;
+			// 
+			// comboBox3
+			// 
+			this->comboBox3->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox3->FormattingEnabled = true;
+			this->comboBox3->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"Player", L"Bot", L"Out" });
+			this->comboBox3->Location = System::Drawing::Point(70, 132);
+			this->comboBox3->Name = L"comboBox3";
+			this->comboBox3->Size = System::Drawing::Size(60, 21);
+			this->comboBox3->TabIndex = 6;
+			// 
+			// comboBox2
+			// 
+			this->comboBox2->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox2->FormattingEnabled = true;
+			this->comboBox2->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"Player", L"Bot", L"Out" });
+			this->comboBox2->Location = System::Drawing::Point(70, 72);
+			this->comboBox2->Name = L"comboBox2";
+			this->comboBox2->Size = System::Drawing::Size(60, 21);
+			this->comboBox2->TabIndex = 5;
+			// 
+			// comboBox1
+			// 
+			this->comboBox1->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox1->FormattingEnabled = true;
+			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"Player", L"Bot", L"Out" });
+			this->comboBox1->Location = System::Drawing::Point(70, 12);
+			this->comboBox1->Name = L"comboBox1";
+			this->comboBox1->Size = System::Drawing::Size(60, 21);
+			this->comboBox1->TabIndex = 4;
+			// 
+			// pictureBox4
+			// 
+			this->pictureBox4->Location = System::Drawing::Point(0, 180);
+			this->pictureBox4->Name = L"pictureBox4";
+			this->pictureBox4->Size = System::Drawing::Size(50, 50);
+			this->pictureBox4->TabIndex = 3;
+			this->pictureBox4->TabStop = false;
+			// 
+			// pictureBox3
+			// 
+			this->pictureBox3->Location = System::Drawing::Point(0, 120);
+			this->pictureBox3->Name = L"pictureBox3";
+			this->pictureBox3->Size = System::Drawing::Size(50, 50);
+			this->pictureBox3->TabIndex = 2;
+			this->pictureBox3->TabStop = false;
+			// 
+			// pictureBox2
+			// 
+			this->pictureBox2->Location = System::Drawing::Point(0, 60);
+			this->pictureBox2->Name = L"pictureBox2";
+			this->pictureBox2->Size = System::Drawing::Size(50, 50);
+			this->pictureBox2->TabIndex = 1;
+			this->pictureBox2->TabStop = false;
+			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->Location = System::Drawing::Point(0, 0);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(50, 50);
+			this->pictureBox1->TabIndex = 0;
+			this->pictureBox1->TabStop = false;
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(65, 362);
+			this->button4->Location = System::Drawing::Point(33, 320);
+			this->button4->Margin = System::Windows::Forms::Padding(2);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(75, 23);
 			this->button4->TabIndex = 15;
@@ -219,11 +262,41 @@ namespace IART {
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &gui::button4_Click);
 			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(33, 283);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(75, 23);
+			this->button1->TabIndex = 16;
+			this->button1->Text = L"Play";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &gui::button1_Click_1);
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(35, 380);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(68, 13);
+			this->label1->TabIndex = 17;
+			this->label1->Text = L"Now playing:";
+			// 
+			// pictureBox5
+			// 
+			this->pictureBox5->Location = System::Drawing::Point(43, 407);
+			this->pictureBox5->Name = L"pictureBox5";
+			this->pictureBox5->Size = System::Drawing::Size(50, 50);
+			this->pictureBox5->TabIndex = 18;
+			this->pictureBox5->TabStop = false;
+			// 
 			// gui
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(960, 683);
+			this->ClientSize = System::Drawing::Size(720, 555);
+			this->Controls->Add(this->pictureBox5);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->button1);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->robotPanel);
 			this->Controls->Add(this->label2);
@@ -232,12 +305,17 @@ namespace IART {
 			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->KeyPreview = true;
-			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximizeBox = false;
 			this->Name = L"gui";
 			this->Text = L"Bloqueio";
 			this->Load += gcnew System::EventHandler(this, &gui::gui_Load);
 			this->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &gui::gui_KeyPress);
+			this->robotPanel->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox4))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox5))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -247,12 +325,106 @@ namespace IART {
 
 	private: System::Void gui_Load(System::Object^  sender, System::EventArgs^  e)
 	{
-		rootNode = initiateMap();
+		comboBox1->SelectedIndex = 0;
+		comboBox2->SelectedIndex = 1;
+		comboBox3->SelectedIndex = 1;
+		comboBox4->SelectedIndex = 1;
+
+		initialize();
+	}
+
+	private: void initialize()
+	{
+		mainPanel->Controls->Clear();
+
+		initializeImages();
+		loadRobotsPanel();
+
+		std::vector<char> contructorList;
+
+		for (int i = 0; i < playerType->Length; i++)
+		{
+			int index = ((ComboBox^)robotPanel->Controls->Find("comboBox" + (i+1), true)[0])->SelectedIndex;
+
+			if (index != 2)
+				contructorList.push_back('a' + i);
+		}
+
+		rootNode = initiateMap(contructorList);
 		currNode = new Node(*rootNode);
+
+		int index = 0, i;
+		for (i = 0; i < playerType->Length; i++)
+		{
+			if (playerType[i] == 0)
+			{
+				selectedCharacter = index;
+				break;
+			}
+			else if (playerType[i] == 1)
+			{
+				index++;
+			}
+		}
+
+		if (i == playerType->Length)
+			selectedCharacter = 0;
+
+		pictureBox5->Image = characters[currNode->state[selectedCharacter].id - 'a'];
+		pictureBox5->Refresh();
 
 		initializeBoxes();
 		loadBoxes();
-		loadRobotsPanel();
+	}
+
+	private: void initializeImages()
+	{
+		characters = gcnew array<Image^>(4);
+		goals = gcnew array<Image^>(4);
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			characters[i] = changeColor(Image::FromFile("images/robot.png"), 'a' + i);
+
+			goals[i] = changeColor(Image::FromFile("images/goal.png"), 'a' + i);
+
+			if (i % 2 == 0)
+				goals[i] = rotateImage(goals[i]);
+		}
+	}
+
+	void loadRobotsPanel()
+	{
+		PictureBox^ picbox;
+		RadioButton^ button;
+
+		robotPanel->Controls->Clear();
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			picbox = gcnew PictureBox();
+
+			picbox->Image = characters[i];
+			picbox->Name = "robotSelectorPicture" + i;
+			picbox->Location = System::Drawing::Point(0, i * (50 + 10));
+			picbox->Size = System::Drawing::Size(50, 50);
+			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
+			robotPanel->Controls->Add(picbox);
+		}
+
+		this->robotPanel->Controls->Add(comboBox1);
+		this->robotPanel->Controls->Add(comboBox2);
+		this->robotPanel->Controls->Add(comboBox3);
+		this->robotPanel->Controls->Add(comboBox4);
+
+
+		playerType = gcnew array<int>(4);
+		for (int i = 0; i < 4; i++)
+		{
+			int selectedIndex = ((ComboBox^)robotPanel->Controls->Find("comboBox" + (i + 1), true)[0])->SelectedIndex;
+
+			playerType[i] = selectedIndex;
+		}
 	}
 
 	private: void initializeBoxes()
@@ -335,48 +507,12 @@ namespace IART {
 			}
 		}
 
-		characters = gcnew array<Image^>(currNode->state.size());
-		goals = gcnew array<Image^>(currNode->state.size());
-
-		for (size_t i = 0; i < currNode->state.size(); i++)
+		for (int i = 0; i < currNode->state.size(); i++)
 		{
-			characters[i] = changeColor(Image::FromFile("images/robot.png"), currNode->state[i].id);
-			getPictureBox("box" + currNode->state[i].coords[1] + currNode->state[i].coords[0])->Image = characters[i];
-
-			goals[i] = changeColor(Image::FromFile("images/goal.png"), currNode->state[i].id);
-
-			if (i % 2 == 0)
-				goals[i] = rotateImage(goals[i]);
-
-			getPictureBox("goal" + i)->Image = goals[i];
+			getPictureBox("box" + currNode->state[i].coords[1] + currNode->state[i].coords[0])->Image = characters[currNode->state[i].id - 'a'];
+			getPictureBox("goal" + i)->Image = goals[currNode->state[i].id - 'a'];
 		}
 
-
-	}
-
-	void loadRobotsPanel()
-	{
-		PictureBox^ picbox;
-		RadioButton^ button;
-
-		robotPanel->Controls->Clear();
-
-		for (size_t i = 0; i < currNode->state.size(); i++)
-		{
-			picbox = gcnew PictureBox();
-
-			picbox->Image = characters[i];
-			picbox->Name = "robotSelectorPicture" + i;
-			picbox->Location = System::Drawing::Point(0, i * (50 + 10));
-			picbox->Size = System::Drawing::Size(50, 50);
-			picbox->Click += gcnew System::EventHandler(this, &gui::robotPicturePanelClick);
-			robotPanel->Controls->Add(picbox);
-		}
-
-		this->robotPanel->Controls->Add(comboBox1);
-		this->robotPanel->Controls->Add(comboBox2);
-		this->robotPanel->Controls->Add(comboBox3);
-		this->robotPanel->Controls->Add(comboBox4);
 	}
 
 
@@ -401,7 +537,7 @@ namespace IART {
 			if (addBar("barVer", i, j))
 			{
 				incrementPlayer();
-				playBots();
+				playCharacter();
 			}
 		}
 		else if (y % 60 >= 50) // Horizontal line
@@ -412,7 +548,7 @@ namespace IART {
 			if (addBar("barHor", i, j))
 			{
 				incrementPlayer();
-				playBots();
+				playCharacter();
 			}
 		}
 	}
@@ -469,7 +605,7 @@ namespace IART {
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		if (currNode != NULL && !playing && !currNode->finished())
+		if (currNode != NULL && !playing && !currNode->finished() && playerType[currNode->state[selectedCharacter].id - 'a'] == 0)
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
@@ -491,8 +627,7 @@ namespace IART {
 						return;
 
 					incrementPlayer();
-					
-					playBots();
+					playCharacter();
 
 					return;
 				}
@@ -512,46 +647,43 @@ namespace IART {
 		return false;
 	}
 
-	void playBots()
+
+	void playCharacter()
 	{
-		playing = true;
-		for (size_t i = 1; i < currNode->state.size(); i++)
+		if (playerType[currNode->state[selectedCharacter].id - 'a'] == 1)
 		{
-			playCharacter();
+			auto begin = std::chrono::high_resolution_clock::now();
+
+			Node* bestMove = minimax(currNode, selectedCharacter, MINIMAXDEPTH);
+			while (bestMove->parent != currNode)
+			{
+				bestMove = bestMove->parent;
+			}
+
+			int deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e6;
+			std::cout << "\nFinished in : " << deltaTime << " milliseconds.\n";
+
+			int remainingTime = botPlayTime - deltaTime;
+
+			if (remainingTime > 0)
+				ui_utilities::milliSleep(remainingTime);
+
+			setNode(&currNode, &bestMove);
 
 			if (checkWin())
 				return;
 
 			incrementPlayer();
+			playCharacter();
 		}
-
-		playing = false;
-	}
-
-	void playCharacter()
-	{
-		auto begin = std::chrono::high_resolution_clock::now();
-
-		Node* bestMove = minimax(currNode, selectedCharacter, 1);
-		while (bestMove->parent != currNode)
-		{
-			bestMove = bestMove->parent;
-		}
-
-		int deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e6;
-		std::cout << "\nFinished in : " << deltaTime << " milliseconds.\n";
-
-		int remainingTime = botPlayTime - deltaTime;
-
-		if (remainingTime > 0)
-			ui_utilities::milliSleep(remainingTime);
-
-		setNode(&currNode, &bestMove);
 	}
 
 	void incrementPlayer()
 	{
 		selectedCharacter = (selectedCharacter + 1) % currNode->state.size();
+
+		pictureBox5->Image = characters[currNode->state[selectedCharacter].id - 'a'];
+		pictureBox5->Refresh();
 	}
 
 	std::string convertString(System::String^ input)
@@ -594,7 +726,7 @@ namespace IART {
 			getPictureBox("box" + (*node1)->state[i].coords[1] + (*node1)->state[i].coords[0])->Image = nullptr;
 			getPictureBox("box" + (*node1)->state[i].coords[1] + (*node1)->state[i].coords[0])->Refresh();
 
-			getPictureBox("box" + (*node2)->state[i].coords[1] + (*node2)->state[i].coords[0])->Image = characters[i];
+			getPictureBox("box" + (*node2)->state[i].coords[1] + (*node2)->state[i].coords[0])->Image = characters[(*node2)->state[i].id - 'a'];
 			getPictureBox("box" + (*node2)->state[i].coords[1] + (*node2)->state[i].coords[0])->Refresh();
 
 			for (auto wall : (*node2)->state[i].walls)
@@ -617,14 +749,7 @@ namespace IART {
 
 	void resetMap()
 	{
-		mainPanel->Controls->Clear();
-
-		initializeBoxes();
-
-		setNode(&currNode, &rootNode);
-		playing = false;
-
-		loadBoxes();
+		initialize();
 	}
 
 
@@ -738,9 +863,9 @@ namespace IART {
 		resetMap();
 	}
 
-	private: System::Void comboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e)
+	private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e)
 	{
-		resetMap();
+		playCharacter();
 	}
 };
 }

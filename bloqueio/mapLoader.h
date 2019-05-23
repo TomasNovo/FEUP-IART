@@ -24,7 +24,7 @@ bool validMove(Node* node, int characterIndex, int x, int y);
 bool validBar(Node* node, int characterIndex, std::string type, int i, int j);
 bool validBarEfficient(Node* node, int characterIndex, std::string type, int i, int j, int maxCharacter);
 
-Node* initiateMap();
+Node* initiateMap(std::vector<char> characters);
 
 void initiateOperators();
 

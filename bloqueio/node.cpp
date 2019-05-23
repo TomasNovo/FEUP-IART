@@ -39,6 +39,54 @@ Node::Node()
 
 }
 
+Node::Node(std::vector<char> characters)
+{
+	Character character;
+
+	auto it = std::find(characters.begin(), characters.end(), 'a');
+	if (it != characters.end())
+	{
+		character.coords[0] = 4;
+		character.coords[1] = 0;
+		character.objective[1] = 8;
+		character.id = 'a';
+		state.push_back(character);
+	}
+
+	it = std::find(characters.begin(), characters.end(), 'b');
+	if (it != characters.end())
+	{
+		character = Character();
+		character.coords[0] = 8;
+		character.coords[1] = 4;
+		character.objective[0] = 0;
+		character.id = 'b';
+		state.push_back(character);
+	}
+
+	it = std::find(characters.begin(), characters.end(), 'c');
+	if (it != characters.end())
+	{
+		character = Character();
+		character.coords[0] = 4;
+		character.coords[1] = 8;
+		character.objective[1] = 0;
+		character.id = 'c';
+		state.push_back(character);
+	}
+
+	it = std::find(characters.begin(), characters.end(), 'd');
+	if (it != characters.end())
+	{
+		character = Character();
+		character.coords[0] = 0;
+		character.coords[1] = 4;
+		character.objective[0] = 8;
+		character.id = 'd';
+		state.push_back(character);
+	}
+}
+
 
 Node::Node(const Node& node)
 {
@@ -58,21 +106,18 @@ void Node::setH(int characterIndex)
 
 	// h is sorthest distance to border subtracted distances of other players.
 
-	int closestOponentDistance = -2;
 	for (size_t i = 0; i < state.size(); i++)
 	{
-		int characterH = getDistance(i); // The lower the distance the better the avaluation of each player becomes, hence the inverted operations
+		double characterH = getDistance(i); // The lower the distance the better the avaluation of each player becomes, lesser h means better evaluation, hence the inverted operations
+
+		if (characterH == -1)
+			characterH = 0;
 
 		if (i == characterIndex)
 			this->h -= characterH;
 		else
-		{
-			if (closestOponentDistance == -2 || characterH < closestOponentDistance)
-				closestOponentDistance = characterH;
-		}
+			this->h += characterH / (double)(state.size() - 1);
 	}
-
-	this->h += closestOponentDistance;
 	
 	this->f = this->cost + this->h;
 }

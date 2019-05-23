@@ -23,6 +23,7 @@ public:
 	//std::vector<std::vector<long long>> zobristTable;
 
 	Node();
+	Node(std::vector<char> characters);
 
 	Node(int n);
 
