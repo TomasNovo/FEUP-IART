@@ -323,10 +323,10 @@ Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCha
 
 		if (newNode != currNode)
 		{
-			newNode->setH(maxCharacter, heuristic);
 			newNode->parent = currNode;
 			newNode->cost++;
 			newNode->operationName = operationNames[i];
+			newNode->setH(maxCharacter, heuristic);
 		}
 	}
 	else

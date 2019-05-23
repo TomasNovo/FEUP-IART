@@ -114,7 +114,7 @@ void Node::setH(int characterIndex, int heuristic)
 			characterH = getDistance(i); // The lower the distance the better the evaluation of each player becomes, lesser h means better evaluation, hence the inverted operations
 
 		if (characterH == -1)
-			characterH = 0;
+			characterH = state[i].H()*2;
 
 		if (i == characterIndex)
 			this->h -= characterH;
@@ -129,6 +129,10 @@ void Node::setH(int characterIndex, int heuristic)
 int Node::getDistance(int characterIndex)
 {
 	Node* currNode = new Node(*this);
+
+	currNode->h = currNode->state[characterIndex].H();
+	currNode->f = currNode->cost + currNode->h;
+
 	Node* nextNode;
 
 	std::multiset<Node*, sortF> openList;
@@ -169,14 +173,15 @@ int Node::getDistance(int characterIndex)
 		for (int i = 0; i < 4; i++)
 		{
 			nextNode = operations[i](currNode, characterIndex);
-			nextNode->cost++;
-			nextNode->h = nextNode->state[characterIndex].H();
-			nextNode->f = nextNode->cost + nextNode->h;
 
 			if (nextNode == currNode)
 			{
 				continue;
 			}
+
+			nextNode->cost++;
+			nextNode->h = nextNode->state[characterIndex].H();
+			nextNode->f = nextNode->cost + nextNode->h;
 
 			if (closedSet.find(nextNode) == closedSet.end())
 			{
