@@ -77,7 +77,8 @@ namespace IART {
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Panel^  robotPanel;
-	private: System::Windows::Forms::Button^  button4;
+	private: System::Windows::Forms::Button^  button2;
+
 
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
@@ -116,6 +117,7 @@ namespace IART {
 
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(gui::typeid));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
@@ -129,7 +131,7 @@ namespace IART {
 			this->pictureBox3 = (gcnew System::Windows::Forms::PictureBox());
 			this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
-			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->pictureBox5 = (gcnew System::Windows::Forms::PictureBox());
@@ -253,16 +255,16 @@ namespace IART {
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
 			// 
-			// button4
+			// button2
 			// 
-			this->button4->Location = System::Drawing::Point(33, 320);
-			this->button4->Margin = System::Windows::Forms::Padding(2);
-			this->button4->Name = L"button4";
-			this->button4->Size = System::Drawing::Size(75, 23);
-			this->button4->TabIndex = 15;
-			this->button4->Text = L"Reset";
-			this->button4->UseVisualStyleBackColor = true;
-			this->button4->Click += gcnew System::EventHandler(this, &gui::button4_Click);
+			this->button2->Location = System::Drawing::Point(33, 320);
+			this->button2->Margin = System::Windows::Forms::Padding(2);
+			this->button2->Name = L"button2";
+			this->button2->Size = System::Drawing::Size(75, 23);
+			this->button2->TabIndex = 15;
+			this->button2->Text = L"Reset";
+			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &gui::button4_Click);
 			// 
 			// button1
 			// 
@@ -272,7 +274,7 @@ namespace IART {
 			this->button1->TabIndex = 16;
 			this->button1->Text = L"Play";
 			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &gui::button1_Click_1);
+			this->button1->Click += gcnew System::EventHandler(this, &gui::button1_Click);
 			// 
 			// label1
 			// 
@@ -310,7 +312,7 @@ namespace IART {
 			this->Controls->Add(this->pictureBox5);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->button1);
-			this->Controls->Add(this->button4);
+			this->Controls->Add(this->button2);
 			this->Controls->Add(this->robotPanel);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->mapLabel);
@@ -344,6 +346,8 @@ namespace IART {
 		comboBox4->SelectedIndex = 1;
 
 		comboBox5->SelectedIndex = 1;
+
+
 
 		initialize();
 	}
@@ -861,26 +865,10 @@ namespace IART {
 	{
 		playCharacter();
 	}
-
-	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		MessageBox::Show("Heuristic is " + currNode->h);
-	}
-
-	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		MessageBox::Show("Heuristic is " + currNode->getDistance(0));
-	}
-
 	
 	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		resetMap();
-	}
-
-	private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e)
-	{
-		playCharacter();
 	}
 };
 }
