@@ -100,15 +100,18 @@ Node::Node(const Node& node)
 	this->operationName = node.operationName;
 }
 
-void Node::setH(int characterIndex)
+void Node::setH(int characterIndex, int heuristic)
 {
 	this->h = 0;
 
 	// h is sorthest distance to border subtracted distances of other players.
-
 	for (size_t i = 0; i < state.size(); i++)
 	{
-		double characterH = getDistance(i); // The lower the distance the better the avaluation of each player becomes, lesser h means better evaluation, hence the inverted operations
+		double characterH;
+		if (heuristic == 0)
+			characterH = state[i].H(); // Direct distance to goal, i.e., disregarding barriers
+		else
+			characterH = getDistance(i); // The lower the distance the better the evaluation of each player becomes, lesser h means better evaluation, hence the inverted operations
 
 		if (characterH == -1)
 			characterH = 0;
@@ -268,8 +271,8 @@ int hashNode::operator() (const Node* node) const
 
 	for (int i = 0; i < node->state.size(); ++i)
 	{
-		hash += MAPWIDTH * std::hash<int>()(node->state[i].coords[1]);
-		hash += std::hash<int>()(node->state[i].coords[0]);
+		hash += MAPWIDTH * node->state[i].coords[1];
+		hash += node->state[i].coords[0];
 	}
 
 

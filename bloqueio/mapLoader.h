@@ -29,7 +29,7 @@ Node* initiateMap(std::vector<char> characters);
 void initiateOperators();
 
 Node* doOperation(Node* currNode, int i, int characterIndex);
-Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCharacter);
+Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCharacter, int heuristic);
 bool wallsCollide(std::string type1, int i1, int j1, std::string type2, int i2, int j2);
 
 bool removeOperation(std::string operationName);

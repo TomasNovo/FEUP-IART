@@ -90,6 +90,7 @@ namespace IART {
 	private: System::Windows::Forms::ComboBox^  comboBox1;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::PictureBox^  pictureBox5;
+	private: System::Windows::Forms::ComboBox^  comboBox5;
 
 
 
@@ -132,6 +133,7 @@ namespace IART {
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->pictureBox5 = (gcnew System::Windows::Forms::PictureBox());
+			this->comboBox5 = (gcnew System::Windows::Forms::ComboBox());
 			this->robotPanel->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox4))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->BeginInit();
@@ -289,11 +291,22 @@ namespace IART {
 			this->pictureBox5->TabIndex = 18;
 			this->pictureBox5->TabStop = false;
 			// 
+			// comboBox5
+			// 
+			this->comboBox5->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox5->FormattingEnabled = true;
+			this->comboBox5->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Easy", L"Medium" });
+			this->comboBox5->Location = System::Drawing::Point(26, 353);
+			this->comboBox5->Name = L"comboBox5";
+			this->comboBox5->Size = System::Drawing::Size(91, 21);
+			this->comboBox5->TabIndex = 19;
+			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(720, 555);
+			this->Controls->Add(this->comboBox5);
 			this->Controls->Add(this->pictureBox5);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->button1);
@@ -329,6 +342,8 @@ namespace IART {
 		comboBox2->SelectedIndex = 1;
 		comboBox3->SelectedIndex = 1;
 		comboBox4->SelectedIndex = 1;
+
+		comboBox5->SelectedIndex = 1;
 
 		initialize();
 	}
@@ -654,7 +669,7 @@ namespace IART {
 		{
 			auto begin = std::chrono::high_resolution_clock::now();
 
-			Node* bestMove = minimax(currNode, selectedCharacter, MINIMAXDEPTH);
+			Node* bestMove = minimax(currNode, selectedCharacter, MINIMAXDEPTH, comboBox5->SelectedIndex);
 			while (bestMove->parent != currNode)
 			{
 				bestMove = bestMove->parent;

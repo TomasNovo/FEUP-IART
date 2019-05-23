@@ -198,7 +198,7 @@ Node* initiateMap(std::vector<char> characters)
 	initiateOperators();
 		
 	Node* rootNode = new Node(characters);
-	rootNode->setH(0);
+	rootNode->setH(0, 0);
 
 	return rootNode;
 }
@@ -212,10 +212,41 @@ void createMap()
 
 void initiateOperators()
 {
-	Operator up = [](Node* node, int characterIndex) {Node* newNode = node; if (validMove(newNode, characterIndex, 0, -1)) { newNode = new Node(*node); newNode->state[characterIndex].coords[1]--; } return newNode; };
-	Operator right = [](Node* node, int characterIndex) {Node* newNode = node; if (validMove(newNode, characterIndex, 1, 0)) { newNode = new Node(*node); newNode->state[characterIndex].coords[0]++; } return newNode;};
-	Operator down = [](Node* node, int characterIndex) {Node* newNode = node; if (validMove(newNode, characterIndex, 0, 1)) { newNode = new Node(*node); newNode->state[characterIndex].coords[1]++; } return newNode;};
-	Operator left = [](Node* node, int characterIndex) {Node* newNode = node; if (validMove(newNode, characterIndex, -1, 0)) { newNode = new Node(*node); newNode->state[characterIndex].coords[0]--; } return newNode;};
+	Operator up = [](Node* node, int characterIndex) {
+														Node* newNode = node; 
+														if (validMove(newNode, characterIndex, 0, -1))
+														{
+															newNode = new Node(*node);
+															newNode->state[characterIndex].coords[1]--;
+														} 
+														return newNode; 
+													};
+	Operator right = [](Node* node, int characterIndex) {
+															Node* newNode = node;
+															if (validMove(newNode, characterIndex, 1, 0)) 
+															{ 
+																newNode = new Node(*node); 
+																newNode->state[characterIndex].coords[0]++;
+															} 
+															return newNode;
+														};
+	Operator down = [](Node* node, int characterIndex) {
+															Node* newNode = node; 
+															if (validMove(newNode, characterIndex, 0, 1)) { 
+																newNode = new Node(*node); 
+																newNode->state[characterIndex].coords[1]++;
+															} 
+															return newNode;
+														};
+	Operator left = [](Node* node, int characterIndex) {
+															Node* newNode = node;
+															if (validMove(newNode, characterIndex, -1, 0))
+															{ 
+																newNode = new Node(*node); 
+																newNode->state[characterIndex].coords[0]--; 
+															} 
+															return newNode;
+														};
 
 	operations.push_back(up);
 	operations.push_back(right);
@@ -273,7 +304,7 @@ Node* doOperation(Node* currNode, int i, int characterIndex)
 	if (newNode != currNode)
 	{
 		newNode->cost++;
-		newNode->setH(0);
+		newNode->setH(0, 0);
 
 		newNode->parent = currNode;
 		newNode->operationName = operationNames[i];
@@ -282,7 +313,7 @@ Node* doOperation(Node* currNode, int i, int characterIndex)
 	return newNode;
 }
 
-Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCharacter)
+Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCharacter, int heuristic)
 {
 	Node* newNode;
 
@@ -292,7 +323,7 @@ Node* doOperationEfficient(Node* currNode, int i, int characterIndex, int maxCha
 
 		if (newNode != currNode)
 		{
-			newNode->setH(maxCharacter);
+			newNode->setH(maxCharacter, heuristic);
 			newNode->parent = currNode;
 			newNode->cost++;
 			newNode->operationName = operationNames[i];

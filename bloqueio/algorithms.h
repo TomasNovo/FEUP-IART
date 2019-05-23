@@ -23,6 +23,6 @@ Node* aStar(Node* currNode, int heuristic);
 
 Node* aStar2(Node* currNode, int heuristic);
 
-Node* minimax(Node* currNode, int characterIndex, int depth);
+Node* minimax(Node* currNode, int characterIndex, int depth, int heuristic);
 
 #endif
