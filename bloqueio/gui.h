@@ -92,6 +92,7 @@ namespace IART {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::PictureBox^  pictureBox5;
 	private: System::Windows::Forms::ComboBox^  comboBox5;
+	private: System::Windows::Forms::Label^  label3;
 
 
 
@@ -117,7 +118,6 @@ namespace IART {
 
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(gui::typeid));
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->mainPanel = (gcnew System::Windows::Forms::Panel());
 			this->mapLabel = (gcnew System::Windows::Forms::Label());
@@ -136,6 +136,7 @@ namespace IART {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->pictureBox5 = (gcnew System::Windows::Forms::PictureBox());
 			this->comboBox5 = (gcnew System::Windows::Forms::ComboBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->robotPanel->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox4))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->BeginInit();
@@ -162,7 +163,7 @@ namespace IART {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(30, 20);
+			this->label2->Location = System::Drawing::Point(30, 9);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(99, 13);
 			this->label2->TabIndex = 11;
@@ -178,7 +179,7 @@ namespace IART {
 			this->robotPanel->Controls->Add(this->pictureBox3);
 			this->robotPanel->Controls->Add(this->pictureBox2);
 			this->robotPanel->Controls->Add(this->pictureBox1);
-			this->robotPanel->Location = System::Drawing::Point(10, 37);
+			this->robotPanel->Location = System::Drawing::Point(10, 28);
 			this->robotPanel->Name = L"robotPanel";
 			this->robotPanel->Size = System::Drawing::Size(134, 232);
 			this->robotPanel->TabIndex = 12;
@@ -192,6 +193,7 @@ namespace IART {
 			this->comboBox4->Name = L"comboBox4";
 			this->comboBox4->Size = System::Drawing::Size(60, 21);
 			this->comboBox4->TabIndex = 7;
+			this->comboBox4->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::changedRobotPanelComboBoxIndex);
 			// 
 			// comboBox3
 			// 
@@ -202,6 +204,7 @@ namespace IART {
 			this->comboBox3->Name = L"comboBox3";
 			this->comboBox3->Size = System::Drawing::Size(60, 21);
 			this->comboBox3->TabIndex = 6;
+			this->comboBox3->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::changedRobotPanelComboBoxIndex);
 			// 
 			// comboBox2
 			// 
@@ -212,6 +215,7 @@ namespace IART {
 			this->comboBox2->Name = L"comboBox2";
 			this->comboBox2->Size = System::Drawing::Size(60, 21);
 			this->comboBox2->TabIndex = 5;
+			this->comboBox2->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::changedRobotPanelComboBoxIndex);
 			// 
 			// comboBox1
 			// 
@@ -222,6 +226,7 @@ namespace IART {
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(60, 21);
 			this->comboBox1->TabIndex = 4;
+			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &gui::changedRobotPanelComboBoxIndex);
 			// 
 			// pictureBox4
 			// 
@@ -257,7 +262,7 @@ namespace IART {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(33, 320);
+			this->button2->Location = System::Drawing::Point(38, 349);
 			this->button2->Margin = System::Windows::Forms::Padding(2);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 23);
@@ -268,7 +273,7 @@ namespace IART {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(33, 283);
+			this->button1->Location = System::Drawing::Point(38, 314);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 16;
@@ -279,7 +284,7 @@ namespace IART {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(35, 380);
+			this->label1->Location = System::Drawing::Point(41, 388);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(68, 13);
 			this->label1->TabIndex = 17;
@@ -287,7 +292,7 @@ namespace IART {
 			// 
 			// pictureBox5
 			// 
-			this->pictureBox5->Location = System::Drawing::Point(43, 407);
+			this->pictureBox5->Location = System::Drawing::Point(50, 414);
 			this->pictureBox5->Name = L"pictureBox5";
 			this->pictureBox5->Size = System::Drawing::Size(50, 50);
 			this->pictureBox5->TabIndex = 18;
@@ -298,16 +303,26 @@ namespace IART {
 			this->comboBox5->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->comboBox5->FormattingEnabled = true;
 			this->comboBox5->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Easy", L"Medium" });
-			this->comboBox5->Location = System::Drawing::Point(26, 353);
+			this->comboBox5->Location = System::Drawing::Point(30, 281);
 			this->comboBox5->Name = L"comboBox5";
 			this->comboBox5->Size = System::Drawing::Size(91, 21);
 			this->comboBox5->TabIndex = 19;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(50, 264);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(50, 13);
+			this->label3->TabIndex = 20;
+			this->label3->Text = L"Difficulty:";
 			// 
 			// gui
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(720, 555);
+			this->Controls->Add(this->label3);
 			this->Controls->Add(this->comboBox5);
 			this->Controls->Add(this->pictureBox5);
 			this->Controls->Add(this->label1);
@@ -624,7 +639,7 @@ namespace IART {
 
 	private: System::Void gui_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e)
 	{
-		if (currNode != NULL && !playing && !currNode->finished() && playerType[currNode->state[selectedCharacter].id - 'a'] == 0)
+		if (currNode != NULL && playing && !currNode->finished() && playerType[currNode->state[selectedCharacter].id - 'a'] == 0)
 		{
 			std::vector<char> letters = { 'w', 'd', 's', 'a' };
 			Node* nextNode;
@@ -669,7 +684,7 @@ namespace IART {
 
 	void playCharacter()
 	{
-		if (playerType[currNode->state[selectedCharacter].id - 'a'] == 1)
+		if (playing && playerType[currNode->state[selectedCharacter].id - 'a'] == 1)
 		{
 			auto begin = std::chrono::high_resolution_clock::now();
 
@@ -863,12 +878,18 @@ namespace IART {
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
 	{
+		playing = true;
 		playCharacter();
 	}
 	
 	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		resetMap();
+	}
+
+	private: System::Void changedRobotPanelComboBoxIndex(System::Object^  sender, System::EventArgs^  e)
+	{
+		playing = false;
 	}
 };
 }
