@@ -1,0 +1,29 @@
+Minimax with 4 players, depth = 1 and heuristic = 1 took 75.6437 ms with 87 runs
+31024
+208896
+
+Minimax with 4 players, depth = 2 and heuristic = 1 took 446.43 ms with 86 runs
+30900
+1519756
+
+Minimax with 4 players, depth = 1 and heuristic = 0 took 84.0909 ms with 77 runs
+32296
+222168
+
+Minimax with 4 players, depth = 2 and heuristic = 0 took 188.302 ms with 53 runs
+32364
+266568
+
+Minimax with 2 players, depth = 1 and heuristic = 1 took 33.4333 ms with 30 runs
+31056
+64012
+
+Minimax with 2 players, depth = 2 and heuristic = 1 took 127.943 ms with 35 runs 
+31036
+217344
+
+Minimax with 2 players, depth = 1 and heuristic = 0 took 16.6429 ms with 42 runs
+32588
+53192
+
+Minimax with 2 players, depth = 2 and heuristic = 0 

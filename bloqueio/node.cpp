@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 #include "macros.h"
 #include  "mapLoader.h"

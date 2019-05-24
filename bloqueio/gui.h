@@ -355,6 +355,9 @@ namespace IART {
 #pragma endregion
 
 
+		int timeMinimax = 0;
+		int numMoves = 0;
+
 	private: System::Void gui_Load(System::Object^  sender, System::EventArgs^  e)
 	{
 		comboBox1->SelectedIndex = 0;
@@ -690,10 +693,16 @@ namespace IART {
 		return true;
 	}
 
+	void printMinimaxTime()
+	{
+		std::cout << "Minimax with " << currNode->state.size() << " players, " << "depth = " << MINIMAXDEPTH << " and heuristic = " << comboBox5->SelectedIndex << " took " << (double)timeMinimax / numMoves << " ms with " << numMoves << " runs\n";
+	}
+
 	bool checkWin()
 	{
 		if (checkDraw())
 		{
+			printMinimaxTime();
 			MessageBox::Show("Draw!");
 			initialize();
 			return true;
@@ -701,6 +710,7 @@ namespace IART {
 
 		if (currNode->finished())
 		{
+			printMinimaxTime();
 			MessageBox::Show("Player " + (selectedCharacter + 1) + " won!");
 			initialize();
 			return true;
@@ -724,7 +734,10 @@ namespace IART {
 			}
 
 			int deltaTime = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - begin).count() / (double)1e6;
-			std::cout << "\nFinished in : " << deltaTime << " milliseconds.\n";
+			//std::cout << "\nFinished in : " << deltaTime << " milliseconds.\n";
+
+			timeMinimax += deltaTime;
+			numMoves++;
 
 			int remainingTime = botPlayTime - deltaTime;
 
