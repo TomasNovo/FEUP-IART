@@ -26,4 +26,6 @@ Minimax with 2 players, depth = 1 and heuristic = 0 took 16.6429 ms with 42 runs
 32588
 53192
 
-Minimax with 2 players, depth = 2 and heuristic = 0 
+Minimax with 2 players, depth = 2 and heuristic = 0 took 97.48 ms with 25 runs
+31244
+121788

@@ -1,0 +1,9 @@
+This project was programmed using the .NET framework with C++/CLI for the GUI, which compiles on Visual Studio.
+To run the program you need the .NET framework. The binary is in the 'x64/Release' folder along with the necessary images.
+To compile the project you need to install Visual Studio if you don't have it and import the project. After sucessfully running the program you will be presented with a graphical interface with 4 players.
+You can select if you want a specific character to be a player, a bot ou out of the game.
+To start playing choose the character roles, press the reset button and then the player button.
+The first player character starts the game.
+If the game has no players (only bots) the first bot in the clock-wise motion starts, starting at the red character.
+A move is either physically moving a character (wasd keys) or placing a barrier by clicking in an empty space on the GUI.
+You can also specify the limit and/or the heuristic function of the algorithm, if it needs it.
