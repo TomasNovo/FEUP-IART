@@ -114,7 +114,7 @@ void Node::setH(int characterIndex, int heuristic)
 			characterH = getDistance(i); // The lower the distance the better the evaluation of each player becomes, lesser h means better evaluation, hence the inverted operations
 
 		if (characterH == -1)
-			characterH = state[i].H()*2;
+			characterH = state[i].H()*1.3;
 
 		if (i == characterIndex)
 			this->h -= characterH;

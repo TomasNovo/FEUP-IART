@@ -66,7 +66,7 @@ namespace IART {
 	private: int selectedCharacter = 0;
 	private: int botPlayTime = 500;
 
-	private: bool playing = false;
+	private: bool playing = true;
 
 	private: array<int>^ playerType;
 
@@ -151,6 +151,8 @@ namespace IART {
 			this->mainPanel->Name = L"mainPanel";
 			this->mainPanel->Size = System::Drawing::Size(800, 800);
 			this->mainPanel->TabIndex = 3;
+			this->mainPanel->MouseClick += gcnew MouseEventHandler(this, &gui::placeBar);
+
 			// 
 			// mapLabel
 			// 
@@ -359,10 +361,9 @@ namespace IART {
 		comboBox2->SelectedIndex = 1;
 		comboBox3->SelectedIndex = 1;
 		comboBox4->SelectedIndex = 1;
-
 		comboBox5->SelectedIndex = 1;
 
-
+		playing = true;
 
 		initialize();
 	}
@@ -370,6 +371,7 @@ namespace IART {
 	private: void initialize()
 	{
 		mainPanel->Controls->Clear();
+		mainPanel->Size = System::Drawing::Size((MAPWIDTH - 1) * 60 + 50 + 20, (MAPHEIGHT - 1) * 60 + 50 + 20);
 
 		initializeImages();
 		loadRobotsPanel();
@@ -463,9 +465,6 @@ namespace IART {
 
 	private: void initializeBoxes()
 	{
-		mainPanel->Size = System::Drawing::Size((MAPWIDTH - 1) * 60 + 50 + 20, (MAPHEIGHT - 1) * 60 + 50 + 20);
-		mainPanel->MouseClick += gcnew MouseEventHandler(this, &gui::placeBar);
-
 		PictureBox^ picbox;
 		int posX = 0, posY = 0, adder = 0;
 		for (size_t i = 0; i < MAPHEIGHT; i++)
@@ -558,7 +557,7 @@ namespace IART {
 		int j = x / 60;
 		int i = y / 60;
 
-		if (playing || x % 60 >= 50 && y % 60 >= 50) // Ambigous position
+		if (!playing || x % 60 >= 50 && y % 60 >= 50) // Ambigous position
 		{
 			return;
 		}
@@ -669,14 +668,44 @@ namespace IART {
 		}
 	}
 	
+	bool checkDraw()
+	{
+		Node* node = currNode;
+		int lookbehind = 2;
+
+		for (int i = 0; i < lookbehind; i++)
+		{
+			for (int i = 0; i < 2 * currNode->state.size(); i++)
+			{
+				node = node->parent;
+
+				if (node == NULL)
+					return false;
+			}
+
+			if (!(*node == *currNode))
+				return false;
+		}
+
+		return true;
+	}
 
 	bool checkWin()
 	{
+		if (checkDraw())
+		{
+			MessageBox::Show("Draw!");
+			initialize();
+			return true;
+		}
+
 		if (currNode->finished())
 		{
 			MessageBox::Show("Player " + (selectedCharacter + 1) + " won!");
+			initialize();
 			return true;
 		}
+
 
 		return false;
 	}
@@ -781,12 +810,6 @@ namespace IART {
 	}
 
 
-	void resetMap()
-	{
-		initialize();
-	}
-
-
 	Image^ changeColor(Image^ image, char robotId)
 	{
 		if (robotId == 'a') // Red
@@ -884,7 +907,8 @@ namespace IART {
 	
 	private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		resetMap();
+		initialize();
+		playing = false;
 	}
 
 	private: System::Void changedRobotPanelComboBoxIndex(System::Object^  sender, System::EventArgs^  e)
